@@ -425,6 +425,8 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 .balc-free{color:#C9C2E3}
 .balc-alloc{color:var(--lt)}
 .balc-days{color:var(--tx)}
+.balc-bar{height:10px;border-radius:6px;background:rgba(10,8,22,.55);overflow:hidden;margin-top:2px;border:1px solid rgba(139,124,199,.15)}
+.balc-bar span{display:block;height:100%;width:0%;border-radius:5px;background:linear-gradient(90deg,#8B7CC7,#A58FE0,#C9C2E3);box-shadow:0 0 12px rgba(139,124,199,.45);transition:width 1.1s cubic-bezier(.16,1,.3,1)}
 
 /* ── Anggaran: fixed obligations & formula panel ── */
 .formula{display:grid;gap:0;font-size:13.5px}
@@ -757,7 +759,7 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 <div class="head"><div><h1>Anggaran</h1><p class="sub">Kalkulator simulasi pembagian saldo — tidak mengubah saldo asli Anda.</p></div>
 <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn danger" id="breset" type="button">Hapus simulasi</button></div></div>
 
-<div class="card hero balc-hero"><p class="lbl">Total Balance <span style="opacity:.65;font-weight:400">(saldo awal simulasi)</span></p><p class="big" id="btot">Rp 0</p><p class="lbl" style="margin-top:6px;opacity:.75">Dibaca dari dashboard Anda. Simulasi tidak mengubah angka ini.</p><div class="balc-hero-foot"><div><span class="lbl">Sisa saldo simulasi</span><b class="balc-free" id="bsimfree">Rp 0</b></div><div><span class="lbl">Total dialokasikan</span><b class="balc-alloc" id="bsimalloc">Rp 0</b></div><div><span class="lbl">Jumlah hari</span><b class="balc-days" id="bsimdays">0 hari</b></div></div></div>
+<div class="card hero balc-hero"><p class="lbl">Total Balance <span style="opacity:.65;font-weight:400">(saldo awal simulasi)</span></p><p class="big" id="btot">Rp 0</p><p class="lbl" style="margin-top:6px;opacity:.75">Dibaca dari dashboard Anda. Simulasi tidak mengubah angka ini.</p><div class="balc-hero-foot"><div><span class="lbl">Sisa saldo simulasi</span><b class="balc-free" id="bsimfree">Rp 0</b></div><div><span class="lbl">Total dialokasikan</span><b class="balc-alloc" id="bsimalloc">Rp 0</b></div><div><span class="lbl">Jumlah hari</span><b class="balc-days" id="bsimdays">0 hari</b></div><div><span class="lbl">Rata-rata / hari</span><b class="balc-days" id="bsimdly">Rp 0</b></div></div><div class="balc-bar" aria-hidden="true"><span id="bsimpct"></span></div></div>
 
 <div class="grid g2b" style="margin-top:22px">
 <div class="card"><h2>1 · Pilih jangka waktu</h2>
@@ -1102,21 +1104,15 @@ var s4=SIM.start?simParse(SIM.start):new Date(y,m,1),e4=SIM.end?simParse(SIM.end
 if(isNaN(s4.getTime())||isNaN(e4.getTime())||e4<s4)return null;
 var days=Math.round((e4-s4)/864e5)+1;
 return{s:s4,e:e4,days:days,label:'Custom'}}
-function simHistoryWins(p){var arr=[];
-if(SIM.periodType==='month'){for(var k=1;k<=3;k++){var d1=new Date(p.e.getFullYear(),p.e.getMonth()-k,1);arr.push({s:d1,e:new Date(d1.getFullYear(),d1.getMonth()+1,0)})}return arr}
-var wEnd=new Date(p.s.getTime()-864e5),len=p.days;
-for(var k2=0;k2<3;k2++){var wStart=new Date(wEnd.getTime()-(len-1)*864e5);arr.push({s:new Date(wStart.getTime()),e:new Date(wEnd.getTime())});wEnd=new Date(wStart.getTime()-864e5)}return arr}
-function simSpend(cat,wStart,wEnd){var s=simIso(wStart),e=simIso(wEnd),t=0;for(var i=0;i<T.length;i++){var x=T[i];if(x.t!=='expense'||isXf(x))continue;if(x.c===cat&&x.dt>=s&&x.dt<=e)t+=x.a}return t}
-function simHistMedian(trackerCat,p){var ws=simHistoryWins(p);if(!ws.some(function(w){return simSpend(trackerCat,w.s,w.e)>0}))return null;
-var arr=ws.map(function(w){var len=Math.round((w.e-w.s)/864e5)+1;return simSpend(trackerCat,w.s,w.e)/len});arr.sort(function(a,b){return a-b});return arr[Math.floor(arr.length/2)]}
-function simPerPeriod(trackerCat,p){var ws=simHistoryWins(p);if(!ws.some(function(w){return simSpend(trackerCat,w.s,w.e)>0}))return null;
-var arr=ws.map(function(w){return simSpend(trackerCat,w.s,w.e)});arr.sort(function(a,b){return a-b});return arr[Math.floor(arr.length/2)]}
-var SIM_FIXED={'Kos':1,'Laundry':1,'Pulsa/Internet':1};
+function simSpend30(trackerCat){var cut=new Date();cut.setHours(0,0,0,0);cut.setDate(cut.getDate()-29);var s=simIso(cut),e=simIso(new Date()),t=0;for(var i=0;i<T.length;i++){var x=T[i];if(x.t!=='expense'||isXf(x))continue;if(x.c===trackerCat&&x.dt>=s&&x.dt<=e)t+=x.a}return t}
+var SIM_MANUAL={'Tabungan':1,'Dana Cadangan':1};
 function simRecommend(cat,p){var tracker=bCatMap()[cat];
-if(SIM_FIXED[cat]){var m=simPerPeriod(tracker,p);if(m!=null&&m>0)return{amount:Math.round(m),source:'median per periode dari 3 periode sebelumnya'};return{amount:0,source:'belum ada riwayat — isi nominal Anda',needsInput:true}}
-var md=simHistMedian(tracker,p);
-if(md!=null&&md>0){return{amount:Math.round(md*p.days),source:'median Rp '+Math.round(md).toLocaleString('id-ID')+'/hari x '+p.days+' hari'}}
-return{amount:0,source:'belum ada riwayat — isi nominal harian atau total',needsInput:true}}
+if(SIM_MANUAL[cat])return{amount:0,source:'Masukkan alokasi Anda',needsInput:true};
+var tot=simSpend30(tracker);
+if(tot>0){var daily=tot/30;return{amount:Math.round(daily*p.days),source:'Dihitung dari total transaksi '+cat+' selama 30 hari terakhir'}}
+return{amount:0,source:'Riwayat transaksi '+cat+' belum tersedia',needsInput:true,noHist:true}}
+// dipakai untuk label batas maksimal harian ketika tidak ada riwayat
+function simMaxDaily(p){var free=simFree();return p&&p.days?Math.max(0,Math.floor(free/p.days)):0}
 function simBalance(){return sumAll(T,'income')-sumAll(T,'expense')}
 function simAllocTotal(){var t=0;SIM.sel.forEach(function(c){t+=(+SIM.amounts[c]||0)});return t}
 function simFree(){return simBalance()-simAllocTotal()}
@@ -1131,12 +1127,16 @@ var free=simFree(),alloc=simAllocTotal();
 $('#bsimfree').textContent=R(free);
 $('#bsimalloc').textContent=R(alloc);
 $('#bsimdays').textContent=p.days+' hari';
+$('#bsimdly').textContent='Rp '+Math.round(alloc/p.days).toLocaleString('id-ID');
+$('#bsimpct').style.width=(simBalance()>0?Math.min(100,Math.max(0,alloc/simBalance()*100)):0)+'%';
 var warn=$('#bwarn');
 if(free<0){warn.style.display='';warn.textContent='Alokasi melebihi Total Balance Rp '+Math.round(-free).toLocaleString('id-ID')+' — kurangi kategori. Total Balance asli tidak berubah.'}else{warn.style.display='none'}
 var map=bCatMap(),html='';
 SIM.sel.forEach(function(c){var a=+SIM.amounts[c]||0,m=SIM.meta[c]||{source:'input Anda'};
-var daily=p.days?a/p.days:0;
-html+='<div class="sim-row"><div class="sim-row-main"><div class="sim-row-name">'+esc(c)+'<span class="sim-row-src">'+esc(m.source)+'</span></div><input type="number" min="0" inputmode="numeric" data-sim="'+esc(c)+'" value="'+(a||'')+'" placeholder="0" aria-label="Alokasi '+esc(c)+'"><button class="x iconbtn danger" data-simdel="'+esc(c)+'" aria-label="Hapus '+esc(c)+' dari simulasi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div><div class="sim-row-meta">Batas Rp '+Math.round(daily).toLocaleString('id-ID')+'/hari'+(a?' · Total '+R(a):'')+'</div></div>'});
+var daily=p.days?a/p.days:0,maxD=m.noHist?simMaxDaily(p):0;
+var src=m.source;
+if(m.noHist)src='Belum ada riwayat — batas maksimal Rp '+Math.round(maxD).toLocaleString('id-ID')+'/hari (sisa saldo ÷ '+p.days+' hari)';
+html+='<div class="sim-row"><div class="sim-row-main"><div class="sim-row-name">'+esc(c)+'<span class="sim-row-src">'+esc(src)+'</span></div><input type="number" min="0" inputmode="numeric" data-sim="'+esc(c)+'" value="'+(a||'')+'" placeholder="0" aria-label="Alokasi '+esc(c)+'"><button class="x iconbtn danger" data-simdel="'+esc(c)+'" aria-label="Hapus '+esc(c)+' dari simulasi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div><div class="sim-row-meta">Batas Rp '+Math.round(daily).toLocaleString('id-ID')+'/hari'+(a?' · Total '+R(a):'')+'</div></div>'});
 $('#balloc').innerHTML=html||'<p class="empty">Belum ada anggaran ditambahkan. Tekan "+ Tambah Anggaran" untuk mulai.</p>';
 renderSimChips();renderSimFormula(p,free,alloc);
 }
@@ -1146,6 +1146,7 @@ if(!SIM.sel.length)html+='<p class="cal-empty">Belum ada kategori dipilih — ta
 SIM.sel.forEach(function(c){var a=+SIM.amounts[c]||0,m=SIM.meta[c]||{source:'input Anda'};
 html+='<div class="fx-row fx-sub"><span>'+esc(c)+' — '+R(a)+'<br><span class="fx-meta">Sumber: '+esc(m.source)+' · batas Rp '+Math.round(a/p.days).toLocaleString('id-ID')+'/hari</span></span><b>'+R(a)+'</b></div>'});
 if(SIM.sel.length){html+='<div class="fx-row"><span>Total dialokasikan</span><b>'+R(alloc)+'</b></div>';
+html+='<div class="fx-row"><span>Rata-rata per hari (semua kategori)</span><b>Rp '+Math.round(alloc/p.days).toLocaleString('id-ID')+'</b></div>';
 html+='<div class="fx-row fx-res"><span>Sisa saldo simulasi (= Total Balance − alokasi)</span><b class="'+(free<0?'dn':'')+'">'+R(free)+'</b></div>'}
 $('#bformula').innerHTML=html}
 $('#bper').onchange=function(){SIM.periodType=this.value;SIM.start=SIM.end=null;saveSim();renderSim()};
@@ -1165,6 +1166,8 @@ $('#btot').textContent=R(simBalance());
 $('#bsimfree').textContent=R(free);
 $('#bsimalloc').textContent=R(alloc);
 $('#bsimdays').textContent=p.days+' hari';
+$('#bsimdly').textContent='Rp '+Math.round(alloc/p.days).toLocaleString('id-ID');
+$('#bsimpct').style.width=(simBalance()>0?Math.min(100,Math.max(0,alloc/simBalance()*100)):0)+'%';
 var warn=$('#bwarn');
 if(free<0){warn.style.display='';warn.textContent='Alokasi melebihi Total Balance Rp '+Math.round(-free).toLocaleString('id-ID')+' — kurangi kategori. Total Balance asli tidak berubah.'}else{warn.style.display='none'}
 renderSimFormula(p,free,alloc);
