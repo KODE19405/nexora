@@ -180,8 +180,8 @@ async function handleAi(req, res) {
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AI_API_KEY },
       body: JSON.stringify({
         model: AI_MODEL,
-        temperature: 0.4,
-        max_tokens: 400,
+        temperature: 0.3,
+        max_tokens: 1000,
         messages: [{ role: 'system', content: SYSTEM_PROMPT }].concat(payload.messages)
       })
     });
@@ -191,9 +191,12 @@ async function handleAi(req, res) {
       return sendJson(res, 502, { error: { code: 'AI_PROVIDER_ERROR', message: 'Penyedia AI mengembalikan error (' + upstream.status + '). Periksa konfigurasi server.' } });
     }
     const data = await upstream.json();
-    const reply = data && data.choices && data.choices[0] && data.choices[0].message && typeof data.choices[0].message.content === 'string'
-      ? data.choices[0].message.content.trim() : '';
-    if (!reply) return sendJson(res, 502, { error: { code: 'AI_EMPTY', message: 'Penyedia AI mengembalikan jawaban kosong.' } });
+    const msgObj = data && data.choices && data.choices[0] && data.choices[0].message;
+    const reply = msgObj && typeof msgObj.content === 'string' ? msgObj.content.trim() : '';
+    if (!reply) {
+      console.error('[ai] empty content; finish_reason=' + (data && data.choices && data.choices[0] && data.choices[0].finish_reason) + ' usage=' + JSON.stringify(data && data.usage));
+      return sendJson(res, 502, { error: { code: 'AI_EMPTY', message: 'Penyedia AI mengembalikan jawaban kosong.' } });
+    }
     return sendJson(res, 200, { reply });
   } catch (e) {
     const aborted = e && e.name === 'AbortError';
