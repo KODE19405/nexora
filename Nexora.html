@@ -885,6 +885,25 @@ try{if(localStorage.getItem('nx_v2_cleaned3')!=='1'){
   T=T.filter(function(x){return !((x.d==='Target dihapus: Dana darurat'&&+x.a===12500000)||(x.d==='Target dihapus: Liburan Bali'&&+x.a===4800000))});
   try{localStorage.setItem('nx_t',JSON.stringify(T));localStorage.setItem('nx_v2_cleaned3','1')}catch(e){}
 }}catch(e){}
+/* ── Migrasi v4_orphans: baris residu Goals yang tidak lagi terikat ke Goal aktif.
+   Tujuan: Goal yang dihapus sebelumnya (sebelum removeGoalRows ada) tidak boleh
+   muncul lagi di mana pun. Hanya baris yang dibuat otomatis app & yatim piatu
+   yang dihapus — transaksi asli (non-Goals) tidak disentuh. */
+try{if(localStorage.getItem('nx_v4_orphans')!=='1'){
+  var liveIds={};try{var lg=JSON.parse(localStorage.getItem('nx_g'));if(Array.isArray(lg))lg.forEach(function(g){if(g&&g.id)liveIds[g.id]=1})}catch(e){}
+  var before=T.length;
+  T=T.filter(function(x){
+    if(x.c!=='Goals')return true;
+    // jika baris terikat ke goal yang masih ada → pertahankan
+    if(x.g && liveIds[x.g])return true;
+    // pola yang hanya bisa dibuat oleh app (gtx): Setor/Tarik/Target dihapus
+    var d=x.d||'';
+    var isAppRow=/^(Setor ke|Tarik dari) /.test(d)||/^Target dihapus: /.test(d);
+    return !isAppRow;
+  });
+  if(T.length!==before){try{localStorage.setItem('nx_t',JSON.stringify(T))}catch(e){}}
+  try{localStorage.setItem('nx_v4_orphans','1')}catch(e){}
+}}catch(e){}
 function save(){try{localStorage.setItem('nx_t',JSON.stringify(T))}catch(e){}}
 var today=iso(now.getFullYear(),now.getMonth(),now.getDate());
 var ym=function(d){return d.slice(0,7)},cur=today.slice(0,7);
