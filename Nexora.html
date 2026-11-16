@@ -735,7 +735,7 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 <div class="f">
 <label>Penghasilan per bulan (Rp)<input id="binc" type="number" min="0" inputmode="numeric" placeholder="Ketik penghasilan Anda"></label>
 <label>Periode anggaran<select id="bper"><option value="7d">7 hari ke depan</option><option value="14d">14 hari ke depan</option><option value="month">Bulan berjalan</option><option value="gajian">Mengikuti jadwal gajian</option><option value="custom">Custom (tanggal mulai &amp; berakhir)</option></select></label>
-<div class="two" id="bpayrow" style="display:none"><label>Tanggal gajian tiap bulan<input id="bpay" type="number" min="1" max="28" inputmode="numeric" placeholder="Contoh: 25"></label><label>Hari gajian<select id="bpayhint" disabled><option>Setiap bulan</option></select></label></div>
+<div class="two" id="bpayrow" style="display:none;grid-template-columns:1fr"><label>Tanggal gajian tiap bulan<input id="bpay" type="number" min="1" max="28" inputmode="numeric" placeholder="Contoh: 25"></label></div>
 <div class="two" id="bcustom" style="display:none"><label>Tanggal mulai<input id="bstart" type="date"></label><label>Tanggal berakhir<input id="bend" type="date"></label></div>
 <p class="lbl" id="bspan" style="margin:0"></p></div></div>
 <div class="card"><h2>2 · Pilih kategori yang dipakai</h2>
@@ -823,9 +823,9 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 var $=function(s){return document.querySelector(s)};
 var R=function(n){return 'Rp '+Math.round(n).toLocaleString('id-ID')};
 var P=function(n){return (isFinite(n)?n:0).toFixed(1).replace('.',',')+' %'};
-var ECAT=['Makanan','Sewa','Transport','Hiburan','Tagihan','Belanja','Kos','Pulsa/Internet','Laundry','Jajan','Kas','Bensin','Transportasi','Belanja Online','Dana Cadangan','Kebutuhan Lainnya'],ICAT=['Gaji','Bisnis','Freelance'];
+var ECAT=['Makanan','Sewa','Transport','Hiburan','Tagihan','Belanja','Kos','Pulsa/Internet','Laundry','Jajan','Kas','Bensin','Belanja Online','Dana Cadangan','Kebutuhan Lainnya'],ICAT=['Gaji','Bisnis','Freelance'];
 var BUD={Makanan:2000000,Sewa:2200000,Transport:800000,Hiburan:600000,Tagihan:900000,Belanja:700000};
-var COL=['#C9C2E3','#8B7CC7','#A58FE0','#5A3B8C','#6E55B0','#E3DDF5'];
+var COL=['#C9C2E3','#8B7CC7','#A58FE0','#5A3B8C','#6E55B0','#E3DDF5','#B49AF0','#7A5CD6','#4E3A75','#D9B8FF','#9A6BFF','#6B4FB8','#C7A6F2','#574B93','#8F7CE6','#3E3359'];
 var now=new Date(),T=[];
 function iso(y,m,d){var x=new Date(y,m,d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
 /* Bersihkan data contoh bawaan Nexora (sekali saja, flag nx_v2_cleaned2).
@@ -958,7 +958,9 @@ ms.forEach(function(m){if(m.proj){m.i=projI;m.e=projE}});
 function fmtKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
 var anyActual=ms.some(function(m){return !m.proj && (m.i>0||m.e>0)});
 var mx=Math.max.apply(null,ms.map(function(m){return Math.max(m.i,m.e)}).concat([1]));
-var note=!anyActual?'<p class="empty" style="margin-top:10px;margin-bottom:0">Belum cukup data aktual — grafik proyeksi memakai '+(projI>0||projE>0?'rata-rata 3 bulan terakhir':'estimasi Rp 0')+'. Isi transaksi dan atur Anggaran untuk proyeksi yang lebih akurat.</p>':'';
+var projSrc=(Bload&&Bload.income)?'penghasilan Anggaran Anda':(h3n?'rata-rata 3 bulan terakhir':'estimasi Rp 0');
+var hasProj=ms.some(function(m){return m.proj});
+var note=!anyActual?'<p class="empty" style="margin-top:10px;margin-bottom:0">Belum cukup data aktual — proyeksi bulan mendatang memakai '+projSrc+'. Isi transaksi dan atur Anggaran untuk hasil lebih akurat.</p>':(hasProj?'<p class="lbl" style="margin-top:8px;opacity:.8">Bar transparan = proyeksi estimasi ('+projSrc+'), bukan data aktual.</p>':'');
 var s='<svg viewBox="0 0 480 230" width="100%" role="img" aria-label="Grafik arus kas November 2026 hingga April 2027">';
 for(var g2=0;g2<4;g2++){var y=20+g2*50;s+='<line x1="0" x2="480" y1="'+y+'" y2="'+y+'" stroke="rgba(58,58,82,.5)"/>'}
 var dividerIdx=-1;ms.forEach(function(m,i){if(m.proj&&dividerIdx<0)dividerIdx=i});
@@ -1044,7 +1046,7 @@ function bPeriod(){var t=new Date();t.setHours(0,0,0,0);var y=t.getFullYear(),m=
 if(B.periodType==='7d'||B.periodType==='14d'){var n=+B.periodType;return{s:new Date(y,m,d),e:new Date(y,m,d+n-1),days:n,elapsed:1,label:n+' hari ke depan'}}
 if(B.periodType==='month'){var s=new Date(y,m,1),e=new Date(y,m+1,0);return{s:s,e:e,days:e.getDate(),elapsed:d,label:'Bulan berjalan'}}
 if(B.periodType==='gajian'){var pd=Math.min(28,Math.max(1,+B.payDay||25));var s2=new Date(y,m,pd);if(s2>t)s2=new Date(y,m-1,pd);var e2=new Date(s2.getFullYear(),s2.getMonth()+1,pd-1);var days=Math.round((e2-s2)/864e5)+1,elapsed=Math.round((t-s2)/864e5)+1;return{s:s2,e:e2,days:days,elapsed:elapsed,label:'Gajian ke gajian · tiap tgl '+pd}}
-var s3=B.start?new Date(B.start):new Date(y,m,1),e3=B.end?new Date(B.end):new Date(y,m+1,0);
+var s3=B.start?(function(){var p=B.start.split('-');return new Date(+p[0],+p[1]-1,+p[2])})():new Date(y,m,1),e3=B.end?(function(){var p=B.end.split('-');return new Date(+p[0],+p[1]-1,+p[2])})():new Date(y,m+1,0);
 if(isNaN(s3.getTime())||isNaN(e3.getTime())||e3<s3)return null;
 var days2=Math.round((e3-s3)/864e5)+1,el=Math.max(1,Math.min(days2,Math.round((t-s3)/864e5)+1));
 return{s:s3,e:e3,days:days2,elapsed:el,label:'Custom · '+s3.toLocaleDateString('id-ID',{day:'numeric',month:'short'})+' – '+e3.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}}
@@ -1062,15 +1064,16 @@ $('#bspan').textContent=p?(p.s.toLocaleDateString('id-ID',{day:'numeric',month:'
 var inc=bPeriodIncome(),alloc=bAllocTotal(),spent=bSpentTotal(),rem=alloc-spent;
 $('#btot').textContent=R(inc);
 $('#ballocT').textContent=R(alloc);
-$('#bunalloc').textContent='Belum dialokasikan '+R(Math.max(0,inc-alloc));
+$('#bunalloc').textContent=inc>=alloc?'Belum dialokasikan '+R(inc-alloc):'Melebihi penghasilan '+R(alloc-inc);
+$('#bunalloc').classList.toggle('dn',inc<alloc);
 $('#bspent').textContent=R(spent);
 $('#bremain').textContent='Sisa Rp '+Math.round(Math.abs(rem)).toLocaleString('id-ID')+(rem<0?' (over)':'');
 var pDays=Math.max(1,p?p.days:1),elapsed=Math.max(1,p?p.elapsed:1);
 var spendCap=rem>0?rem:0,dayCap=spendCap/pDays;
 $('#bdaily').textContent=R(dayCap);
-var msg;if(spent<=0){msg='Belum ada pengeluaran tercatat — ini batas harian Anda.'}else{var daysLeft=Math.max(0,pDays-elapsed),rate=spent/elapsed,proj=spent+rate*daysLeft;
-if(rate*pDays<=alloc)msg='Pada kecepatan sekarang, diperkirakan cukup sampai akhir periode (estimasi '+R(proj)+').';
-else msg='Pada kecepatan sekarang, sisa alokasi diperkirakan habis dalam ~'+Math.max(1,Math.floor(rem/rate))+' hari (proyeksi '+R(proj)+').'}
+var msg;if(spent<=0){msg='Belum ada pengeluaran tercatat — ini batas harian Anda.'}else if(rem<=0){msg='Pengeluaran sudah melebihi alokasi periode ini (lebih '+R(-rem)+').'}else{var daysLeft=Math.max(0,pDays-elapsed),rate=spent/elapsed,proj=spent+rate*daysLeft,est=rem/rate;
+if(rate*pDays<=alloc||est>=daysLeft)msg='Pada kecepatan sekarang, diperkirakan cukup sampai akhir periode (estimasi '+R(proj)+').';
+else msg='Pada kecepatan sekarang, sisa alokasi diperkirakan habis dalam ~'+Math.max(1,Math.floor(est))+' hari dari hari ini (proyeksi '+R(proj)+').'}
 $('#bpred').textContent=msg;
 $('#bperiodhint').textContent=p?p.label:'';
 var html='',by=p?bSpentIn(p):{},catMap={};BCATS.forEach(function(bc){catMap[bc[0]]=bc[1]});
@@ -1079,7 +1082,7 @@ html+='<div class="bprog"><div class="bp-name">'+c+'</div><div><div class="bar">
 $('#bprogress').innerHTML=html||'<p class="empty">Pilih kategori dan isi alokasi untuk melihat progres.</p>';
 }
 function renderBAll(){renderBChips();renderBAlloc();renderBStats();$('#binc').value=B.income||'';$('#bper').value=B.periodType||'month';$('#bpay').value=B.payDay||25;$('#bstart').value=B.start||'';$('#bend').value=B.end||'';$('#bpayrow').style.display=B.periodType==='gajian'?'':'none';$('#bcustom').style.display=B.periodType==='custom'?'':'none'}
-$('#binc').oninput=function(){B.income=+this.value||null;saveB();renderBStats()};
+$('#binc').oninput=function(){B.income=Math.max(0,+this.value||0)||null;saveB();renderBStats()};
 $('#bper').onchange=function(){B.periodType=this.value;saveB();renderBAll()};
 $('#bpay').oninput=function(){B.payDay=+this.value||25;saveB();renderBStats()};
 $('#bstart').onchange=function(){B.start=this.value;saveB();renderBStats()};
@@ -1091,6 +1094,7 @@ $('#balloc').oninput=function(e){var inp=e.target.closest('[data-alloc]');if(!in
 $('#balloc').onclick=function(e){var b=e.target.closest('[data-rm]');if(!b)return;var c=b.dataset.rm,i=B.sel.indexOf(c);if(i>-1)B.sel.splice(i,1);saveB();renderBAll()};
 $('#brec').onclick=function(){var p=bPeriod();if(!p){toast('Periksa periode anggaran Anda.','err');return}
 if(!B.income){toast('Isi penghasilan dulu agar rekomendasi akurat.','err');return}
+if(!B.sel.length){toast('Pilih minimal satu kategori dulu.','err');return}
 var pool=B.income*p.days/30,sel=B.sel.slice(),wsum=0;sel.forEach(function(c){wsum+=(BW[c]||.03)});
 var cut=iso2(new Date(Date.now()-60*864e5));
 var hist={};BCATS.forEach(function(bc){hist[bc[0]]=0});
@@ -1149,14 +1153,16 @@ $('#calgrid').onclick=function(e){var b=e.target.closest('[data-day]');if(!b)ret
 function extra(){
 var mt=T.filter(function(x){return ym(x.dt)==cur}),inc=sum(mt,'income'),exp=sum(mt,'expense'),sr=inc?(inc-exp)/inc*100:0;
 var budCats=ECAT.filter(function(c){return BUD[c]!=null});
+var mt0=T.filter(function(x){return ym(x.dt)==cur});
+if(!mt0.length){$('#hs').innerHTML='<div><b style="color:#fff;font-size:17px">Belum ada data</b><p class="lbl" style="margin-top:4px">Isi transaksi terlebih dahulu agar kesehatan finansial bisa dihitung.</p></div>'}else{
 var ok=budCats.filter(function(c){return mt.filter(function(x){return x.t=='expense'&&x.c==c}).reduce(function(s,x){return s+x.a},0)<=BUD[c]}).length;
 var sc=Math.round(Math.max(0,Math.min(30,sr))/30*50+ok/budCats.length*30+(inc>=exp?20:0)),lb=sc>=75?'Sangat sehat':sc>=50?'Cukup sehat':'Perlu perhatian';
-$('#hs').innerHTML=ring(sc/100,sc)+'<div><b style="color:#fff;font-size:17px">'+lb+'</b><p class="lbl" style="margin-top:4px">'+ok+' dari '+budCats.length+' kategori sesuai anggaran, savings rate '+P(sr)+'.</p></div>';
+$('#hs').innerHTML=ring(sc/100,sc)+'<div><b style="color:#fff;font-size:17px">'+lb+'</b><p class="lbl" style="margin-top:4px">'+ok+' dari '+budCats.length+' kategori sesuai anggaran, savings rate '+P(sr)+'.</p></div>'}
 var d=now.getDate(),dim=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(),pe=Math.max(exp,exp/d*dim),left=inc-pe;
 $('#fc').innerHTML='<p class="lbl">Perkiraan total pengeluaran</p><p class="big sm">'+R(pe)+'</p><p class="lbl" style="margin-top:10px">Perkiraan sisa uang bulan ini</p><p class="big sm '+(left<0?'dn':'up')+'">'+R(left)+'</p><div class="bar"><span style="width:'+Math.min(100,d/dim*100)+'%"></span></div><p class="lbl" style="margin-top:6px">Hari ke-'+d+' dari '+dim+'</p>';
 renderCal();
 // Net line pada grafik arus kas: aktual solid, proyeksi putus-putus
-var sv=$('#flow svg');if(sv){var ms2=window.__chartMonths||[];
+var sv=$('#flow svg');if(sv&&(window.__chartMonths||[]).length>=6){var ms2=window.__chartMonths;
 var smooth=function(pts){var d='M'+pts[0].x+' '+pts[0].y;for(var j=1;j<pts.length;j++){var p=pts[j],pp=pts[j-1],mx=(p.x+pp.x)/2;d+=' C'+mx+' '+pp.y+' '+mx+' '+p.y+' '+p.x+' '+p.y}return d};
 var nt2=ms2.map(function(m){return Math.max(0,m.i-m.e)});var mm2=1;nt2.forEach(function(n){if(n>mm2)mm2=n});
 var pts=nt2.map(function(n,j){return{x:j*78+42,y:190-n/mm2*170,n:n}});
@@ -1209,7 +1215,7 @@ function startEdit(d){var i=+d.dataset.i,cur=chatLog[i].content;
 d.innerHTML='<textarea class="editbox" rows="3" maxlength="2000" aria-label="Edit pesan"></textarea><div class="msg-actions"><button class="msg-act save" type="button" data-save="1">Simpan</button><button class="msg-act" type="button" data-cancel="1">Batal</button></div>';
 var ta=d.querySelector('.editbox');ta.value=cur;ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
 d.querySelector('[data-save]').onclick=function(){var v=ta.value.trim();if(!v){toast('Pesan tidak boleh kosong.','err');return}
-chatLog[i].content=v;d.innerHTML='<span class="mtext"></span>'+ACTIONS;d.querySelector('.mtext').textContent=v;toast('Pesan diperbarui.')};
+var idx=+d.dataset.i;chatLog[idx].content=v;d.innerHTML='<span class="mtext"></span>'+ACTIONS;d.querySelector('.mtext').textContent=v;toast('Pesan diperbarui.')};
 d.querySelector('[data-cancel]').onclick=function(){d.innerHTML='<span class="mtext"></span>'+ACTIONS;d.querySelector('.mtext').textContent=cur}}
 function copyText(txt){if(navigator.clipboard&&navigator.clipboard.writeText){return navigator.clipboard.writeText(txt).then(function(){toast('Tersalin ke clipboard.')},function(){fallbackCopy(txt)})}return Promise.resolve(fallbackCopy(txt))}
 function fallbackCopy(txt){var ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;top:-999px';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Tersalin ke clipboard.')}catch(_e){toast('Gagal menyalin.','err')}ta.remove()}
