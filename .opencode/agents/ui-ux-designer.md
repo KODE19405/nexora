@@ -20,10 +20,7 @@ permissions:
     resource: "brainstorming"
     effect: allow
   - action: skill
-    resource: "frontend-design"
-    effect: allow
-  - action: skill
-    resource: "web-design-guidelines"
+    resource: "ui-ux-pro-max"
     effect: allow
   - action: skill
     resource: "anti-ai-slop"

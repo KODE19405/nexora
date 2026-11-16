@@ -35,10 +35,7 @@ permissions:
     resource: "*"
     effect: deny
   - action: skill
-    resource: "frontend-design"
-    effect: allow
-  - action: skill
-    resource: "web-design-guidelines"
+    resource: "ui-ux-pro-max"
     effect: allow
   - action: skill
     resource: "systematic-debugging"
