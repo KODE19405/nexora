@@ -405,13 +405,28 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 .gt{font-size:17px;font-weight:600;color:#fff}
 .xbtn{margin-top:auto}
 
+/* ── Anggaran: sim rows ── */
+.sim-row{display:grid;gap:6px;padding:12px 14px;border:1px solid var(--ln);border-radius:12px;background:rgba(10,8,22,.35);transition:border-color .25s,background .25s}
+.sim-row:hover{border-color:rgba(139,124,199,.35)}
+.sim-row-main{display:grid;grid-template-columns:1fr 150px 34px;gap:10px;align-items:center}
+.sim-row-name{display:grid;gap:2px;font-weight:500;color:#fff}
+.sim-row-src{font-size:11.5px;color:var(--tx);opacity:.75;font-weight:400}
+.sim-row input{text-align:right}
+.sim-row-meta{font-size:11.5px;color:var(--tx);opacity:.75}
+
 /* ── Utility: screen-reader only ── */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
+/* ── Anggaran simulator ── */
+.balc-hero{display:flex;flex-direction:column;gap:18px}
+.balc-hero-foot{display:flex;gap:26px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);padding-top:16px}
+.balc-hero-foot > div{display:grid;gap:4px}
+.balc-hero-foot b{font-size:17px;color:#fff;font-weight:600}
+.balc-free{color:#C9C2E3}
+.balc-alloc{color:var(--lt)}
+.balc-days{color:var(--tx)}
+
 /* ── Anggaran: fixed obligations & formula panel ── */
-.mini-head{font-size:13px;font-weight:600;color:#fff;margin:6px 0 8px;display:flex;align-items:baseline;gap:8px}
-.bfixed{display:grid;gap:8px}
-.bfixed-row{display:grid;grid-template-columns:1fr 150px 34px;gap:8px;align-items:center}
 .formula{display:grid;gap:0;font-size:13.5px}
 .fx-row{display:flex;justify-content:space-between;gap:14px;align-items:baseline;padding:8px 0;border-bottom:1px dashed var(--ln)}
 .fx-row:last-child{border-bottom:0}
@@ -421,19 +436,12 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 .fx-res b{color:#fff}
 .fx-sec{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--lt);margin:14px 0 2px}
 .fx-meta{color:var(--tx);opacity:.72;font-size:12px}
-.alloc-meta{font-size:11.5px;color:var(--tx);opacity:.75;padding-left:0;margin:-4px 0 10px 0;line-height:1.55}
 
 /* ── Anggaran ── */
 .budget-chips{display:flex;flex-wrap:wrap;gap:9px}
 .budget-chip{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:20px;border:1px solid var(--ln);background:rgba(10,8,22,.4);color:var(--tx);cursor:pointer;font-size:13px;font-weight:500;transition:all .25s cubic-bezier(.16,1,.3,1);position:relative}
 .budget-chip:hover{border-color:rgba(139,124,199,.4);transform:translateY(-2px)}
 .budget-chip[aria-pressed="true"]{background:linear-gradient(160deg,rgba(139,124,199,.45),rgba(90,59,140,.5));border-color:rgba(165,143,224,.65);color:#fff;box-shadow:0 4px 18px rgba(90,59,140,.35),inset 0 1px 0 rgba(255,255,255,.18)}
-.bstat{min-height:118px}
-.balloc-row{display:grid;grid-template-columns:1fr 150px 34px;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;border:1px solid transparent;transition:border-color .2s,background .2s}
-.balloc-row:hover{border-color:var(--ln);background:rgba(139,124,199,.06)}
-.balloc-row .balloc-name{display:flex;align-items:center;gap:9px;font-weight:500;color:#fff}
-.balloc-row input{text-align:right}
-.balloc-row .alloc-spent{font-size:11.5px;color:var(--tx);opacity:.75}
 .bprog{display:grid;grid-template-columns:minmax(110px,170px) 1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--ln)}
 .bprog:last-child{border-bottom:0;padding-bottom:2px}
 .bprog .bp-name{display:flex;align-items:center;gap:9px;color:#fff;font-weight:500}
@@ -746,36 +754,28 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 </section>
 
 <section class="view" id="anggaran">
-<div class="head"><div><h1>Anggaran</h1><p class="sub">Atur uang jajan, kos, tabungan, dan semua kebutuhan per periode — praktis untuk anak rantau.</p></div>
-<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="bshow">Isi dari pemasukan bulan ini</button><button class="btn danger" id="breset">Hapus anggaran</button></div></div>
-<div class="grid g2b">
-<div class="card"><h2>1 · Penghasilan &amp; periode</h2>
-<div class="f">
-<label>Penghasilan yang tersedia (Rp)<input id="binc" type="number" min="0" inputmode="numeric" placeholder="Contoh: 1000000"></label>
-<p class="lbl" style="margin:-4px 0 0;opacity:.75">Isi penghasilan yang benar-benar tersedia untuk periode ini. Untuk bulan berjalan, isi gaji bulanan Anda; untuk 14 hari, isi gaji atau jatah uang 2 minggu Anda.</p>
-<label>Periode anggaran<select id="bper"><option value="7d">7 hari ke depan</option><option value="14d">14 hari ke depan</option><option value="month">Bulan berjalan</option><option value="gajian">Mengikuti jadwal gajian</option><option value="custom">Custom (tanggal mulai &amp; berakhir)</option></select></label>
-<div class="two" id="bpayrow" style="display:none;grid-template-columns:1fr"><label>Tanggal gajian tiap bulan<input id="bpay" type="number" min="1" max="28" inputmode="numeric" placeholder="Contoh: 25"></label></div>
+<div class="head"><div><h1>Anggaran</h1><p class="sub">Kalkulator simulasi pembagian saldo — tidak mengubah saldo asli Anda.</p></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn danger" id="breset" type="button">Hapus simulasi</button></div></div>
+
+<div class="card hero balc-hero"><p class="lbl">Total Balance <span style="opacity:.65;font-weight:400">(saldo awal simulasi)</span></p><p class="big" id="btot">Rp 0</p><p class="lbl" style="margin-top:6px;opacity:.75">Dibaca dari dashboard Anda. Simulasi tidak mengubah angka ini.</p><div class="balc-hero-foot"><div><span class="lbl">Sisa saldo simulasi</span><b class="balc-free" id="bsimfree">Rp 0</b></div><div><span class="lbl">Total dialokasikan</span><b class="balc-alloc" id="bsimalloc">Rp 0</b></div><div><span class="lbl">Jumlah hari</span><b class="balc-days" id="bsimdays">0 hari</b></div></div></div>
+
+<div class="grid g2b" style="margin-top:22px">
+<div class="card"><h2>1 · Pilih jangka waktu</h2>
+<label>Jangka waktu<select id="bper"><option value="7d">7 hari</option><option value="14d">14 hari</option><option value="30d">30 hari</option><option value="month">Bulanan (bulan berjalan)</option><option value="custom">Custom</option></select></label>
 <div class="two" id="bcustom" style="display:none"><label>Tanggal mulai<input id="bstart" type="date"></label><label>Tanggal berakhir<input id="bend" type="date"></label></div>
-<div class="two"><label>Target tabungan periode ini (Rp)<input id="bsave" type="number" min="0" inputmode="numeric" placeholder="Opsional — mis. 100000"></label>
-<label>Target dana cadangan periode ini (Rp)<input id="bcad" type="number" min="0" inputmode="numeric" placeholder="Opsional — mis. 50000"></label></div>
-<div><h3 class="mini-head">Kewajiban tetap &amp; tagihan <span class="lbl" style="font-weight:400">(opsional — dikurangi lebih dulu)</span></h3><div id="bfixed" class="f bfixed"></div><button class="btn ghost" id="baddfixed" type="button" style="justify-self:start">+ Tambah kewajiban tetap</button><p class="lbl" id="bfixtot" style="margin:2px 0 0"></p></div>
-<p class="lbl" id="bspan" style="margin:0"></p></div></div>
-<div class="card"><h2>2 · Pilih kategori yang dipakai</h2>
-<p class="lbl" style="margin:-6px 0 14px">Hanya kategori yang Anda pilih yang muncul. Tidak wajib lengkap.</p>
-<div class="budget-chips" id="bchips"></div>
-<div class="row" style="margin-top:18px"><h2 style="margin:0;font-size:14px">3 · Alokasi per kategori</h2><button class="btn" id="brec" type="button">Hitung rekomendasi</button></div>
-<p class="lbl" id="bnote" style="margin:6px 0 12px">Estimasi berbasis penghasilan, kewajiban, dan riwayat transaksi Anda. Bisa diedit.</p>
+<p class="lbl" id="bspan" style="margin:8px 0 0"></p>
+<div class="row" style="margin-top:18px"><h2 style="margin:0;font-size:14px">2 · Tambah Anggaran</h2><button class="btn" id="baddtoggle" type="button">+ Tambah Anggaran</button></div>
+<p class="lbl" style="margin:8px 0 12px">Pilih kategori yang dipakai — tidak wajib lengkap.</p>
+<div class="budget-chips" id="bchips" hidden></div>
+</div>
+<div class="card"><h2>3 · Alokasi simulasi</h2>
+<p class="lbl" style="margin:-6px 0 14px">Rekomendasi dihitung dari riwayat transaksi Anda. Semua nominal bisa diedit atau dihapus. Tidak tersimpan sebagai transaksi.</p>
 <div class="f" id="balloc"></div>
-<p class="note warn" id="bwarn" style="display:none;margin:16px 0 0"></p></div>
+<p class="note warn" id="bwarn" style="display:none;margin:16px 0 0"></p>
 </div>
-<div class="grid g4" style="margin-top:22px" id="bstats">
-<div class="card hero bstat"><p class="lbl">Penghasilan</p><p class="big" id="btot">Rp 0</p></div>
-<div class="card gloss bstat"><p class="lbl">Total dialokasikan</p><p class="big sm" id="ballocT">Rp 0</p><p class="lbl" id="bunalloc">Belum dialokasikan Rp 0</p></div>
-<div class="card gloss bstat"><p class="lbl">Terpakai periode ini</p><p class="big sm dn" id="bspent">Rp 0</p><p class="lbl" id="bremain">Sisa Rp 0</p></div>
-<div class="card gloss bstat"><p class="lbl">Batas harian &amp; proyeksi</p><p class="big sm" id="bdaily">Rp 0</p><p class="lbl" id="bpred">Belum ada pengeluaran tercatat.</p></div>
 </div>
-<div class="card" style="margin-top:22px"><div class="row"><h2>Progres per kategori</h2><span class="lbl" id="bperiodhint"></span></div><div id="bprogress"></div></div>
-<div class="card" style="margin-top:22px"><h2>Cara perhitungan anggaran</h2><div id="bformula" class="formula"></div></div>
+
+<div class="card gloss" style="margin-top:22px"><h2>Cara perhitungan</h2><div id="bformula" class="formula"></div></div>
 </section>
 
 <section class="view" id="omzet">
@@ -847,7 +847,7 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 var $=function(s){return document.querySelector(s)};
 var R=function(n){return 'Rp '+Math.round(n).toLocaleString('id-ID')};
 var P=function(n){return (isFinite(n)?n:0).toFixed(1).replace('.',',')+' %'};
-var ECAT=['Makanan','Sewa','Transport','Hiburan','Tagihan','Belanja','Kos','Pulsa/Internet','Laundry','Jajan','Kas','Bensin','Belanja Online','Dana Cadangan','Kebutuhan Lainnya'],ICAT=['Gaji','Bisnis','Freelance'];
+var ECAT=['Makanan','Sewa','Transport','Hiburan','Tagihan','Belanja','Kos','Pulsa/Internet','Laundry','Jajan','Kas','Belanja Online','Dana Cadangan','Kebutuhan Lainnya'],ICAT=['Gaji','Bisnis','Freelance'];
 var BUD={Makanan:2000000,Sewa:2200000,Transport:800000,Hiburan:600000,Tagihan:900000,Belanja:700000};
 var COL=['#C9C2E3','#8B7CC7','#A58FE0','#5A3B8C','#6E55B0','#E3DDF5','#B49AF0','#7A5CD6','#4E3A75','#D9B8FF','#9A6BFF','#6B4FB8','#C7A6F2','#574B93','#8F7CE6','#3E3359'];
 var now=new Date(),T=[];
@@ -1065,145 +1065,94 @@ function numAnim(s,ms){document.querySelectorAll(s).forEach(function(el){cnt(el,
 function ring(p,txt){var r=40,C=2*Math.PI*r;return '<svg viewBox="0 0 100 100" width="90"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(10,8,22,.5)" stroke-width="10"/><circle class="ring" cx="50" cy="50" r="40" fill="none" stroke="#8B7CC7" stroke-width="10" stroke-linecap="round" transform="rotate(-90 50 50)" style="stroke-dasharray:'+(Math.min(1,p)*C)+' '+C+'"/><text x="50" y="56" text-anchor="middle" fill="#fff" font-size="18" font-weight="600">'+txt+'</text></svg>'}
 function stag(){document.querySelectorAll('.view.on .card').forEach(function(c,i){c.style.setProperty('--i',i)})}
 
-/* ── Anggaran (budget planner) — rumus konkret ── */
-var BKEY='nx_budget';
-var BCATS=[['Makan','Makanan'],['Tabungan','Goals'],['Laundry','Laundry'],['Jajan','Jajan'],['Hiburan','Hiburan'],['Dana Cadangan','Dana Cadangan'],['Kas','Kas'],['Bensin','Bensin'],['Transportasi','Transport'],['Kos','Kos'],['Pulsa/Internet','Pulsa/Internet'],['Belanja Online','Belanja Online'],['Kebutuhan Lainnya','Kebutuhan Lainnya']];
-var BDEF={income:null,periodType:'month',payDay:25,start:null,end:null,sel:['Makan','Kos','Tabungan','Pulsa/Internet','Transportasi','Bensin'],alloc:{},fixed:[{n:'Kos',amt:0},{n:'Tagihan',amt:0}],saveT:null,cadT:null};
-function loadB(){try{var b=JSON.parse(localStorage.getItem(BKEY));return(b&&typeof b==='object')?b:null}catch(e){return null}}
-function sanitizeB(b){var out=JSON.parse(JSON.stringify(BDEF));
-if(!b||typeof b!=='object')return out;
-out.income=isFinite(+b.income)&&+b.income>0?Math.round(+b.income):null;
-out.periodType=['7d','14d','month','gajian','custom'].indexOf(b.periodType)>-1?b.periodType:'month';
-out.payDay=isFinite(+b.payDay)?Math.min(28,Math.max(1,+b.payDay)):25;
-out.start=typeof b.start==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(b.start)?b.start:null;
-out.end=typeof b.end==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(b.end)?b.end:null;
-var valid={};BCATS.forEach(function(bc){valid[bc[0]]=1});
-out.sel=Array.isArray(b.sel)?b.sel.filter(function(c,i,arr){return valid[c]&&arr.indexOf(c)===i}):[];
-out.alloc={};if(b.alloc&&typeof b.alloc==='object'){Object.keys(b.alloc).forEach(function(k){if(valid[k]){var v=+b.alloc[k];if(isFinite(v)&&v>0)out.alloc[k]=Math.round(v)}})}
-out.fixed=Array.isArray(b.fixed)?b.fixed.filter(function(f){return f&&typeof f==='object'}).map(function(f){return{n:typeof f.n==='string'?f.n.slice(0,80):'',amt:isFinite(+f.amt)&&+f.amt>0?Math.round(+f.amt):0}}).slice(0,12):[];
-if(out.fixed.length===0)out.fixed=[{n:'Kos',amt:0},{n:'Tagihan',amt:0}];
-out.saveT=isFinite(+b.saveT)&&+b.saveT>0?Math.round(+b.saveT):null;
-out.cadT=isFinite(+b.cadT)&&+b.cadT>0?Math.round(+b.cadT):null;
-return out}
-var B=sanitizeB(loadB());
-function saveB(){try{localStorage.setItem(BKEY,JSON.stringify(B))}catch(e){}}
-var iso2=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
-function bPeriod(){var t=new Date();t.setHours(0,0,0,0);var y=t.getFullYear(),m=t.getMonth(),d=t.getDate();
-if(B.periodType==='7d'||B.periodType==='14d'){var n=parseInt(B.periodType,10);return{s:new Date(y,m,d),e:new Date(y,m,d+n-1),days:n,elapsed:1,label:n+' hari ke depan'}}
-if(B.periodType==='month'){var s=new Date(y,m,1),e=new Date(y,m+1,0);return{s:s,e:e,days:e.getDate(),elapsed:d,label:'Bulan berjalan'}}
-if(B.periodType==='gajian'){var pd=Math.min(28,Math.max(1,+B.payDay||25));var s2=new Date(y,m,pd);if(s2>t)s2=new Date(y,m-1,pd);var e2=new Date(s2.getFullYear(),s2.getMonth()+1,pd-1);var days=Math.round((e2-s2)/864e5)+1,elapsed=Math.round((t-s2)/864e5)+1;return{s:s2,e:e2,days:days,elapsed:elapsed,label:'Gajian ke gajian · tiap tgl '+pd}}
-if(B.periodType==='custom'){var s3=B.start?(function(){var p=B.start.split('-');return new Date(+p[0],+p[1]-1,+p[2])})():new Date(y,m,1),e3=B.end?(function(){var p=B.end.split('-');return new Date(+p[0],+p[1]-1,+p[2])})():new Date(y,m+1,0);
-if(isNaN(s3.getTime())||isNaN(e3.getTime())||e3<s3)return null;
-var days2=Math.round((e3-s3)/864e5)+1,el=Math.max(1,Math.min(days2,Math.round((t-s3)/864e5)+1));
-return{s:s3,e:e3,days:days2,elapsed:el,label:'Custom · '+s3.toLocaleDateString('id-ID',{day:'numeric',month:'short'})+' – '+e3.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}}
-return null}
-function bSpentIn(p){var s=iso2(p.s),e=iso2(p.e),by={};for(var i=0;i<T.length;i++){var x=T[i];if(x.t!=='expense'||isXf(x))continue;var tc=x.dt;if(tc<s||tc>e)continue;by[x.c]=(by[x.c]||0)+x.a}return by}
-function bSpentTotal(){var p=bPeriod();if(!p)return 0;var by=bSpentIn(p),tot=0;for(var k in by)tot+=by[k];return tot}
-function bAllocTotal(){var t=0;for(var i=0;i<B.sel.length;i++)t+=(+B.alloc[B.sel[i]]||0);return t}
-function catMap(){var m={};BCATS.forEach(function(bc){m[bc[0]]=bc[1]});return m}
-function bFixedRaw(){var t=0;B.fixed.forEach(function(f){t+=(+f.amt||0)});return t}
-function bScaled(p){if(!p)return{income:0,fixed:0,saveT:0,cadT:0};return{income:B.income||0,fixed:bFixedRaw(),saveT:B.saveT||0,cadT:B.cadT||0}}
-function bVarPool(p){var s=bScaled(p);return Math.max(0,s.income-s.fixed-s.saveT-s.cadT)}
-function prevWindows(p){var arr=[];
- if(B.periodType==='month'){for(var k=1;k<=3;k++){var d1=new Date(p.e.getFullYear(),p.e.getMonth()-k,1);arr.push({s:d1,e:new Date(d1.getFullYear(),d1.getMonth()+1,0)})}return arr}
- var wEnd=new Date(p.s.getTime()-864e5),len=p.days;
- for(var k2=0;k2<3;k2++){var wStart=new Date(wEnd.getTime()-(len-1)*864e5);arr.push({s:new Date(wStart.getTime()),e:new Date(wEnd.getTime())});wEnd=new Date(wStart.getTime()-864e5)}return arr}
-function histWinSum(trackerCat,wStart,wEnd){var s=iso2(wStart),e=iso2(wEnd),t=0;for(var i=0;i<T.length;i++){var x=T[i];if(x.t!=='expense'||isXf(x))continue;if(x.c===trackerCat&&x.dt>=s&&x.dt<=e)t+=x.a}return t}
-function winHasAny(trackerCat,wins){return wins.some(function(w){return histWinSum(trackerCat,w.s,w.e)>0})}
-function medDailyExp(trackerCat,p){var ws=prevWindows(p);if(!winHasAny(trackerCat,ws))return null;
-var ds=ws.map(function(w){var len=Math.round((w.e-w.s)/864e5)+1;return histWinSum(trackerCat,w.s,w.e)/len}).sort(function(a,b){return a-b});return ds[Math.floor(ds.length/2)]}
-function medPerPeriod(trackerCat,p){var ws=prevWindows(p);if(!winHasAny(trackerCat,ws))return null;
-var ds=ws.map(function(w){return histWinSum(trackerCat,w.s,w.e)}).sort(function(a,b){return a-b});return ds[Math.floor(ds.length/2)]}
-var FIXED_CATS={'Kos':1,'Laundry':1,'Pulsa/Internet':1};
-function titleWis(n){return String(n||'').trim().toLowerCase()}
-function recommendation(c,p){if(!p)return{a:0,src:'periode tidak valid — periksa tanggal'};var map=catMap(),tracker=map[c];
- if(c==='Tabungan')return{a:Math.round(bScaled(p).saveT),src:B.saveT?'target tabungan Anda':'belum ada target tabungan — isi di atas'};
- if(c==='Dana Cadangan')return{a:Math.round(bScaled(p).cadT),src:B.cadT?'target dana cadangan Anda':'belum ada target dana cadangan — isi di atas'};
- var fp=null;B.fixed.forEach(function(f){if(titleWis(f.n)===titleWis(c)&&+f.amt>0)fp=+f.amt});
- if(fp!=null)return{a:Math.round(fp),src:'kewajiban tetap yang Anda isi'};
- if(FIXED_CATS[c]){var m=medPerPeriod(tracker,p);if(m!=null&&m>0)return{a:Math.round(m/10000)*10000,src:'median per periode dari 3 periode sebelumnya'};return{a:0,src:'belum ada riwayat — isi manual'}}
- var md=medDailyExp(tracker,p);
- if(md!=null&&md>0){var r=Math.round(md*p.days/10000)*10000;if(r<10000)r=10000;return{a:r,src:'median Rp '+Math.round(md).toLocaleString('id-ID')+'/hari × '+p.days+' hari'}}
- return{a:0,src:'belum ada riwayat — isi manual'}}
-function renderBChips(){$('#bchips').innerHTML=BCATS.map(function(c){var on=B.sel.indexOf(c[0])>-1;return '<button type="button" class="budget-chip" data-cat="'+esc(c[0])+'" aria-pressed="'+on+'">'+esc(c[0])+'</button>'}).join('')}
-function renderBAlloc(){var html='',p=bPeriod(),by=p?bSpentIn(p):{},map=catMap(),days=p?p.days:1;
-B.sel.forEach(function(c){var spent=by[map[c]]||0,a=+B.alloc[c]||0,rem=a-spent,r=recommendation(c,p);
-html+='<div class="balloc-row"><div class="balloc-name">'+esc(c)+'<span class="alloc-spent">Terpakai '+R(spent)+'</span></div><input type="number" min="0" inputmode="numeric" data-alloc="'+esc(c)+'" value="'+(B.alloc[c]||'')+'" placeholder="0" aria-label="Alokasi '+esc(c)+'"><button class="x iconbtn danger" data-rm="'+esc(c)+'" aria-label="Hapus '+esc(c)+' dari anggaran"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>';
-html+='<div class="alloc-meta">Batas Rp '+Math.round(a/days).toLocaleString('id-ID')+'/hari · Terpakai '+R(spent)+' · Sisa '+R(rem)+'<br>Sumber: '+r.src+'</div>'});
-$('#balloc').innerHTML=html||'<p class="empty">Belum ada kategori dipilih. Klik kategori di atas.</p>'}
-function renderBStats(){var p=bPeriod();
-$('#bspan').textContent=p?(p.s.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})+' – '+p.e.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})+' · '+p.days+' hari ('+(p.elapsed||1)+' hari berjalan) — '+p.label):'Periode tidak valid.';
-var sc=p?bScaled(p):{income:0,fixed:0,saveT:0,cadT:0},pool=Math.max(0,sc.income-sc.fixed-sc.saveT-sc.cadT);
-var inc=sc.income,alloc=bAllocTotal(),spent=bSpentTotal(),rem=alloc-spent;
-$('#btot').textContent=R(inc);
-$('#ballocT').textContent=R(alloc);
-$('#bunalloc').textContent=pool>=alloc?'Belum dialokasikan '+R(pool-alloc):'Melebihi penghasilan '+R(alloc-pool);
-$('#bunalloc').classList.toggle('dn',pool<alloc);
-$('#bspent').textContent=R(spent);
-$('#bremain').textContent='Sisa Rp '+Math.round(Math.abs(rem)).toLocaleString('id-ID')+(rem<0?' (over)':'');
-var pDays=Math.max(1,p?p.days:1),elapsed=Math.max(1,p?p.elapsed:1);
-var spendCap=rem>0?rem:0,dayCap=spendCap/pDays;
-$('#bdaily').textContent=R(dayCap);
-var msg;if(spent<=0){msg='Belum ada pengeluaran tercatat — ini batas harian Anda.'}else if(rem<=0){msg='Pengeluaran sudah melebihi alokasi periode ini (lebih '+R(-rem)+').'}else{var daysLeft=Math.max(0,pDays-elapsed),rate=spent/elapsed,proj=spent+rate*daysLeft,est=rem/rate;
-if(rate*pDays<=alloc||est>=daysLeft)msg='Pada kecepatan sekarang, diperkirakan cukup sampai akhir periode (estimasi '+R(proj)+').';
-else msg='Pada kecepatan sekarang, sisa alokasi diperkirakan habis dalam ~'+Math.max(1,Math.floor(est))+' hari dari hari ini (proyeksi '+R(proj)+').'}
-$('#bpred').textContent=msg;
-$('#bperiodhint').textContent=p?p.label:'';
-var html='',by=p?bSpentIn(p):{},catMap={};BCATS.forEach(function(bc){catMap[bc[0]]=bc[1]});
-B.sel.forEach(function(c){var a=+B.alloc[c]||0,sp=by[catMap[c]]||0,pct=a>0?Math.min(100,Math.round(sp/a*100)):0,over=a>0&&sp>a;
-html+='<div class="bprog"><div class="bp-name">'+esc(c)+'</div><div><div class="bar"><span class="'+(over?'over':'')+'" style="width:'+pct+'%"></span></div><div class="lbl" style="margin-top:4px;opacity:.75">'+R(sp)+' dari '+R(a)+'</div></div><div class="bp-pct">'+(a>0?pct+'%':'-')+'</div></div>'});
-$('#bprogress').innerHTML=html||'<p class="empty">Pilih kategori dan isi alokasi untuk melihat progres.</p>';
-renderBExplain();
+/* Anggaran: Kalkulator Simulasi (Terisolasi) */
+var BSIM_KEY='nx_bsim';
+var BCATS=[['Makan','Makanan'],['Tabungan','Goals'],['Laundry','Laundry'],['Jajan','Jajan'],['Hiburan','Hiburan'],['Dana Cadangan','Dana Cadangan'],['Kas','Kas'],['Bensin','Transport'],['Transportasi','Transport'],['Kos','Kos'],['Pulsa/Internet','Pulsa/Internet'],['Belanja Online','Belanja Online'],['Kebutuhan Lainnya','Kebutuhan Lainnya']];
+function bCatMap(){var m={};BCATS.forEach(function(bc){m[bc[0]]=bc[1]});return m}
+function bsim(){try{var s=JSON.parse(localStorage.getItem(BSIM_KEY));if(s&&typeof s==='object'){var catMap=bCatMap();return{periodType:['7d','14d','30d','month','custom'].indexOf(s.periodType)>-1?s.periodType:'14d',start:typeof s.start==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s.start)?s.start:null,end:typeof s.end==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s.end)?s.end:null,sel:Array.isArray(s.sel)?s.sel.filter(function(c,i,a){return catMap[c]&&a.indexOf(c)===i}):[],amounts:(s.amounts&&typeof s.amounts==='object')?s.amounts:{},meta:(s.meta&&typeof s.meta==='object')?s.meta:{}}}return{periodType:'14d',start:null,end:null,sel:[],amounts:{},meta:{}}}catch(e){return{periodType:'14d',start:null,end:null,sel:[],amounts:{},meta:{}}}}
+var SIM=bsim();
+// sanitize amounts
+Object.keys(SIM.amounts||{}).forEach(function(k){if(!bCatMap()[k])delete SIM.amounts[k];else{var v=+SIM.amounts[k];if(!isFinite(v)||v<0)delete SIM.amounts[k];else SIM.amounts[k]=Math.round(v)}});
+function saveSim(){try{localStorage.setItem(BSIM_KEY,JSON.stringify(SIM))}catch(e){}}
+var simIso=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+function simParse(iso){var p=String(iso).split('-');return new Date(+p[0],+p[1]-1,+p[2])}
+function simPeriod(){var t=new Date();t.setHours(0,0,0,0);var y=t.getFullYear(),m=t.getMonth(),d=t.getDate();
+if(SIM.periodType==='7d'||SIM.periodType==='14d'||SIM.periodType==='30d'){var n=parseInt(SIM.periodType,10);var s2=new Date(y,m,d),e2=new Date(y,m,d+n-1);return{s:s2,e:e2,days:n,label:n+' hari ke depan'}}
+if(SIM.periodType==='month'){var s3=new Date(y,m,1),e3=new Date(y,m+1,0);return{s:s3,e:e3,days:e3.getDate(),label:'Bulanan'}}
+var s4=SIM.start?simParse(SIM.start):new Date(y,m,1),e4=SIM.end?simParse(SIM.end):new Date(y,m+1,0);
+if(isNaN(s4.getTime())||isNaN(e4.getTime())||e4<s4)return null;
+var days=Math.round((e4-s4)/864e5)+1;
+return{s:s4,e:e4,days:days,label:'Custom'}}
+function simHistoryWins(p){var arr=[];
+if(SIM.periodType==='month'){for(var k=1;k<=3;k++){var d1=new Date(p.e.getFullYear(),p.e.getMonth()-k,1);arr.push({s:d1,e:new Date(d1.getFullYear(),d1.getMonth()+1,0)})}return arr}
+var wEnd=new Date(p.s.getTime()-864e5),len=p.days;
+for(var k2=0;k2<3;k2++){var wStart=new Date(wEnd.getTime()-(len-1)*864e5);arr.push({s:new Date(wStart.getTime()),e:new Date(wEnd.getTime())});wEnd=new Date(wStart.getTime()-864e5)}return arr}
+function simSpend(cat,wStart,wEnd){var s=simIso(wStart),e=simIso(wEnd),t=0;for(var i=0;i<T.length;i++){var x=T[i];if(x.t!=='expense'||isXf(x))continue;if(x.c===cat&&x.dt>=s&&x.dt<=e)t+=x.a}return t}
+function simHistMedian(trackerCat,p){var ws=simHistoryWins(p);if(!ws.some(function(w){return simSpend(trackerCat,w.s,w.e)>0}))return null;
+var arr=ws.map(function(w){var len=Math.round((w.e-w.s)/864e5)+1;return simSpend(trackerCat,w.s,w.e)/len});arr.sort(function(a,b){return a-b});return arr[Math.floor(arr.length/2)]}
+function simPerPeriod(trackerCat,p){var ws=simHistoryWins(p);if(!ws.some(function(w){return simSpend(trackerCat,w.s,w.e)>0}))return null;
+var arr=ws.map(function(w){return simSpend(trackerCat,w.s,w.e)});arr.sort(function(a,b){return a-b});return arr[Math.floor(arr.length/2)]}
+var SIM_FIXED={'Kos':1,'Laundry':1,'Pulsa/Internet':1};
+function simRecommend(cat,p){var tracker=bCatMap()[cat];
+if(SIM_FIXED[cat]){var m=simPerPeriod(tracker,p);if(m!=null&&m>0)return{amount:Math.round(m),source:'median per periode dari 3 periode sebelumnya'};return{amount:0,source:'belum ada riwayat — isi nominal Anda',needsInput:true}}
+var md=simHistMedian(tracker,p);
+if(md!=null&&md>0){return{amount:Math.round(md*p.days),source:'median Rp '+Math.round(md).toLocaleString('id-ID')+'/hari x '+p.days+' hari'}}
+return{amount:0,source:'belum ada riwayat — isi nominal harian atau total',needsInput:true}}
+function simBalance(){return sumAll(T,'income')-sumAll(T,'expense')}
+function simAllocTotal(){var t=0;SIM.sel.forEach(function(c){t+=(+SIM.amounts[c]||0)});return t}
+function simFree(){return simBalance()-simAllocTotal()}
+function renderSim(){var p=simPeriod();
+$('#btot').textContent=R(simBalance());
+$('#bper').value=SIM.periodType;
+$('#bcustom').style.display=SIM.periodType==='custom'?'':'none';
+$('#bstart').value=SIM.start||'';$('#bend').value=SIM.end||'';
+if(!p){$('#bspan').textContent='Periode tidak valid — periksa tanggal mulai & berakhir.';$('#bsimfree').textContent=R(simBalance());$('#bsimalloc').textContent='Rp 0';$('#bsimdays').textContent='0 hari';$('#balloc').innerHTML='<p class="empty">Perbaiki periode di atas untuk melihat alokasi.</p>';$('#bformula').innerHTML='';renderSimChips();return}
+$('#bspan').textContent=p.s.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})+' – '+p.e.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})+' · '+p.days+' hari';
+var free=simFree(),alloc=simAllocTotal();
+$('#bsimfree').textContent=R(free);
+$('#bsimalloc').textContent=R(alloc);
+$('#bsimdays').textContent=p.days+' hari';
+var warn=$('#bwarn');
+if(free<0){warn.style.display='';warn.textContent='Alokasi melebihi Total Balance Rp '+Math.round(-free).toLocaleString('id-ID')+' — kurangi kategori. Total Balance asli tidak berubah.'}else{warn.style.display='none'}
+var map=bCatMap(),html='';
+SIM.sel.forEach(function(c){var a=+SIM.amounts[c]||0,m=SIM.meta[c]||{source:'input Anda'};
+var daily=p.days?a/p.days:0;
+html+='<div class="sim-row"><div class="sim-row-main"><div class="sim-row-name">'+esc(c)+'<span class="sim-row-src">'+esc(m.source)+'</span></div><input type="number" min="0" inputmode="numeric" data-sim="'+esc(c)+'" value="'+(a||'')+'" placeholder="0" aria-label="Alokasi '+esc(c)+'"><button class="x iconbtn danger" data-simdel="'+esc(c)+'" aria-label="Hapus '+esc(c)+' dari simulasi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div><div class="sim-row-meta">Batas Rp '+Math.round(daily).toLocaleString('id-ID')+'/hari'+(a?' · Total '+R(a):'')+'</div></div>'});
+$('#balloc').innerHTML=html||'<p class="empty">Belum ada anggaran ditambahkan. Tekan "+ Tambah Anggaran" untuk mulai.</p>';
+renderSimChips();renderSimFormula(p,free,alloc);
 }
-function renderBExplain(){var p=bPeriod();
-if(!p){$('#bformula').innerHTML='<p class="cal-empty">Periode tidak valid — periksa tanggal mulai &amp; berakhir.</p>';return}
-var sc=bScaled(p),pool=Math.max(0,sc.income-sc.fixed-sc.saveT-sc.cadT),map=catMap(),by=bSpentIn(p);
-var html='<div class="fx-row"><span><b>Penghasilan periode</b> ('+p.days+' hari · '+(p.elapsed||1)+' hari berjalan)</span><b>'+R(sc.income)+'</b></div>';
-html+='<div class="fx-row fx-sub"><span>− Kewajiban tetap &amp; tagihan</span><b>'+R(sc.fixed)+'</b></div>';
-html+='<div class="fx-row fx-sub"><span>− Target tabungan</span><b>'+R(sc.saveT)+'</b></div>';
-html+='<div class="fx-row fx-sub"><span>− Target dana cadangan</span><b>'+R(sc.cadT)+'</b></div>';
-html+='<div class="fx-row fx-res"><span>Uang tersedia untuk kebutuhan variabel</span><b>'+R(pool)+'</b></div>';
-var alloc=bAllocTotal();
-html+='<div class="fx-row"><span>Total alokasi kategori</span><b>'+R(alloc)+'</b></div>';
-var unalloc=pool-alloc;
-html+='<div class="fx-row"><span>'+(unalloc<0?'Melebihi uang tersedia':'Belum dialokasikan')+'</span><b class="'+(unalloc<0?'dn':'')+'">'+R(Math.abs(unalloc))+'</b></div>';
-html+='<div class="fx-sec">Per kategori</div>';
-if(!B.sel.length)html+='<p class="cal-empty">Pilih kategori dulu.</p>';
-B.sel.forEach(function(c){var a=+B.alloc[c]||0,sp=by[map[c]]||0,rem=a-sp,r=recommendation(c,p);
-html+='<div class="fx-row fx-sub"><span>'+esc(c)+' — batas Rp '+Math.round(a/p.days).toLocaleString('id-ID')+'/hari<br><span class="fx-meta">Sumber: '+esc(r.src)+' · terpakai '+R(sp)+' · sisa '+R(rem)+'</span></span><b>'+R(a)+'</b></div>'});
+function renderSimChips(){$('#bchips').innerHTML=BCATS.map(function(bc){var on=SIM.sel.indexOf(bc[0])>-1;return '<button type="button" class="budget-chip" data-cat="'+esc(bc[0])+'" aria-pressed="'+on+'">'+esc(bc[0])+'</button>'}).join('')}
+function renderSimFormula(p,free,alloc){var html='<div class="fx-row"><span><b>Total Balance</b> (saldo awal simulasi)</span><b>'+R(simBalance())+'</b></div>';
+if(!SIM.sel.length)html+='<p class="cal-empty">Belum ada kategori dipilih — tambah anggaran untuk melihat rumus.</p>';
+SIM.sel.forEach(function(c){var a=+SIM.amounts[c]||0,m=SIM.meta[c]||{source:'input Anda'};
+html+='<div class="fx-row fx-sub"><span>'+esc(c)+' — '+R(a)+'<br><span class="fx-meta">Sumber: '+esc(m.source)+' · batas Rp '+Math.round(a/p.days).toLocaleString('id-ID')+'/hari</span></span><b>'+R(a)+'</b></div>'});
+if(SIM.sel.length){html+='<div class="fx-row"><span>Total dialokasikan</span><b>'+R(alloc)+'</b></div>';
+html+='<div class="fx-row fx-res"><span>Sisa saldo simulasi (= Total Balance − alokasi)</span><b class="'+(free<0?'dn':'')+'">'+R(free)+'</b></div>'}
 $('#bformula').innerHTML=html}
-function renderBAll(){renderBChips();renderBAlloc();renderBStats();renderBFixed();$('#binc').value=B.income||'';$('#bper').value=B.periodType||'month';$('#bpay').value=B.payDay||25;$('#bstart').value=B.start||'';$('#bend').value=B.end||'';$('#bsave').value=B.saveT||'';$('#bcad').value=B.cadT||'';$('#bpayrow').style.display=B.periodType==='gajian'?'':'none';$('#bcustom').style.display=B.periodType==='custom'?'':'none'}
-function renderBFixed(){var html='';B.fixed.forEach(function(f,i){html+='<div class="bfixed-row"><input type="text" data-fi="'+i+'" value="'+esc(f.n)+'" placeholder="Nama kewajiban (mis. Kos, Tagihan)" aria-label="Nama kewajiban"><input type="number" min="0" inputmode="numeric" data-fa="'+i+'" value="'+(f.amt||'')+'" placeholder="0" aria-label="Jumlah per bulan"><button class="x iconbtn danger" data-fx="'+i+'" aria-label="Hapus kewajiban"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div>'});
-$('#bfixed').innerHTML=html||'<p class="empty" style="margin:0">Belum ada kewajiban. Tambah di bawah bila ada.</p>';
-$('#bfixtot').textContent=B.fixed.some(function(f){return +f.amt>0})?('Total kewajiban tetap: '+R(bFixedRaw())):''}
-$('#baddfixed').onclick=function(){B.fixed.push({n:'',amt:0});saveB();renderBFixed();renderBStats()};
-$('#bfixed').oninput=function(e){var fi=e.target.dataset.fi,fa=e.target.dataset.fa;if(fi!=null)B.fixed[+fi].n=e.target.value;else if(fa!=null)B.fixed[+fa].amt=+e.target.value||0;else return;saveB();renderBStats()};
-$('#bfixed').onclick=function(e){var b=e.target.closest('[data-fx]');if(!b)return;B.fixed.splice(+b.dataset.fx,1);saveB();renderBFixed();renderBStats()};
-$('#bsave').oninput=function(){B.saveT=+this.value||null;saveB();renderBStats()};
-$('#bcad').oninput=function(){B.cadT=+this.value||null;saveB();renderBStats()};
-$('#binc').oninput=function(){B.income=Math.max(0,+this.value||0)||null;saveB();renderBStats()};
-$('#bper').onchange=function(){B.periodType=this.value;saveB();renderBAll()};
-$('#bpay').oninput=function(){B.payDay=+this.value||25;saveB();renderBStats()};
-$('#bstart').onchange=function(){B.start=this.value;saveB();renderBStats()};
-$('#bend').onchange=function(){B.end=this.value;saveB();renderBStats()};
-$('#bchips').onclick=function(e){var b=e.target.closest('[data-cat]');if(!b)return;var c=b.dataset.cat,i=B.sel.indexOf(c);
-if(i>-1){B.sel.splice(i,1)}else{B.sel.push(c)}
-saveB();renderBAll()};
-$('#balloc').oninput=function(e){var inp=e.target.closest('[data-alloc]');if(!inp)return;B.alloc[inp.dataset.alloc]=+inp.value||0;saveB();renderBStats()};
-$('#balloc').onclick=function(e){var b=e.target.closest('[data-rm]');if(!b)return;var c=b.dataset.rm,i=B.sel.indexOf(c);if(i>-1)B.sel.splice(i,1);saveB();renderBAll()};
-$('#brec').onclick=function(){var p=bPeriod();if(!p){toast('Periksa periode anggaran Anda.','err');return}
-if(!B.income){toast('Isi penghasilan dulu agar rekomendasi akurat.','err');return}
-if(!B.sel.length){toast('Pilih minimal satu kategori dulu.','err');return}
-var sc=bScaled(p),pool=bVarPool(p),tot=0;
-B.sel.forEach(function(c){var r=recommendation(c,p);B.alloc[c]=r.a;tot+=r.a});
-saveB();renderBAlloc();renderBStats();$('#bnote').textContent='Estimasi berbasis penghasilan, kewajiban tetap, dan riwayat transaksi Anda. Bisa diedit.';
-if(tot>pool&&pool>=0){var warn='Total rekomendasi '+R(tot)+' melebihi uang yang sebenarnya tersedia '+R(pool)+' — selisih '+R(tot-pool)+'. Kurangi kategori fleksibel (Hiburan, Belanja Online, Jajan, Kebutuhan Lainnya) lebih dulu; Kos dan tabungan diprioritaskan. Nominal tidak dipotong otomatis — sesuaikan sendiri.';$('#bwarn').style.display='';$('#bwarn').textContent=warn;toast('Rekomendasi dihitung — lihat peringatan kelebihan.','err')}
-else{$('#bwarn').style.display='none';toast('Rekomendasi dihitung dari penghasilan, kewajiban, dan riwayat Anda.')}};
-$('#bshow').onclick=function(){var s=ym(today),inc=sum(T.filter(function(x){return ym(x.dt)===s}),'income');
-if(inc<=0){toast('Belum ada pemasukan tercatat bulan ini.','err');return}
-B.income=inc;saveB();renderBAll();toast('Penghasilan bulan ini '+R(inc)+' diterapkan.')};
-$('#breset').onclick=function(){confirmDialog('Hapus anggaran?','Semua alokasi dan periode akan dihapus. Riwayat transaksi Anda tidak terhapus.','Hapus').then(function(ok){if(!ok)return;B=JSON.parse(JSON.stringify(BDEF));B.sel=[];$('#bwarn').style.display='none';saveB();renderBAll();toast('Anggaran dihapus.')})};
-renderBAll();
+$('#bper').onchange=function(){SIM.periodType=this.value;SIM.start=SIM.end=null;saveSim();renderSim()};
+$('#bstart').onchange=function(){SIM.start=this.value;saveSim();renderSim()};
+$('#bend').onchange=function(){SIM.end=this.value;saveSim();renderSim()};
+$('#baddtoggle').onclick=function(){var c=$('#bchips');c.hidden=!c.hidden;this.setAttribute('aria-pressed',c.hidden?'false':'true')};
+$('#bchips').onclick=function(e){var b=e.target.closest('[data-cat]');if(!b)return;var c=b.dataset.cat,p=simPeriod();if(!p){toast('Perbaiki periode dulu.','err');return}
+var i=SIM.sel.indexOf(c);
+if(i>-1){SIM.sel.splice(i,1);delete SIM.amounts[c];delete SIM.meta[c]}
+else{var r=simRecommend(c,p);SIM.sel.push(c);SIM.amounts[c]=r.amount;SIM.meta[c]={source:r.source};if(r.needsInput)toast('Riwayat '+c+' belum cukup — isi nominal Anda.','err')}
+saveSim();renderSim()};
+$('#balloc').oninput=function(e){var inp=e.target.closest('[data-sim]');if(!inp)return;var c=inp.dataset.sim;SIM.amounts[c]=Math.max(0,+inp.value||0);SIM.meta[c]={source:'input Anda'};saveSim();renderSimComputeOnly()};
+$('#balloc').onclick=function(e){var b=e.target.closest('[data-simdel]');if(!b)return;var c=b.dataset.simdel,i=SIM.sel.indexOf(c);if(i>-1)SIM.sel.splice(i,1);delete SIM.amounts[c];delete SIM.meta[c];saveSim();renderSim()};
+function renderSimComputeOnly(){var p=simPeriod();if(!p)return;
+var free=simFree(),alloc=simAllocTotal();
+$('#btot').textContent=R(simBalance());
+$('#bsimfree').textContent=R(free);
+$('#bsimalloc').textContent=R(alloc);
+$('#bsimdays').textContent=p.days+' hari';
+var warn=$('#bwarn');
+if(free<0){warn.style.display='';warn.textContent='Alokasi melebihi Total Balance Rp '+Math.round(-free).toLocaleString('id-ID')+' — kurangi kategori. Total Balance asli tidak berubah.'}else{warn.style.display='none'}
+renderSimFormula(p,free,alloc);
+[...document.querySelectorAll('[data-sim]')].forEach(function(inp){var c=inp.dataset.sim,a=+SIM.amounts[c]||0;var row=inp.closest('.sim-row');if(row){var meta=row.querySelector('.sim-row-meta');if(meta)meta.textContent='Batas Rp '+Math.round(a/p.days).toLocaleString('id-ID')+'/hari'+(a?' · Total '+R(a):'')}});
+}
+$('#breset').onclick=function(){confirmDialog('Hapus simulasi?','Seluruh konfigurasi anggaran simulasi dihapus. Saldo asli dan transaksi Anda tidak tersentuh.','Hapus').then(function(ok){if(!ok)return;SIM={periodType:'14d',start:null,end:null,sel:[],amounts:{},meta:{}};saveSim();renderSim();toast('Simulasi dihapus.')})};
+renderSim();
 
 /* ── Kalender pengeluaran ── */
 var calV=new Date(now.getFullYear(),now.getMonth(),1),calPick=null;
@@ -1375,7 +1324,7 @@ var _omz=omzet;omzet=function(){_omz();document.querySelectorAll('#ores .big').f
 
 $('#eye').onclick=function(){document.body.classList.toggle('priv');this.textContent=document.body.classList.contains('priv')?'Tampilkan saldo':'Sembunyikan saldo'};
 
-window.addEventListener('hashchange',function(){var h=location.hash;if(!h||h=='#dashboard')dash();else if(h=='#goals')gl();else if(h=='#analitik')dash();else if(h=='#omzet')omzet();else if(h=='#invoice')inv();else if(h=='#tracker')tlist();else if(h=='#anggaran')renderBStats();stag()});
+window.addEventListener('hashchange',function(){var h=location.hash;if(!h||h=='#dashboard')dash();else if(h=='#goals')gl();else if(h=='#analitik')dash();else if(h=='#omzet')omzet();else if(h=='#invoice')inv();else if(h=='#tracker')tlist();else if(h=='#anggaran')renderSim();stag()});
 
 /* Bersihkan preferensi menu tersembunyi dari versi lama Nexora */
 try{localStorage.removeItem('nx_nav_hidden')}catch(e){}
