@@ -1,23 +1,31 @@
 # AI Assistance — Setup & Arsitektur
 
-AI Assistance di Nexora memanggil penyedia AI sungguhan lewat backend lokal. API key **hanya** berada di server (environment variable) dan tidak pernah dikirim ke browser.
+## Cara tercepat (disarankan)
 
-## Menjalankan
+1. Salin `.env.example` menjadi `.env` (sudah ada — tinggal isi).
+2. Buka `.env` di Notepad, isi satu baris: `AI_API_KEY=gsk_key_groq_anda`, simpan.
+3. Klik dua kali **`START.bat`** — browser terbuka, server menyala, AI langsung aktif.
+
+Tidak perlu mengetik `$env:...` sama sekali lagi — server memuat `.env` otomatis setiap start.
+Kapan pun Anda ingin mengganti model, edit `.env` saja (mis. `AI_MODEL=openai/gpt-oss-120b`).
+
+## Menjalankan manual (alternatif)
 
 ```powershell
-# 1. Set environment variable (PowerShell)
+# Set environment variable (PowerShell)
 $env:AI_API_KEY = "sk-..."
 # Opsional:
 $env:AI_BASE_URL = "https://api.openai.com/v1"   # atau openrouter/groq/ollama dst.
 $env:AI_MODEL    = "gpt-4o-mini"
 
-# 2. Jalankan server (Node.js >= 18, tanpa dependensi)
+# Jalankan server (Node.js >= 18, tanpa dependensi)
 node server.js
 
-# 3. Buka http://127.0.0.1:8787/
+# Buka http://127.0.0.1:8787/
 ```
 
 Cek status AI: `GET http://127.0.0.1:8787/api/health` → `{ ok, aiConfigured, model }`.
+Environment variable yang di-set manual menang atas isi `.env` (urutan: shell > .env).
 
 ## Cara kerja
 
@@ -38,7 +46,7 @@ Cek status AI: `GET http://127.0.0.1:8787/api/health` → `{ ok, aiConfigured, m
 - Provider yang dipakai adalah pihak ketiga: data yang dikirim (ringkasan finansial) tunduk pada kebijakan privasi provider tsb. Untuk data sensitif gunakan provider/model lokal (mis. via Ollama).
 - Endpoint ini tidak menyimpan prompt/jawaban (tidak ada logging konten); hanya kode status provider yang dicatat ke console.
 - Jawaban AI bukan nasihat keuangan profesional (system prompt menegaskan ini bila relevan).
-- Catatan: `.env` **tidak** dibaca otomatis oleh server — set environment variable di shell Anda.
+- Catatan: `.env` dibaca otomatis saat start dan **tidak pernah disajikan** qua HTTP (403) serta di-gitignore. Jangan memindahkan/membagikan file ini.
 
 ## Troubleshooting
 
