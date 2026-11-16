@@ -102,21 +102,43 @@ nav a.on::after{
 }
 @keyframes nav-indicator{from{transform:scaleY(0);opacity:0}}
 
-/* ── Nav icons (emoji-based) ── */
+/* ── Nav icons ── */
 nav a .nav-icon{
   display:grid;place-items:center;
   width:28px;height:28px;
   border-radius:8px;
   background:rgba(139,124,199,.1);
-  font-size:15px;
+  color:var(--lt);
   transition:all .3s cubic-bezier(.34,1.56,.64,1);
   flex-shrink:0
 }
-nav a:hover .nav-icon{transform:scale(1.15)}
+nav a:hover .nav-icon{transform:scale(1.15);color:#fff}
 nav a.on .nav-icon{
   background:rgba(139,124,199,.25);
+  color:#fff;
   box-shadow:0 0 12px rgba(139,124,199,.2)
 }
+.nav-icon svg{display:block}
+
+/* ── Nav item wrapper + hide/show ── */
+.nav-item{position:relative;display:flex}
+.nav-item a{flex:1}
+.nav-hide{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--tx);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .25s,background .25s,color .25s;display:grid;place-items:center;z-index:2}
+nav.manage a{padding-right:44px}
+nav.manage .nav-hide{opacity:.7;pointer-events:auto}
+.nav-hide:hover{opacity:1!important;background:rgba(139,124,199,.16);color:#fff;border-color:var(--glass-border)}
+.nav-hide[disabled]{opacity:0!important;pointer-events:none!important}
+.nav-item.hidden{display:none}
+nav.manage .nav-item.hidden{display:flex}
+.nav-item.hidden a{opacity:.38;filter:grayscale(.55)}
+.nav-item.hidden a:hover{opacity:.6}
+.nav-note{display:flex;flex-direction:column;gap:8px;background:rgba(90,59,140,.18);border:1px solid rgba(139,124,199,.28);border-radius:12px;padding:10px 12px;font-size:12px;color:var(--tx)}
+.nav-note-btns{display:flex;gap:8px}
+.smbtn{padding:6px 12px;font-size:12px;border-radius:8px}
+.nav-manage{margin-top:auto;justify-content:flex-start;gap:10px;font-size:13px;padding:10px 14px;color:var(--lt)}
+.nav-manage:hover{color:#fff}
+.nav-badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--lt);color:#17102e;font-size:11px;font-weight:700;margin-left:auto}
+.xbtn{margin-top:0}
 
 /* ── Main ── */
 main{
@@ -529,9 +551,11 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
     padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));
     z-index:5;justify-content:space-around;gap:2px
   }
-  .logo{display:none}
+  .logo,.nav-manage,.nav-note,.nav-hide{display:none!important}
+  .nav-item{flex:1}
+  .xbtn{display:none}
   nav a{
-    padding:8px 6px;font-size:11px;text-align:center;flex:1;
+    padding:8px 6px;font-size:11px;text-align:center;flex:1;width:100%;
     flex-direction:column;gap:2px;justify-content:center
   }
   nav a .nav-label{font-size:10px}
@@ -583,15 +607,17 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 </head>
 <body>
 <div class="app">
-<nav aria-label="Menu utama">
+<nav aria-label="Menu utama" id="sidenav">
 <div class="logo">nex<i>ora</i></div>
-<a href="#dashboard" data-v="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
-<a href="#tracker" data-v="tracker"><span class="nav-icon">💰</span><span class="nav-label">Money Tracker</span></a>
-<a href="#omzet" data-v="omzet"><span class="nav-icon">📈</span><span class="nav-label">Omzet &amp; Margin</span></a>
-<a href="#invoice" data-v="invoice"><span class="nav-icon">📄</span><span class="nav-label">Invoice</span></a>
-<a href="#goals" data-v="goals"><span class="nav-icon">🎯</span><span class="nav-label">Goals</span></a>
-<a href="#analitik" data-v="analitik"><span class="nav-icon">🔍</span><span class="nav-label">Analitik</span></a>
-<a href="#ai" data-v="ai"><span class="nav-icon">🤖</span><span class="nav-label">AI Assistant</span></a>
+<div class="nav-note" id="navnote" hidden><span id="navnote-t">Kelola menu — klik ikon mata untuk menyembunyikan.</span><div class="nav-note-btns"><button class="btn ghost smbtn" id="navshowall" type="button">Tampilkan semua</button><button class="btn smbtn" id="navdone" type="button">Selesai</button></div></div>
+<div class="nav-item" data-v="dashboard"><a href="#dashboard" data-v="dashboard"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span class="nav-label">Dashboard</span></a><button class="nav-hide" type="button" data-hide="dashboard" disabled aria-label="Dashboard selalu tampil" title="Dashboard selalu tampil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button></div>
+<div class="nav-item" data-v="tracker"><a href="#tracker" data-v="tracker"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></span><span class="nav-label">Money Tracker</span></a><button class="nav-hide" type="button" data-hide="tracker" aria-label="Sembunyikan Money Tracker" title="Sembunyikan / tampilkan"></button></div>
+<div class="nav-item" data-v="omzet"><a href="#omzet" data-v="omzet"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg></span><span class="nav-label">Omzet &amp; Margin</span></a><button class="nav-hide" type="button" data-hide="omzet" aria-label="Sembunyikan Omzet & Margin" title="Sembunyikan / tampilkan"></button></div>
+<div class="nav-item" data-v="invoice"><a href="#invoice" data-v="invoice"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg></span><span class="nav-label">Invoice</span></a><button class="nav-hide" type="button" data-hide="invoice" aria-label="Sembunyikan Invoice" title="Sembunyikan / tampilkan"></button></div>
+<div class="nav-item" data-v="goals"><a href="#goals" data-v="goals"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span class="nav-label">Goals</span></a><button class="nav-hide" type="button" data-hide="goals" aria-label="Sembunyikan Goals" title="Sembunyikan / tampilkan"></button></div>
+<div class="nav-item" data-v="analitik"><a href="#analitik" data-v="analitik"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 2 12 12"/><path d="M16 2h6v6"/></svg></span><span class="nav-label">Analitik</span></a><button class="nav-hide" type="button" data-hide="analitik" aria-label="Sembunyikan Analitik" title="Sembunyikan / tampilkan"></button></div>
+<div class="nav-item" data-v="ai"><a href="#ai" data-v="ai"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9z"/></svg></span><span class="nav-label">AI Assistant</span></a><button class="nav-hide" type="button" data-hide="ai" aria-label="Sembunyikan AI Assistant" title="Sembunyikan / tampilkan"></button></div>
+<button class="btn ghost nav-manage" id="navmanage" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Kelola menu<span class="nav-badge" id="navbadge" hidden>0</span></button>
 <button class="btn ghost xbtn" id="xclose" type="button">Tutup Nexora</button>
 </nav>
 <main>
@@ -897,14 +923,16 @@ var hist=[],busy=false;
 function add(c,t){var d=document.createElement('div');d.className='m '+c;d.textContent=t;$('#chat').appendChild(d);$('#chat').scrollTop=1e5;return d}
 function cat(c,mt){return mt.filter(function(x){return x.t=='expense'&&x.c==c}).reduce(function(s,x){return s+x.a},0)}
 function ctx(){var mt=T.filter(function(x){return ym(x.dt)==cur});return 'Pemasukan bulan ini '+R(sum(mt,'income'))+', pengeluaran '+R(sum(mt,'expense'))+', saldo total '+R(sum(T,'income')-sum(T,'expense'))+'. Per kategori: '+ECAT.map(function(c){return c+' '+R(cat(c,mt))+' dari anggaran '+R(BUD[c])}).join('; ')+'. Target tabungan: '+G.map(function(g){return g.n+' '+R(g.s)+' dari '+R(g.t)}).join('; ')+'.'}
-function fb(){var mt=T.filter(function(x){return ym(x.dt)==cur}),inc=sum(mt,'income'),exp=sum(mt,'expense'),top=ECAT.map(function(c){return{c:c,v:cat(c,mt)}}).sort(function(a,b){return b.v-a.v})[0];return 'Ini ringkasan dari data Anda. Savings rate bulan ini '+P(inc?(inc-exp)/inc*100:0)+'. Pengeluaran terbesar ada di '+top.c+' ('+R(top.v)+'). Coba pangkas kategori itu 10% dan pindahkan selisihnya ke target tabungan di awal bulan.'}
+function fb(){var mt=T.filter(function(x){return ym(x.dt)==cur}),inc=sum(mt,'income'),exp=sum(mt,'expense'),top=ECAT.map(function(c){return{c:c,v:cat(c,mt)}}).sort(function(a,b){return b.v-a.v})[0];return 'Ringkasan data Anda (bukan AI — asisten AI belum aktif): savings rate bulan ini '+P(inc?(inc-exp)/inc*100:0)+'. Pengeluaran terbesar di '+top.c+' ('+R(top.v)+'). Untuk jawaban cerdas, aktifkan AI Assistance: set AI_API_KEY di server (lihat docs/AI_SETUP.md) lalu jalankan node server.js.'}
 async function ask(q){q=q.trim();if(busy||!q)return;busy=true;add('u',q);var el=add('a','');el.innerHTML='<span class="dots"><span></span><span></span><span></span></span>';
 hist.push({role:'user',content:q});
-try{var sm=await claude.use('sample');if(!sm)throw 0;
-var sys='Kamu asisten keuangan pribadi di aplikasi Nexora. Jawab dalam bahasa Indonesia, hangat dan ringkas (maksimal 120 kata), beri 2 sampai 3 saran konkret berdasarkan data. Jangan pakai markdown atau tabel. Ingatkan singkat bahwa ini bukan nasihat keuangan profesional hanya jika relevan. Data: '+ctx();
-var m=hist.slice(-6).map(function(h,i,a){return i==a.length-1?{role:'user',content:sys+'\n\nPertanyaan: '+h.content}:h});
-var r=await sm(m,{cache:false,onText:function(o){el.textContent=o.text;$('#chat').scrollTop=1e5}});
-el.textContent=r.text;hist.push({role:'assistant',content:r.text})}
+try{
+var msgs=[{role:'user',content:'Berikut data keuangan saya saat ini. Gunakan data ini untuk menjawab: '+ctx()},{role:'assistant',content:'Baik, saya sudah membaca data Anda. Silakan tanya.'}].concat(hist.slice(-8));
+var r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs})});
+if(!r.ok){var eb=null;try{eb=await r.json()}catch(_e){}
+if(r.status===503){hist.pop();el.textContent=fb();busy=false;return}
+throw new Error((eb&&eb.error&&eb.error.message)||('HTTP '+r.status))}
+var data=await r.json();el.textContent=data.reply;hist.push({role:'assistant',content:data.reply})}
 catch(e){hist.pop();el.textContent=fb()}
 busy=false}
 function send(){var v=$('#aq').value;$('#aq').value='';ask(v)}
@@ -967,6 +995,28 @@ var _omz=omzet;omzet=function(){_omz();document.querySelectorAll('#ores .big').f
 $('#eye').onclick=function(){document.body.classList.toggle('priv');this.textContent=document.body.classList.contains('priv')?'Tampilkan saldo':'Sembunyikan saldo'};
 
 window.addEventListener('hashchange',function(){var h=location.hash;if(!h||h=='#dashboard')dash();else if(h=='#goals')gl();else if(h=='#analitik')dash();else if(h=='#omzet')omzet();else if(h=='#invoice')inv();else if(h=='#tracker')tlist();stag()});
+
+/* ── Nav hide/show with saved preference ── */
+var NAV_HIDE_KEY='nx_nav_hidden';
+var EYE_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+var EYEOFF_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.6 10.6 0 0 1 12 19c-6.5 0-10-7-10-7a17.6 17.6 0 0 1 4.06-4.94M9.9 4.24A9.5 9.5 0 0 1 12 4c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.16 3.19M3 3l18 18"/></svg>';
+function navHidden(){try{var a=JSON.parse(localStorage.getItem(NAV_HIDE_KEY));return Array.isArray(a)?a:[]}catch(e){return[]}}
+function saveNavHidden(a){try{localStorage.setItem(NAV_HIDE_KEY,JSON.stringify(a))}catch(e){}}
+function renderNavState(){var h=navHidden();
+document.querySelectorAll('.nav-item').forEach(function(it){var v=it.dataset.v,off=h.indexOf(v)>-1;
+it.classList.toggle('hidden',off);
+var b=it.querySelector('.nav-hide');if(b&&!b.disabled){b.innerHTML=off?EYEOFF_SVG:EYE_SVG;b.setAttribute('aria-pressed',off?'true':'false');b.setAttribute('aria-label',(off?'Tampilkan ':'Sembunyikan ')+(it.querySelector('.nav-label')||{}).textContent)}});
+var badge=$('#navbadge');if(badge){badge.textContent=h.length;badge.hidden=h.length===0}
+$('#navshowall').textContent=h.length?'Tampilkan semua ('+h.length+')':'Tampilkan semua'}
+$('#navmanage').onclick=function(){var nav=$('#sidenav');nav.classList.toggle('manage');var on=nav.classList.contains('manage');$('#navnote').hidden=!on;this.setAttribute('aria-pressed',on?'true':'false');renderNavState()};
+$('#navdone').onclick=function(){$('#sidenav').classList.remove('manage');$('#navnote').hidden=true;$('#navmanage').setAttribute('aria-pressed','false')};
+$('#navshowall').onclick=function(){saveNavHidden([]);renderNavState();toast('Semua menu ditampilkan kembali.')};
+$('#sidenav').addEventListener('click',function(e){var b=e.target.closest('.nav-hide');if(!b||b.disabled)return;
+var v=b.dataset.hide,h=navHidden(),i=h.indexOf(v);
+if(i>-1)h.splice(i,1);else h.push(v);
+saveNavHidden(h);renderNavState();
+toast(i>-1?'Menu ditampilkan kembali.':'Menu disembunyikan — klik lagi di mode Kelola menu untuk mengembalikannya.')});
+renderNavState();
 
 /* ── Card pointer tracking ── */
 document.addEventListener('pointermove',function(e){var c=e.target.closest&&e.target.closest('.card');if(c){var r=c.getBoundingClientRect();c.style.setProperty('--mx',e.clientX-r.left+'px');c.style.setProperty('--my',e.clientY-r.top+'px')}});
