@@ -923,7 +923,13 @@ function confetti(){if(RM)return;var cs=COL.concat(['#fff']);for(var i=0;i<40;i+
 var hist=[],busy=false;
 function add(c,t){var d=document.createElement('div');d.className='m '+c;d.textContent=t;$('#chat').appendChild(d);$('#chat').scrollTop=1e5;return d}
 function cat(c,mt){return mt.filter(function(x){return x.t=='expense'&&x.c==c}).reduce(function(s,x){return s+x.a},0)}
-function ctx(){var mt=T.filter(function(x){return ym(x.dt)==cur});return 'Pemasukan bulan ini '+R(sum(mt,'income'))+', pengeluaran '+R(sum(mt,'expense'))+', saldo total '+R(sum(T,'income')-sum(T,'expense'))+'. Per kategori: '+ECAT.map(function(c){return c+' '+R(cat(c,mt))+' dari anggaran '+R(BUD[c])}).join('; ')+'. Target tabungan: '+G.map(function(g){return g.n+' '+R(g.s)+' dari '+R(g.t)}).join('; ')+'.'}
+function ctx(){var mt=T.filter(function(x){return ym(x.dt)==cur}),inc=sum(mt,'income'),exp=sum(mt,'expense'),sr=inc?(inc-exp)/inc*100:0,d=now.getDate();
+var cd=ECAT.map(function(c){return{c:c,v:cat(c,mt),b:BUD[c]||0}}).sort(function(a,b){return b.v-a.v});
+var top3=cd.slice(0,3).map(function(x){return x.c+' '+R(x.v)+' ('+(exp?Math.round(x.v/exp*100):0)+'%)'}).join(', ');
+var over=cd.filter(function(x){return x.b&&x.v>x.b}).map(function(x){return x.c+' '+R(x.v-x.b)+' di atas anggaran'});
+var goals=G.map(function(g){return g.n+' '+Math.round(g.t?g.s/g.t*100:0)+'%'}).join(', ')||'belum ada';
+var s='Ringkasan bulan ini ('+cur+'): pemasukan '+R(inc)+', pengeluaran '+R(exp)+', sisa '+R(inc-exp)+', savings rate '+P(sr)+'. Pengeluaran terbesar: '+top3+'. '+(over.length?'Melebihi anggaran: '+over.join('; ')+'. ':'Semua kategori masih dalam anggaran. ')+'Rata-rata pengeluaran per hari '+R(exp/d)+' (hari ke-'+d+'). Saldo total '+R(sum(T,'income')-sum(T,'expense'))+'. Progress target tabungan: '+goals+'.';
+return s.slice(0,1800)}
 function fb(){var mt=T.filter(function(x){return ym(x.dt)==cur}),inc=sum(mt,'income'),exp=sum(mt,'expense'),top=ECAT.map(function(c){return{c:c,v:cat(c,mt)}}).sort(function(a,b){return b.v-a.v})[0];return 'Ringkasan data Anda (bukan AI — asisten AI belum aktif): savings rate bulan ini '+P(inc?(inc-exp)/inc*100:0)+'. Pengeluaran terbesar di '+top.c+' ('+R(top.v)+'). Untuk jawaban cerdas, aktifkan AI Assistance: set AI_API_KEY di server (lihat docs/AI_SETUP.md) lalu jalankan node server.js.'}
 async function ask(q){q=q.trim();if(busy||!q)return;busy=true;add('u',q);var el=add('a','');el.innerHTML='<span class="dots"><span></span><span></span><span></span></span>';
 hist.push({role:'user',content:q});
