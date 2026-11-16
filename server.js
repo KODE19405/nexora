@@ -18,6 +18,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const PORT = Number(process.env.PORT) || 8787;
 const HOST = process.env.HOST || '127.0.0.1';
@@ -35,6 +36,41 @@ const MIME = {
   '.woff2': 'font/woff2', '.txt': 'text/plain; charset=utf-8'
 };
 
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Referrer-Policy': 'no-referrer',
+  'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+};
+
+const BLOCKED_FILES = new Set(['server.js', 'opencode.json', 'package.json', 'package-lock.json', 'AGENTS.md']);
+
+function serveStatic(req, res, pathname) {
+  let rel;
+  try {
+    rel = decodeURIComponent(pathname);
+  } catch (e) {
+    res.writeHead(400, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
+    return res.end('Bad request');
+  }
+  if (rel.includes('\0')) { res.writeHead(400, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Bad request'); }
+  if (rel === '/') rel = '/Nexora.html';
+  const filePath = path.normalize(path.join(ROOT, rel));
+  if (filePath !== ROOT && !filePath.startsWith(ROOT + path.sep)) { res.writeHead(403, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Forbidden'); }
+  const segments = path.relative(ROOT, filePath).split(path.sep);
+  if (segments.some(s => s.startsWith('.')) || BLOCKED_FILES.has(path.basename(filePath))) { res.writeHead(403, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Forbidden'); }
+  fs.readFile(filePath, (err, data) => {
+    if (err) { res.writeHead(404, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Not found'); }
+    const ext = path.extname(filePath).toLowerCase();
+    res.writeHead(200, {
+      ...SECURITY_HEADERS,
+      'Content-Type': MIME[ext] || 'application/octet-stream',
+      'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=3600'
+    });
+    res.end(data);
+  });
+}
+
 /* ── Rate limiter (per IP, fixed window) ── */
 const WINDOW_MS = 10 * 60 * 1000, MAX_REQ = 30;
 const hits = new Map();
@@ -47,13 +83,15 @@ function rateLimited(ip) {
   return e.count > MAX_REQ;
 }
 
-function sendJson(res, status, obj) {
+const NEXORA_TOKEN = process.env.NEXORA_TOKEN || '';
+function sendJson(res, status, obj, extraHeaders) {
   const body = JSON.stringify(obj);
   res.writeHead(status, {
+    ...SECURITY_HEADERS,
     'Content-Type': 'application/json; charset=utf-8',
     'Content-Length': Buffer.byteLength(body),
     'Cache-Control': 'no-store',
-    'X-Content-Type-Options': 'nosniff'
+    ...(extraHeaders || {})
   });
   res.end(body);
 }
@@ -61,13 +99,14 @@ function sendJson(res, status, obj) {
 function readBody(req, limit) {
   return new Promise((resolve, reject) => {
     let size = 0; const chunks = [];
+    const timer = setTimeout(() => { reject(new Error('BODY_TIMEOUT')); req.destroy(); }, 30000);
     req.on('data', (c) => {
       size += c.length;
-      if (size > limit) { reject(new Error('PAYLOAD_TOO_LARGE')); req.destroy(); return; }
+      if (size > limit) { clearTimeout(timer); reject(new Error('PAYLOAD_TOO_LARGE')); req.destroy(); return; }
       chunks.push(c);
     });
-    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-    req.on('error', reject);
+    req.on('end', () => { clearTimeout(timer); resolve(Buffer.concat(chunks).toString('utf8')); });
+    req.on('error', (e) => { clearTimeout(timer); reject(e); });
   });
 }
 
@@ -95,7 +134,13 @@ const SYSTEM_PROMPT = 'Kamu asisten keuangan pribadi di aplikasi Nexora. Jawab d
 
 async function handleAi(req, res) {
   const ip = req.socket.remoteAddress || 'unknown';
-  if (rateLimited(ip)) return sendJson(res, 429, { error: { code: 'RATE_LIMITED', message: 'Terlalu banyak permintaan. Coba lagi beberapa menit lagi.' } });
+  if (rateLimited(ip)) return sendJson(res, 429, { error: { code: 'RATE_LIMITED', message: 'Terlalu banyak permintaan. Coba lagi beberapa menit lagi.' } }, { 'Retry-After': '600' });
+  if (NEXORA_TOKEN) {
+    const auth = String(req.headers.authorization || '');
+    const expected = 'Bearer ' + NEXORA_TOKEN;
+    const ok = auth.length === expected.length && crypto.timingSafeEqual(Buffer.from(auth), Buffer.from(expected));
+    if (!ok) return sendJson(res, 401, { error: { code: 'UNAUTHORIZED', message: 'Token Nexora tidak valid.' } });
+  }
   if (!AI_API_KEY) return sendJson(res, 503, { error: { code: 'AI_NOT_CONFIGURED', message: 'AI belum dikonfigurasi di server. Set AI_API_KEY (dan opsional AI_BASE_URL, AI_MODEL) lalu jalankan ulang server.' } });
 
   let payload;
@@ -103,7 +148,7 @@ async function handleAi(req, res) {
     const raw = await readBody(req, 64 * 1024);
     payload = JSON.parse(raw);
   } catch (e) {
-    const code = (e && e.message === 'PAYLOAD_TOO_LARGE') ? 413 : 400;
+    const code = (e && e.message === 'PAYLOAD_TOO_LARGE') ? 413 : (e && e.message === 'BODY_TIMEOUT') ? 408 : 400;
     return sendJson(res, code, { error: { code: code === 413 ? 'PAYLOAD_TOO_LARGE' : 'BAD_JSON', message: code === 413 ? 'Body terlalu besar.' : 'Body bukan JSON yang valid.' } });
   }
   const err = validateMessages(payload);
@@ -125,7 +170,7 @@ async function handleAi(req, res) {
     });
     if (!upstream.ok) {
       const detail = await upstream.text().catch(() => '');
-      console.error('[ai] provider error', upstream.status, detail.slice(0, 300));
+      console.error('[ai] provider error', upstream.status, '(body length ' + detail.length + ')');
       return sendJson(res, 502, { error: { code: 'AI_PROVIDER_ERROR', message: 'Penyedia AI mengembalikan error (' + upstream.status + '). Periksa konfigurasi server.' } });
     }
     const data = await upstream.json();
@@ -142,32 +187,21 @@ async function handleAi(req, res) {
   }
 }
 
-function serveStatic(req, res, pathname) {
-  let rel = decodeURIComponent(pathname);
-  if (rel === '/') rel = '/Nexora.html';
-  const filePath = path.normalize(path.join(ROOT, rel));
-  if (!filePath.startsWith(ROOT)) { res.writeHead(403); return res.end('Forbidden'); }
-  fs.readFile(filePath, (err, data) => {
-    if (err) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Not found'); }
-    const ext = path.extname(filePath).toLowerCase();
-    res.writeHead(200, {
-      'Content-Type': MIME[ext] || 'application/octet-stream',
-      'X-Content-Type-Options': 'nosniff',
-      'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=3600'
-    });
-    res.end(data);
-  });
-}
-
 const server = http.createServer((req, res) => {
-  const url = new URL(req.url, 'http://' + HOST);
+  const hostHeader = String(req.headers.host || '');
+  const hostOk = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(hostHeader);
+  if (!hostOk) { res.writeHead(403, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Forbidden'); }
+  const url = new URL(req.url, 'http://' + hostHeader);
   if (req.method === 'POST' && url.pathname === '/api/ai') return void handleAi(req, res);
   if (req.method === 'GET' && url.pathname === '/api/health') return sendJson(res, 200, { ok: true, aiConfigured: Boolean(AI_API_KEY), model: AI_API_KEY ? AI_MODEL : null });
   if (req.method === 'GET' || req.method === 'HEAD') return serveStatic(req, res, url.pathname);
-  res.writeHead(405, { Allow: 'GET, POST' }); res.end('Method Not Allowed');
+  res.writeHead(405, { Allow: 'GET, POST', ...SECURITY_HEADERS }); res.end('Method Not Allowed');
 });
+server.requestTimeout = 30000;
+server.headersTimeout = 10000;
 
 server.listen(PORT, HOST, () => {
   console.log('Nexora server → http://' + HOST + ':' + PORT + '/');
   console.log('AI: ' + (AI_API_KEY ? 'configured (' + AI_MODEL + ' via ' + AI_BASE_URL + ')' : 'NOT configured — set AI_API_KEY to enable /api/ai'));
+console.log('Auth: ' + (NEXORA_TOKEN ? 'NEXORA_TOKEN required for /api/ai' : 'no token (loopback only — do not set HOST=0.0.0.0)'));
 });

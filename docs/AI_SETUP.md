@@ -29,10 +29,16 @@ Cek status AI: `GET http://127.0.0.1:8787/api/health` → `{ ok, aiConfigured, m
 ## Batasan & catatan keamanan
 
 - AI hanya menerima data ringkasan keuangan yang dirangkai client (`ctx()`): pemasukan/pengeluaran bulan ini, saldo, per kategori vs anggaran, target tabungan. Data transaksi mentah lengkap tidak dikirim.
-- Server bind default ke `127.0.0.1` — tidak terpapar jaringan lokal. Set `HOST` hanya jika paham risikonya.
+- Server hanya bind ke `127.0.0.1` secara default dan memvalidasi header `Host` (hanya `localhost`/`127.0.0.1`/`[::1]`) — mitigasi DNS rebinding.
+- File statik: dotfiles/`server.js`/`opencode.json`/`AGENTS.md` tidak disajikan (403); path traversal ditolak.
+- Respons menyertakan `X-Frame-Options: DENY`, `Content-Security-Policy`, `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`.
+- Rate limit per IP: 30 permintaan / 10 menit (`Retry-After: 600` saat 429). Body ≤ 64 KB, timeout baca body 30 s, `requestTimeout` 30 s.
+- Set `NEXORA_TOKEN` untuk mewajibkan `Authorization: Bearer <token>` pada `/api/ai` (wajib bila `HOST` bukan loopback).
+- **Jangan set `HOST=0.0.0.0`** tanpa token + pemahaman risikonya: tanpa auth, siapa pun di jaringan dapat memakai kuota AI Anda.
 - Provider yang dipakai adalah pihak ketiga: data yang dikirim (ringkasan finansial) tunduk pada kebijakan privasi provider tsb. Untuk data sensitif gunakan provider/model lokal (mis. via Ollama).
-- Endpoint ini tidak menyimpan prompt/jawaban (no logging of content), hanya error provider yang dicatat ke console.
+- Endpoint ini tidak menyimpan prompt/jawaban (tidak ada logging konten); hanya kode status provider yang dicatat ke console.
 - Jawaban AI bukan nasihat keuangan profesional (system prompt menegaskan ini bila relevan).
+- Catatan: `.env` **tidak** dibaca otomatis oleh server — set environment variable di shell Anda.
 
 ## Troubleshooting
 
