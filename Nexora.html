@@ -326,9 +326,8 @@ input:focus,select:focus{
 }
 /* ── Dropdown options: ungu identitas Nexora, teks putih ── */
 select{color:#fff}
-select option,select optgroup{background:#241a47;color:#fff;padding:6px}
+select option,select optgroup{background:#241a47;color:#fff}
 select option:checked,select option:active{background:#5A3B8C;color:#fff;font-weight:600}
-select option:hover{background:#342255;color:#fff}
 select optgroup{font-style:normal;color:var(--lt);font-weight:600}
 label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 .f{display:grid;gap:12px}
@@ -725,7 +724,7 @@ label{display:grid;gap:4px;color:var(--lt);font-size:13px}
 <button class="cal-nav" id="calnext" type="button" aria-label="Bulan berikutnya"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button></div>
 <div class="cal-summary" id="calsummary"></div>
 <div class="cal-week" aria-hidden="true"><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span></div>
-<div class="cal-grid" id="calgrid" role="grid" aria-label="Kalender pengeluaran bulanan"></div>
+<div class="cal-grid" id="calgrid"></div>
 <div class="cal-detail" id="caldetail"></div>
 </div>
 </section>
@@ -755,21 +754,38 @@ var BUD={Makanan:2000000,Sewa:2200000,Transport:800000,Hiburan:600000,Tagihan:90
 var COL=['#C9C2E3','#8B7CC7','#A58FE0','#5A3B8C','#6E55B0','#E3DDF5'];
 var now=new Date(),T=[];
 function iso(y,m,d){var x=new Date(y,m,d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
-/* Bersihkan data contoh bawaan Nexora (sekali saja) — hanya baris yang persis cocok dengan tanda generator seed.
-   Transaksi asli pengguna tidak disentuh. */
+/* Bersihkan data contoh bawaan Nexora (sekali saja, flag nx_v2_cleaned2).
+   Hanya baris yang PERSIS cocok dengan generator seed asli (kategori +
+   keterangan + hari-bulan + nilai nominal dari faktor deterministik).
+   Transaksi asli pengguna tidak mungkin cocok. */
+var SEED_V=[[1,.9,1.1],[1.05,1,.8],[.95,1.2,1],[1.1,.85,1.05],[1,1.1,.9],[1.15,1,1.1]];
+var RND=function(n){return Math.round(n/1000)*1000};
+var SEED_AMT={
+  'income|Gaji':[8500000],
+  'income|Freelance':SEED_V.map(function(f){return RND(3200000*f[0])}),
+  'income|Bisnis':SEED_V.map(function(f){return RND(2400000*f[1])}),
+  'expense|Sewa':[2000000],
+  'expense|Makanan':SEED_V.map(function(f){return RND(1850000*f[1])}),
+  'expense|Transport':SEED_V.map(function(f){return RND(700000*f[2])}),
+  'expense|Tagihan':[850000],
+  'expense|Hiburan':SEED_V.map(function(f){return RND(450000*f[0])}),
+  'expense|Belanja':SEED_V.map(function(f){return RND(600000*f[2])})
+};
 var SEED_SIG=[['income','Gaji','Gaji bulanan',1],['income','Freelance','Proyek desain',8],['income','Bisnis','Penjualan online',14],['expense','Sewa','Sewa apartemen',2],['expense','Makanan','Makan & kopi',10],['expense','Transport','Bensin & ojek',12],['expense','Tagihan','Listrik & internet',5],['expense','Hiburan','Streaming & nonton',17],['expense','Belanja','Belanja bulanan',20]];
-function isSeedTx(x){for(var i=0;i<SEED_SIG.length;i++){var s=SEED_SIG[i];if(x.t===s[0]&&x.c===s[1]&&x.d===s[2]&&+x.dt.slice(8)===s[3])return true}return false}
+function isSeedTx(x){for(var i=0;i<SEED_SIG.length;i++){var s=SEED_SIG[i];if(x.t===s[0]&&x.c===s[1]&&x.d===s[2]&&+x.dt.slice(8)===s[3]){var am=SEED_AMT[x.t+'|'+x.c]||[];return am.indexOf(+x.a)>-1}}return false}
 try{var rawT=localStorage.getItem('nx_t');if(rawT!==null){var parsed=JSON.parse(rawT);T=Array.isArray(parsed)?parsed.filter(function(x){return x&&typeof x==='object'&&isFinite(+x.a)&&typeof x.dt==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x.dt)}):[]}}catch(e){T=[]}
-try{if(localStorage.getItem('nx_v2_cleaned')!=='1'){
-  var before=T.length;T=T.filter(function(x){return !isSeedTx(x)});
+try{if(localStorage.getItem('nx_v2_cleaned2')!=='1'){
+  T=T.filter(function(x){return !isSeedTx(x)});
   var rawG=null;try{rawG=JSON.parse(localStorage.getItem('nx_g'))}catch(e){}
   var droppedGoals=[];
   if(Array.isArray(rawG)){rawG=rawG.filter(function(g){
-    var isDemo=(g&&g.n==='Dana darurat'&&+g.t===30000000&&(!g.h||g.h.length<=1)&&+g.s>=12500000)||(g&&g.n==='Liburan Bali'&&+g.t===12000000&&(!g.h||g.h.length<=1)&&+g.s>=4800000);
+    var isDemo=(g&&g.n==='Dana darurat'&&+g.t===30000000&&Array.isArray(g.h)&&g.h.length===1&&+g.s===12500000)||(g&&g.n==='Liburan Bali'&&+g.t===12000000&&Array.isArray(g.h)&&g.h.length===1&&+g.s===4800000);
     if(isDemo)droppedGoals.push(g.n);return !isDemo});
     localStorage.setItem('nx_g',JSON.stringify(rawG))}
-  if(droppedGoals.length){T=T.filter(function(x){return !/^Setor ke (Dana darurat|Liburan Bali)$/.test(x.d)||(+x.a!==1500000&&+x.a!==800000)})}
-  localStorage.setItem('nx_v2_cleaned','1');try{localStorage.setItem('nx_t',JSON.stringify(T))}catch(e){}
+  if(droppedGoals.length){T=T.filter(function(x){return !(/^Setor ke (Dana darurat|Liburan Bali)$/.test(x.d)&&((+x.dt.slice(8)===3&&+x.a===1500000)||(+x.dt.slice(8)===9&&+x.a===800000)))})}
+  /* Baris hasil demo yang dibuat app saat goal demo dihapus (otomatis oleh app, bukan input pengguna) */
+  T=T.filter(function(x){return !((x.d==='Target dihapus: Dana darurat'&&+x.a===12500000)||(x.d==='Target dihapus: Liburan Bali'&&+x.a===4800000))});
+  try{localStorage.setItem('nx_t',JSON.stringify(T));localStorage.setItem('nx_v2_cleaned2','1')}catch(e){}
 }}catch(e){}
 function save(){try{localStorage.setItem('nx_t',JSON.stringify(T))}catch(e){}}
 var today=iso(now.getFullYear(),now.getMonth(),now.getDate());
