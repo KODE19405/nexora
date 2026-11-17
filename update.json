@@ -1,6 +1,6 @@
 {
-  "versionCode": 5,
-  "versionName": "1.4",
-  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.4/Nexora.apk",
-  "notes": "Seperti aplikasi native: lebih halus & responsif, intro kembali, konten penuh tidak terselip di bar bawah"
+  "versionCode": 6,
+  "versionName": "1.5",
+  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.5/Nexora.apk",
+  "notes": "Perbaikan cek pembaruan (cek ke 2 sumber), sama lancarnya dengan 1.4"
 }

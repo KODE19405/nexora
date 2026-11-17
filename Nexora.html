@@ -3864,13 +3864,13 @@ if(!ok)return false;
 T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();gl();toast('Transaksi dihapus.');return true})}
 
 /* ── Update checker (khusus APK) ──
-   Alur: baca update.json dari hosting statis (GitHub raw) → bandingkan versionCode
-   dengan build saat ini → jika lebih baru, tampilkan banner (bukan dialog modal).
-   Tidak pernah memblokir aplikasi; semua kegagalan jaringan/error ditelan diam-diam.
+   Alur: baca update.json dari hosting statis (GitHub raw; fallback jsdelivr) →
+   bandingkan versionCode dengan build saat ini → jika lebih baru, tampilkan banner.
+   Gagal total = diam-diam (tidak memblokir app).
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 5,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.4',    // HARUS sama dengan versionName
+  code: 6,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.5',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
@@ -3878,18 +3878,25 @@ function isNativeApp(){ try { return !!(window.Capacitor && window.Capacitor.isN
 function updateConfigured(){ var u = NEXORA_UPDATE.manifestUrl; return /^https:\/\//.test(u) && u.indexOf('USERNAME') < 0 && u.indexOf('REPO') < 0; }
 function checkForUpdate(){
   if(!isNativeApp() || !updateConfigured()) return;
-  var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-  var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, NEXORA_UPDATE.timeout) : null;
-  fetch(NEXORA_UPDATE.manifestUrl, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
-    .then(function(r){ if(!r.ok) throw new Error('update http ' + r.status); return r.json(); })
-    .then(function(m){
-      if(timer) clearTimeout(timer);
-      if(!m || typeof m.versionCode !== 'number' || !Number.isFinite(m.versionCode)) return;
-      if(!m.apkUrl || !/^https:\/\//.test(String(m.apkUrl))) return;
-      if(m.versionCode <= NEXORA_UPDATE.code) return;
-      showUpdateBanner(m);
-    })
-    .catch(function(){ if(timer) clearTimeout(timer); });
+  var urls = [NEXORA_UPDATE.manifestUrl, 'https://cdn.jsdelivr.net/gh/KODE19405/nexora@main/update.json'];
+  var chain = Promise.resolve(null);
+  urls.forEach(function(u){
+    chain = chain.then(function(prev){
+      if(prev) return prev;
+      return new Promise(function(resolve){
+        var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, NEXORA_UPDATE.timeout) : null;
+        fetch(u, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+          .then(function(r){ if(timer) clearTimeout(timer); resolve(r.ok ? r.json().catch(function(){ return null; }) : null); }, function(){ if(timer) clearTimeout(timer); resolve(null); });
+      });
+    });
+  });
+  chain.then(function(m){
+    if(!m || typeof m.versionCode !== 'number' || !Number.isFinite(m.versionCode)) return;
+    if(!m.apkUrl || !/^https:\/\//.test(String(m.apkUrl))) return;
+    if(m.versionCode <= NEXORA_UPDATE.code) return;
+    showUpdateBanner(m);
+  }).catch(function(){});
 }
 function showUpdateBanner(m){
   if(document.querySelector('.update-banner')) return;
