@@ -1,0 +1,10 @@
+﻿{
+  "appId": "com.nexora.app",
+  "appName": "Nexora",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": false
+  }
+}
