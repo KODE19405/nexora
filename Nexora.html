@@ -2,15 +2,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0816">
-<meta name="description" content="Nexora — dasbor keuangan pribadi &amp; bisnis: Money Tracker, Omzet &amp; Margin, Invoice Generator, Goals, Analitik, dan AI Assistant.">
+<meta name="description" content="Nexora — dasbor keuangan pribadi &amp; bisnis: Money Tracker, Omzet &amp; Margin, Goals, Analitik, dan AI Assistant.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 64 64&#39;%3E%3Crect width=&#39;64&#39; height=&#39;64&#39; rx=&#39;14&#39; fill=&#39;%2314102B&#39;/%3E%3Cdefs%3E%3ClinearGradient id=&#39;g&#39; x1=&#39;18&#39; y1=&#39;46&#39; x2=&#39;46&#39; y2=&#39;18&#39; gradientUnits=&#39;userSpaceOnUse&#39;%3E%3Cstop stop-color=&#39;%23A78BFA&#39;/%3E%3Cstop offset=&#39;1&#39; stop-color=&#39;%237C3AED&#39;/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill=&#39;url(%23g)&#39; d=&#39;M19 45V19h7.4l13.2 17.6V19H47v26h-7.4L26.4 27.4V45H19z&#39;/%3E%3C/svg%3E">
 <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 64 64&#39;%3E%3Crect width=&#39;64&#39; height=&#39;64&#39; rx=&#39;14&#39; fill=&#39;%2314102B&#39;/%3E%3Cdefs%3E%3ClinearGradient id=&#39;g&#39; x1=&#39;18&#39; y1=&#39;46&#39; x2=&#39;46&#39; y2=&#39;18&#39; gradientUnits=&#39;userSpaceOnUse&#39;%3E%3Cstop stop-color=&#39;%23A78BFA&#39;/%3E%3Cstop offset=&#39;1&#39; stop-color=&#39;%237C3AED&#39;/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill=&#39;url(%23g)&#39; d=&#39;M19 45V19h7.4l13.2 17.6V19H47v26h-7.4L26.4 27.4V45H19z&#39;/%3E%3C/svg%3E">
 <title>Nexora — Interactive &amp; Animated Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"></noscript>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"></noscript>
 <style data-stitch-css-vh="4ed8bd090b484785===
 :root{
   --bg: #05040a;
@@ -658,26 +660,11 @@ input[type=&#34;date&#34;]::-webkit-calendar-picker-indicator{
   cursor: pointer;
 }
 
-/* ── Invoice Paper: Elegant Minimalist Luxury ── */
-.paper{
-  background: #f7f6fd;
-  color: #1a162b;
-  border-radius: 14px;
-  padding: 36px 32px;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.6);
-  font-family: &#39;Plus Jakarta Sans&#39;, sans-serif;
-}
-.paper table{width:100%;border-collapse:collapse;margin:22px 0}
-.paper th, .paper td{text-align:left;padding:10px 8px;border-bottom:1px solid #d4cde8}
-.paper td:nth-child(n+2),.paper th:nth-child(n+2){text-align:right}
-.paper th{font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:0.04em;color:#574b78}
-.paper h3{
-  font-family: &#39;Space Grotesk&#39;, sans-serif;
-  font-size: 26px;
-  letter-spacing: -0.02em;
-  color: #1a162b;
-}
-.irow{display:grid;grid-template-columns:2fr .7fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px}
+/* ── Native performance profile (APK) ── */
+body.native nav{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(8,6,18,0.94)}
+body.native .modal-backdrop,body.native .modal,body.native .toast,body.native .update-banner{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+body.native .view,body.native .view.on{animation:none!important}
+body.native .view{filter:none!important;transition:none!important}
 
 /* ── Update banner ── */
 .update-banner{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 14px);left:50%;transform:translateX(-50%);z-index:95;width:min(460px,calc(100vw - 32px));display:flex;align-items:center;gap:12px;background:rgba(18,13,38,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--ln-strong);border-radius:16px;padding:12px 14px;box-shadow:0 16px 44px rgba(0,0,0,0.5),0 0 22px var(--ac-glow);animation:update-in 0.4s cubic-bezier(0.16,1,0.3,1)}
@@ -1123,7 +1110,6 @@ input[type=&#34;date&#34;]::-webkit-calendar-picker-indicator{
   .cal-week span{font-size:10px}
   .cal-day{min-height:58px;padding:5px 6px}
   .cal-day .damt{font-size:10.5px}
-  .irow{grid-template-columns:1fr;gap:8px}
 }
 @media(max-width: 480px){
   .g4{
@@ -2415,26 +2401,11 @@ input[type="date"]::-webkit-calendar-picker-indicator{
   cursor: pointer;
 }
 
-/* ── Invoice Paper: Elegant Minimalist Luxury ── */
-.paper{
-  background: #f7f6fd;
-  color: #1a162b;
-  border-radius: 14px;
-  padding: 36px 32px;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.6);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-}
-.paper table{width:100%;border-collapse:collapse;margin:22px 0}
-.paper th, .paper td{text-align:left;padding:10px 8px;border-bottom:1px solid #d4cde8}
-.paper td:nth-child(n+2),.paper th:nth-child(n+2){text-align:right}
-.paper th{font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:0.04em;color:#574b78}
-.paper h3{
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 26px;
-  letter-spacing: -0.02em;
-  color: #1a162b;
-}
-.irow{display:grid;grid-template-columns:2fr .7fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px}
+/* ── Native performance profile (APK) ── */
+body.native nav{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(8,6,18,0.94)}
+body.native .modal-backdrop,body.native .modal,body.native .toast,body.native .update-banner{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+body.native .view,body.native .view.on{animation:none!important}
+body.native .view{filter:none!important;transition:none!important}
 
 /* ── Toasts & Modals ── */
 .toast-wrap{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:10px;width:min(440px,calc(100vw - 32px))}
@@ -2868,7 +2839,6 @@ input[type="date"]::-webkit-calendar-picker-indicator{
   .cal-week span{font-size:10px}
   .cal-day{min-height:58px;padding:5px 6px}
   .cal-day .damt{font-size:10.5px}
-  .irow{grid-template-columns:1fr;gap:8px}
 }
 @media(max-width: 480px){
   .g4{
@@ -3532,7 +3502,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{
 <a href="#tracker" data-v="tracker"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg></span><span class="nav-label">Money Tracker</span></a>
 <a href="#anggaran" data-v="anggaran"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8a2 2 0 0 0 2-2v-9a4 4 0 0 0-4-4H10a4 4 0 0 0-4 4v9a2 2 0 0 0 2 2z"></path><path d="M10 6V4M14 6V4"></path><path d="M9 12h6M9 15.5h4"></path></svg></span><span class="nav-label">Anggaran</span></a>
 <a href="#omzet" data-v="omzet"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M21 7v6h-6"></path></svg></span><span class="nav-label">Omzet &amp; Margin</span></a>
-<a href="#invoice" data-v="invoice"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M9 13h6M9 17h6"></path></svg></span><span class="nav-label">Invoice</span></a>
+
 <a href="#goals" data-v="goals"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg></span><span class="nav-label">Goals</span></a>
 <a href="#analitik" data-v="analitik"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 2 12 12"></path><path d="M16 2h6v6"></path></svg></span><span class="nav-label">Analitik</span></a>
 <a href="#ai" data-v="ai"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"></path><path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9z"></path></svg></span><span class="nav-label">AI Assistant</span></a>
@@ -3714,25 +3684,6 @@ input[type="date"]::-webkit-calendar-picker-indicator{
 </div>
 </section>
 
-<section class="view" id="invoice">
-<div class="head"><div><h1>Invoice Generator</h1><p class="sub">Pembuatan faktur penagihan resmi dengan pratinjau langsung, rincian pajak, dan opsi cetak.</p></div>
-<button class="btn" id="iprint">Cetak invoice</button></div>
-<div class="grid g2b">
-<div class="card"><h2>Detail invoice</h2><div class="f">
-<div class="two"><label>Nomor<input id="in" placeholder="INV-YYYY-001"></label><label>Jatuh tempo<input id="id" type="date"></label></div>
-<label>Logo bisnis<input id="il" type="file" accept="image/*"></label><button class="btn ghost" id="ilx" type="button" style="display:none;justify-self:start">Hapus logo</button><p class="dn" id="ierr"></p>
-<label>Nama bisnis Anda<input id="ib" placeholder="Nama bisnis Anda"></label>
-<label>Klien<input id="ic" placeholder="Nama klien"></label>
-<div id="items"><p class="empty">Belum ada item. Klik &#34;Tambah item&#34; untuk mulai.</p></div>
-<button class="btn ghost" id="iadd">Tambah item</button>
-<label>Pajak (%)<input id="ix" type="number" min="0" value="11"></label>
-<label>Status pembayaran<select id="is"><option>Belum lunas</option><option>Lunas</option></select></label>
-<label>Metode pembayaran<select id="im"><option>Transfer</option><option>QRIS</option><option>Tunai</option></select></label>
-<div id="itr" class="f"><label>Transfer ke<select id="ibk"><optgroup label="Bank"><option>BCA</option><option>Mandiri</option><option>BRI</option><option>BNI</option><option>BTN</option><option>CIMB Niaga</option><option>Permata</option><option>Danamon</option><option>OCBC</option><option>Maybank</option><option>Panin</option><option>Bank Mega</option><option>BSI</option><option>Bank Jago</option><option>SeaBank</option><option>blu by BCA Digital</option><option>Jenius</option><option>Allo Bank</option><option>Neo Commerce</option></optgroup><optgroup label="E-wallet"><option>GoPay</option><option>OVO</option><option>DANA</option><option>ShopeePay</option><option>LinkAja</option><option>Sakuku</option><option>i.saku</option></optgroup></select></label><div class="two"><label>Nomor rekening<input id="ino" placeholder="Nomor rekening"></label><label>Atas nama<input id="inm" placeholder="Nama pemilik rekening"></label></div></div>
-<label id="iqr" style="display:none">Gambar QRIS Anda<input id="iqf" type="file" accept="image/*"></label></div></div>
-<div class="card"><div class="paper" id="paper"><div class="row"><h3>INVOICE</h3><b></b></div><p style="margin-top:14px"><b>Dari</b><br></p><p style="margin-top:10px"><b>Untuk</b><br></p><p style="margin-top:10px">Tanggal: 17 November 2026 · Jatuh tempo: 1 Desember 2026 </p><table><thead><tr><th>Item</th><th>Qty</th><th>Harga</th><th>Total</th></tr></thead><tbody></tbody></table><div class="row"><span>Subtotal</span><span>Rp 0</span></div><div class="row"><span>Pajak</span><span>Rp 0</span></div><div class="row" style="font-size:18px;margin-top:8px"><b>Total</b><b>Rp 0</b></div><div class="payblock" style="margin-top:22px;padding-top:14px;border-top:1px solid #8B7CC7"><div class="row" style="align-items:flex-start"><div><b>Metode pembayaran</b><p style="margin-top:4px">Transfer ke BCA<br>No. rekening  a.n. </p></div><span style="padding:6px 12px;border-radius:4px;font-weight:700;background:#0E0B1D;color:#C9C2E3;white-space:nowrap">BELUM LUNAS</span></div></div></div></div>
-</div>
-</section>
 
 <section class="view" id="analitik">
 <div class="head"><div><h1>Analitik</h1><p class="sub">Evaluasi skor likuiditas, estimasi pengeluaran akhir periode, dan pemetaan kalender belanja.</p></div></div>
@@ -3770,6 +3721,24 @@ input[type="date"]::-webkit-calendar-picker-indicator{
 </div>
 <div id="bye"><b>nexora</b><p>Sampai jumpa. Data Anda tersimpan di browser ini. Silakan tutup tab ini.</p><button class="btn ghost" id="breopen" type="button">Buka kembali</button></div>
 <script>
+(async function(){
+/* ── Durable storage hydration (APK) ──
+   localStorage di WebView bisa tidak ikut ter-flush saat proses dibunuh sistem
+   (atau saat kehabisan memori). Preferences (SharedPreferences Android) adalah
+   sumber kebenaran di APK: setiap tulisan di-mirror, dan saat boot data
+   Preferences disalin kembali ke localStorage SEBELUM kode aplikasi membaca. */
+var PREFS_KEYS=['nx_t','nx_g','nx_b','nx_budget_v2','nx_v2_cleaned3','nx_v4_orphans'];
+var nativePrefs=function(){try{var P=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Preferences;return (P&&P.get&&P.set)?P:null}catch(e){return null}};
+try{
+  if(isNativeApp())document.body.classList.add('native');
+  var P=nativePrefs();
+  if(P){
+    var pairs=await Promise.all(PREFS_KEYS.map(function(k){return P.get({key:k}).then(function(r){return{key:k,value:r&&r.value}},function(){return{key:k,value:undefined}})}));
+    pairs.forEach(function(pair){if(typeof pair.value==='string'&&pair.value.length){try{localStorage.setItem(pair.key,pair.value)}catch(e){}}});
+    var __origSet=localStorage.setItem.bind(localStorage);
+    localStorage.setItem=function(k,v){try{__origSet(k,v)}catch(e){} try{P.set({key:k,value:String(v)})}catch(e){}};
+  }
+}catch(e){}
 var $=function(s){return document.querySelector(s)};
 var R=function(n){return 'Rp '+Math.round(n).toLocaleString('id-ID')};
 var P=function(n){return (isFinite(n)?n:0).toFixed(1).replace('.',',')+' %'};
@@ -3885,8 +3854,8 @@ T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();
    Tidak pernah memblokir aplikasi; semua kegagalan jaringan/error ditelan diam-diam.
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 2,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.1',    // HARUS sama dengan versionName
+  code: 3,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.2',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
@@ -4148,18 +4117,9 @@ var it=[['Omzet',R(rev),''],['Laba kotor',R(gp),gp<0?'dn':''],['Gross margin',P(
 $('#ores').innerHTML=it.map(function(x,idx){return '<div class="card" style="--i:'+idx+'"><p class="lbl">'+x[0]+'</p><p class="big sm '+x[2]+'">'+x[1]+'</p></div>'}).join('')}
 ['#op','#ou','#oc','#oo','#ot'].forEach(function(s){$(s).oninput=omzet});
 
-// invoice
-var IT=[];
-function irows(){$('#items').innerHTML=!IT.length?'<p class="empty">Belum ada item. Klik "Tambah item" untuk mulai.</p>':IT.map(function(x,i){return '<div class="irow"><label>Item<input data-i="'+i+'" data-k="d" placeholder="Nama item" value="'+esc(x.d)+'"></label><label>Qty<input type="number" min="1" data-i="'+i+'" data-k="q" value="'+x.q+'"></label><label>Harga<input type="number" min="0" data-i="'+i+'" data-k="p" value="'+x.p+'"></label><button class="x iconbtn danger" data-r="'+i+'" aria-label="Hapus item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div>'}).join('')}
-function inv(){var sub=0,rows=IT.map(function(x){var t=x.q*x.p;sub+=t;return '<tr><td>'+esc(x.d)+'</td><td>'+x.q+'</td><td>'+R(x.p)+'</td><td>'+R(t)+'</td></tr>'}).join(''),tx=sub*(+$('#ix').value||0)/100,due=$('#id').value;
-$('#paper').innerHTML='<div class="row"><h3>INVOICE</h3><b>'+esc($('#in').value)+'</b></div><p style="margin-top:14px"><b>Dari</b><br>'+esc($('#ib').value)+'</p><p style="margin-top:10px"><b>Untuk</b><br>'+esc($('#ic').value)+'</p><p style="margin-top:10px">Tanggal: '+now.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})+(due?' · Jatuh tempo: '+(function(){var p=due.split('-');return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})})():'')+' </p><table><thead><tr><th>Item</th><th>Qty</th><th>Harga</th><th>Total</th></tr></thead><tbody>'+rows+'</tbody></table><div class="row"><span>Subtotal</span><span>'+R(sub)+'</span></div><div class="row"><span>Pajak</span><span>'+R(tx)+'</span></div><div class="row" style="font-size:18px;margin-top:8px"><b>Total</b><b>'+R(sub+tx)+'</b></div>'}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-$('#items').oninput=function(e){var i=e.target.dataset.i,k=e.target.dataset.k;if(i==null)return;IT[i][k]=k=='d'?e.target.value:+e.target.value||0;inv()};
-$('#items').onclick=function(e){var r=e.target.dataset.r;if(r!=null){IT.splice(r,1);irows();inv()}};
-$('#iadd').onclick=function(){IT.push({d:'Item baru',q:1,p:0});irows();inv()};
-['#in','#id','#ib','#ic','#ix'].forEach(function(s){$(s).oninput=inv});
-$('#iprint').onclick=function(){try{window.print()}catch(e){}};
-var dd2=new Date(now);dd2.setDate(dd2.getDate()+14);$('#id').value=iso(dd2.getFullYear(),dd2.getMonth(),dd2.getDate());$('#tdt').value=today;
+
+$('#tdt').value=today;
 
 // nav
 document.addEventListener('click',function(e){var b=e.target.closest('[data-go]');if(!b)return;
@@ -4473,27 +4433,12 @@ $('#tw').innerHTML=wopts('BCA');
 function wsum(){var by={};T.forEach(function(x){var w=x.w||'Tunai di rumah';by[w]=(by[w]||0)+(x.t=='income'?x.a:-x.a)});var ks=Object.keys(by).sort(function(a,b){return by[b]-by[a]});$('#wsum').innerHTML=ks.map(function(w,idx){return '<div class="tx" style="animation-delay:'+(idx*50)+'ms"><span>'+esc(w)+'</span><b class="'+(by[w]<0?'dn':'')+'">'+R(by[w])+'</b></div>'}).join('')||'<p class="empty">Belum ada transaksi.</p>'}
 var _tl=tlist;tlist=function(){_tl();wsum();numAnim('#wsum b',800)};
 
-var LOGO='',QRIS='';
-$('#ibk').innerHTML=['Bank','E-wallet'].map(function(k){return '<optgroup label="'+k+'">'+WH[k].map(function(n){return '<option>'+n+'</option>'}).join('')+'</optgroup>'}).join('');
-function rimg(f,cb){var e=$('#ierr');e.textContent='';if(!f)return cb('');if(f.type.indexOf('image/')!=0||f.size>2e6){e.textContent='Pilih file gambar dengan ukuran maksimal 2 MB.';return}var r=new FileReader();r.onload=function(){var res=String(r.result||'');if(res.indexOf('data:image/')!==0){e.textContent='File gambar tidak valid.';return}cb(res)};r.readAsDataURL(f)}
-function extraInv(){var p=$('#paper'),m=$('#im').value,ls=$('#is').value=='Lunas';
-$('#itr').style.display=m=='Transfer'?'':'none';$('#iqr').style.display=m=='QRIS'?'':'none';$('#ilx').style.display=LOGO?'':'none';
-var pay=m=='Transfer'?'Transfer ke '+esc($('#ibk').value)+'<br>No. rekening '+esc($('#ino').value)+' a.n. '+esc($('#inm').value):m=='QRIS'?'Bayar dengan QRIS'+(QRIS?'<br><img src="'+QRIS+'" alt="Kode QRIS" style="width:140px;max-width:100%;margin-top:8px;background:#fff;padding:6px;border-radius:4px">':''):'Tunai, dibayar langsung saat serah terima';
-p.insertAdjacentHTML('beforeend','<div class="payblock" style="margin-top:22px;padding-top:14px;border-top:1px solid #8B7CC7"><div class="row" style="align-items:flex-start"><div><b>Metode pembayaran</b><p style="margin-top:4px">'+pay+'</p></div><span style="padding:6px 12px;border-radius:4px;font-weight:700;background:'+(ls?'#5A3B8C':'#0E0B1D')+';color:#C9C2E3;white-space:nowrap">'+(ls?'LUNAS':'BELUM LUNAS')+'</span></div></div>');
-if(LOGO)p.insertAdjacentHTML('afterbegin','<img src="'+LOGO+'" alt="Logo bisnis" style="max-height:56px;max-width:180px;display:block;margin-bottom:16px">')}
-var _inv=inv;inv=function(){_inv();extraInv();numAnim('#paper .row[style*="18px"] b:last-child',500)};
-['#in','#id','#ib','#ic','#ix','#is','#im','#ibk','#ino','#inm'].forEach(function(s){$(s).oninput=inv});
-$('#il').onchange=function(){rimg(this.files[0],function(d){LOGO=d;inv()})};
-$('#iqf').onchange=function(){rimg(this.files[0],function(d){QRIS=d;inv()})};
-$('#ilx').onclick=function(){LOGO='';$('#il').value='';inv()};
-
-
 var _omz=omzet;omzet=function(){_omz();document.querySelectorAll('#ores .big').forEach(function(e){e.classList.remove('fl');void e.offsetWidth;e.classList.add('fl')});numAnim('#ores .big',600)};
 ['#op','#ou','#oc','#oo','#ot'].forEach(function(s){$(s).oninput=omzet});
 
 $('#eye').onclick=function(){document.body.classList.toggle('priv');this.textContent=document.body.classList.contains('priv')?'Tampilkan saldo':'Sembunyikan saldo'};
 
-window.addEventListener('hashchange',function(){var h=location.hash;if(!h||h=='#dashboard')dash();else if(h=='#goals')gl();else if(h=='#analitik')dash();else if(h=='#omzet')omzet();else if(h=='#invoice')inv();else if(h=='#tracker')tlist();else if(h=='#anggaran')renderSim();stag()});
+window.addEventListener('hashchange',function(){var h=location.hash;if(!h||h=='#dashboard')dash();else if(h=='#goals')gl();else if(h=='#analitik')dash();else if(h=='#omzet')omzet();else if(h=='#tracker')tlist();else if(h=='#anggaran')renderSim();stag()});
 
 /* Bersihkan preferensi menu tersembunyi dari versi lama Nexora */
 try{localStorage.removeItem('nx_nav_hidden')}catch(e){}
@@ -4507,7 +4452,7 @@ $('#xclose').onclick=bye;
 $('#breopen').onclick=function(){document.body.classList.remove('closing')};
 
 /* ── Tab return animation ── */
-document.addEventListener('visibilitychange',function(){if(!document.hidden&&!RM&&!document.body.classList.contains('closing')){var a=$('.app');a.style.animation='none';void a.offsetWidth;a.style.animation='view-enter .7s ease-out';setTimeout(function(){a.style.animation=''},800)}});
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&!RM&&!document.body.classList.contains('closing')&&!isNativeApp()){var a=$('.app');a.style.animation='none';void a.offsetWidth;a.style.animation='view-enter .7s ease-out';setTimeout(function(){a.style.animation=''},800)}});
 
 /* ── Intro screen ── */
 if(false){var it=document.createElement('div');it.id='intro';it.innerHTML='<b>nexora</b><i></i>';document.body.appendChild(it);setTimeout(function(){it.remove()},2700)}
@@ -4579,6 +4524,7 @@ function playCinematicIntroSound(){
 (function(){
   var it = document.getElementById('nexora-cinematic-intro');
   if(!it) return;
+  if(isNativeApp()){ try{ it.remove(); }catch(e){} return; }
 
   // Coba putar suara intro secara otomatis atau saat interaksi pertama
   try {
@@ -4596,7 +4542,7 @@ function playCinematicIntroSound(){
   }, 1900);
 })();
 /* ── Init ── */
-fillCats();tlist();omzet();irows();inv();gl();route();dash();window.scrollTo(0, 0);
+fillCats();tlist();omzet();gl();route();dash();window.scrollTo(0, 0);
 
 /* ── Interactive 3D Parallax & Magnetic Tilt ── */
 
@@ -4710,6 +4656,7 @@ setupChartInteractions();
     requestAnimationFrame(renderParticles);
   }
   // renderParticles disabled for professional clarity
+})();
 })();
 
 

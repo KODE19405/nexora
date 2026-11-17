@@ -3,7 +3,8 @@
     "@capacitor/android": "^8.6.2",
     "@capacitor/browser": "^8.0.5",
     "@capacitor/cli": "^8.6.2",
-    "@capacitor/core": "^8.6.2"
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/preferences": "^8.0.1"
   },
   "devDependencies": {
     "canvas": "^3.2.3"
