@@ -662,7 +662,7 @@ input[type=&#34;date&#34;]::-webkit-calendar-picker-indicator{
 
 /* ── Native performance profile (APK) — flat rendering ── */
 body.native{overflow:hidden;overscroll-behavior:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-body.native main{height:100vh;height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(var(--bb,120px) + 10px)!important}
+body.native main{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 body.native *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 body.native nav{background:rgba(8,6,18,0.99);box-shadow:none}
 body.native .card,body.native .gloss,body.native .hero{box-shadow:none!important}
@@ -1057,11 +1057,20 @@ body.native nav a{user-select:none;-webkit-user-select:none}
     padding: 0;
   }
   .app{
-    grid-template-columns: 1fr;
-    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
   }
   main{
-    padding: 18px 14px calc(var(--bb, 110px) + 10px) 14px;
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 18px 14px 16px 14px;
   }
   .head{
     flex-direction: column;
@@ -1084,8 +1093,10 @@ body.native nav a{user-select:none;-webkit-user-select:none}
     font-size: 20px;
   }
   nav{
-    position: fixed;
-    inset: auto 0 0 0;
+    position: static;
+    inset: auto;
+    order: 2;
+    flex: none;
     height: auto;
     flex-direction: row;
     border: 0;
@@ -1105,7 +1116,7 @@ body.native nav a{user-select:none;-webkit-user-select:none}
     flex-direction: column;
     gap: 3px;
     justify-content: center;
-    min-width: 58px;
+    min-width: 0;
     flex: 1;
     border-radius: 8px;
   }
@@ -1195,21 +1206,27 @@ body.native nav a{user-select:none;-webkit-user-select:none}
   .g2, .g2b, .group-grid{grid-template-columns: 1fr}
 }
 @media(max-width: 768px){
-  .app{grid-template-columns: 1fr}
+  .app{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
   nav{
-    position: fixed; inset: auto 0 0 0; height: auto;
+    position: static; inset: auto; order: 2; flex: none; height: auto;
     flex-direction: row; border: 0;
     border-top: 1px solid var(--glass-border);
-    background: rgba(8, 6, 18, 0.92);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    background: rgba(8, 6, 18, 0.97);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
     z-index: 30; justify-content: space-around;
   }
   .logo, .xbtn{display:none!important}
-  nav a{padding: 8px 6px; font-size: 11px; flex-direction: column; gap: 4px; justify-content: center; flex: 1}
+  nav a{padding: 8px 6px; font-size: 11px; flex-direction: column; gap: 4px; justify-content: center; flex: 1; min-width: 0;}
   nav a .nav-icon{width: 26px; height: 26px}
-  main{padding-bottom: 96px}
+  main{flex: 1; min-height: 0; height: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 18px 14px 24px 14px;}
   .method-pills{grid-template-columns: 1fr}
   .two, .res{grid-template-columns: 1fr}
 }
@@ -2415,7 +2432,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{
 
 /* ── Native performance profile (APK) — flat rendering ── */
 body.native{overflow:hidden;overscroll-behavior:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-body.native main{height:100vh;height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(var(--bb,120px) + 10px)!important}
+body.native main{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 body.native *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 body.native nav{background:rgba(8,6,18,0.99);box-shadow:none}
 body.native .card,body.native .gloss,body.native .hero{box-shadow:none!important}
@@ -2798,11 +2815,20 @@ body.native nav a{user-select:none;-webkit-user-select:none}
     padding: 0;
   }
   .app{
-    grid-template-columns: 1fr;
-    min-height: 1024px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
   }
   main{
-    padding: 18px 14px calc(var(--bb, 110px) + 10px) 14px;
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 18px 14px 16px 14px;
   }
   .head{
     flex-direction: column;
@@ -2825,8 +2851,10 @@ body.native nav a{user-select:none;-webkit-user-select:none}
     font-size: 20px;
   }
   nav{
-    position: fixed;
-    inset: auto 0 0 0;
+    position: static;
+    inset: auto;
+    order: 2;
+    flex: none;
     height: auto;
     flex-direction: row;
     border: 0;
@@ -2846,7 +2874,7 @@ body.native nav a{user-select:none;-webkit-user-select:none}
     flex-direction: column;
     gap: 3px;
     justify-content: center;
-    min-width: 58px;
+    min-width: 0;
     flex: 1;
     border-radius: 8px;
   }
@@ -2936,21 +2964,27 @@ body.native nav a{user-select:none;-webkit-user-select:none}
   .g2, .g2b, .group-grid{grid-template-columns: 1fr}
 }
 @media(max-width: 768px){
-  .app{grid-template-columns: 1fr}
+  .app{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
   nav{
-    position: fixed; inset: auto 0 0 0; height: auto;
+    position: static; inset: auto; order: 2; flex: none; height: auto;
     flex-direction: row; border: 0;
     border-top: 1px solid var(--glass-border);
-    background: rgba(8, 6, 18, 0.92);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    background: rgba(8, 6, 18, 0.97);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
     z-index: 30; justify-content: space-around;
   }
   .logo, .xbtn{display:none!important}
-  nav a{padding: 8px 6px; font-size: 11px; flex-direction: column; gap: 4px; justify-content: center; flex: 1}
+  nav a{padding: 8px 6px; font-size: 11px; flex-direction: column; gap: 4px; justify-content: center; flex: 1; min-width: 0;}
   nav a .nav-icon{width: 26px; height: 26px}
-  main{padding-bottom: 96px}
+  main{flex: 1; min-height: 0; height: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 18px 14px 24px 14px;}
   .method-pills{grid-template-columns: 1fr}
   .two, .res{grid-template-columns: 1fr}
 }
@@ -3869,8 +3903,8 @@ T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();
    Gagal total = diam-diam (tidak memblokir app).
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 6,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.5',    // HARUS sama dengan versionName
+  code: 7,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.6',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
@@ -3942,11 +3976,6 @@ document.addEventListener('click',function(e){
   var btn=e.target.closest('.btn,nav a,.chips button');
   if(btn)createRipple({currentTarget:btn,clientX:e.clientX,clientY:e.clientY})
 });
-
-/* ── Ukur tinggi bottom bar → pasang variabel --bb pada <html> ──
-   Dipakai padding-bottom main agar tidak ada isi yang terselip di bawah bar. */
-function syncBottomBar(){var n=document.getElementById('sidenav');if(!n)return;var cs=getComputedStyle(n);var h=(cs.position==='fixed')?Math.ceil(n.getBoundingClientRect().height):0;document.documentElement.style.setProperty('--bb',(h+14)+'px')}
-window.addEventListener('load',syncBottomBar);window.addEventListener('resize',syncBottomBar);window.addEventListener('orientationchange',syncBottomBar);
 
 /* ── View transition with crossfade ── */
 var currentView=null;

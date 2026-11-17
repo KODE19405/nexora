@@ -1,6 +1,6 @@
 {
-  "versionCode": 6,
-  "versionName": "1.5",
-  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.5/Nexora.apk",
-  "notes": "Perbaikan cek pembaruan (cek ke 2 sumber), sama lancarnya dengan 1.4"
+  "versionCode": 7,
+  "versionName": "1.6",
+  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.6/Nexora.apk",
+  "notes": "Konten tidak pernah terpotong bar bawah (layout kolom), menu AI selalu terlihat"
 }
