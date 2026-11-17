@@ -679,6 +679,18 @@ input[type=&#34;date&#34;]::-webkit-calendar-picker-indicator{
 }
 .irow{display:grid;grid-template-columns:2fr .7fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px}
 
+/* ── Update banner ── */
+.update-banner{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 14px);left:50%;transform:translateX(-50%);z-index:95;width:min(460px,calc(100vw - 32px));display:flex;align-items:center;gap:12px;background:rgba(18,13,38,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--ln-strong);border-radius:16px;padding:12px 14px;box-shadow:0 16px 44px rgba(0,0,0,0.5),0 0 22px var(--ac-glow);animation:update-in 0.4s cubic-bezier(0.16,1,0.3,1)}
+.update-banner svg{flex:none;stroke:var(--lt-bright)}
+.update-banner .ux-body{flex:1;min-width:0}
+.update-banner .ux-title{margin:0;font-size:13px;font-weight:700;color:#fff;letter-spacing:0.02em}
+.update-banner .ux-notes{margin:2px 0 0;font-size:12px;color:var(--tx-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.update-banner .ux-actions{display:flex;gap:6px;align-items:center;flex:none}
+.update-banner .ux-later{background:transparent;border:0;color:var(--tx-muted);font-size:12px;padding:8px 8px;cursor:pointer;border-radius:8px;font-family:inherit}
+.update-banner .ux-later:hover{color:var(--lt-bright)}
+.update-banner .ux-later:focus-visible{outline:2px solid var(--lt);outline-offset:2px}
+@keyframes update-in{from{opacity:0;transform:translate(-50%,-14px)}}
+
 /* ── Toasts &amp; Modals ── */
 .toast-wrap{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:10px;width:min(440px,calc(100vw - 32px))}
 .toast{
@@ -3866,6 +3878,62 @@ if(!x){toast('Transaksi tidak ditemukan.','err');return Promise.resolve(false)}
 return confirmDialog('Hapus transaksi?','“'+x.d+'” ('+R(x.a)+') akan dihapus permanen dari data Anda.','Hapus').then(function(ok){
 if(!ok)return false;
 T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();gl();toast('Transaksi dihapus.');return true})}
+
+/* ── Update checker (khusus APK) ──
+   Alur: baca update.json dari hosting statis (GitHub raw) → bandingkan versionCode
+   dengan build saat ini → jika lebih baru, tampilkan banner (bukan dialog modal).
+   Tidak pernah memblokir aplikasi; semua kegagalan jaringan/error ditelan diam-diam.
+   Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
+var NEXORA_UPDATE = {
+  code: 2,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.1',    // HARUS sama dengan versionName
+  manifestUrl: 'https://raw.githubusercontent.com/USERNAME/REPO/main/update.json',
+  timeout: 6000
+};
+function isNativeApp(){ try { return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); } catch(e) { return false; } }
+function updateConfigured(){ var u = NEXORA_UPDATE.manifestUrl; return /^https:\/\//.test(u) && u.indexOf('USERNAME') < 0 && u.indexOf('REPO') < 0; }
+function checkForUpdate(){
+  if(!isNativeApp() || !updateConfigured()) return;
+  var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, NEXORA_UPDATE.timeout) : null;
+  fetch(NEXORA_UPDATE.manifestUrl, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+    .then(function(r){ if(!r.ok) throw new Error('update http ' + r.status); return r.json(); })
+    .then(function(m){
+      if(timer) clearTimeout(timer);
+      if(!m || typeof m.versionCode !== 'number' || !Number.isFinite(m.versionCode)) return;
+      if(!m.apkUrl || !/^https:\/\//.test(String(m.apkUrl))) return;
+      if(m.versionCode <= NEXORA_UPDATE.code) return;
+      showUpdateBanner(m);
+    })
+    .catch(function(){ if(timer) clearTimeout(timer); });
+}
+function showUpdateBanner(m){
+  if(document.querySelector('.update-banner')) return;
+  var b = document.createElement('div');
+  b.className = 'update-banner'; b.setAttribute('role', 'status');
+  b.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7.5 10.5 12 15l4.5-4.5"/><path d="M4 18h16"/></svg>'
+    + '<div class="ux-body"><p class="ux-title">Pembaruan tersedia</p><p class="ux-notes"></p></div>'
+    + '<div class="ux-actions"><button type="button" class="btn" data-ux="go" style="padding:8px 14px;font-size:12.5px;white-space:nowrap">Perbarui</button>'
+    + '<button type="button" class="ux-later" data-ux="later" aria-label="Tutup pemberitahuan pembaruan">Nanti</button></div>';
+  var label = 'Nexora ' + (m.versionName ? String(m.versionName) : '') + ' siap dipasang';
+  if(m.notes) label += ' · ' + String(m.notes);
+  b.querySelector('.ux-notes').textContent = label;
+  b.addEventListener('click', function(e){
+    var t = e.target.closest('[data-ux]');
+    if(!t) return;
+    if(t.dataset.ux === 'later') { b.remove(); return; }
+    if(t.dataset.ux === 'go') {
+      var url = String(m.apkUrl);
+      try {
+        var B = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser;
+        if(B && B.open) { B.open({ url: url }); return; }
+      } catch(err) {}
+      window.open(url, '_system', 'noopener');
+    }
+  });
+  document.body.appendChild(b);
+}
+window.addEventListener('load', function(){ setTimeout(checkForUpdate, 1800); });
 
 /* ── Ripple click effect ── */
 function createRipple(e){
