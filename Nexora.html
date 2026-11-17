@@ -661,10 +661,18 @@ input[type=&#34;date&#34;]::-webkit-calendar-picker-indicator{
 }
 
 /* ── Native performance profile (APK) ── */
+body.native{overflow:hidden}
+body.native main{height:100vh;height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 body.native nav{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(8,6,18,0.94)}
 body.native .modal-backdrop,body.native .modal,body.native .toast,body.native .update-banner{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 body.native .view,body.native .view.on{animation:none!important}
 body.native .view{filter:none!important;transition:none!important}
+.cal-grid{overflow-x:auto}
+#analitik .grid{min-width:0}
+#analitik .card{min-width:0;overflow-wrap:anywhere}
+#analitik svg{max-width:100%;height:auto}
+.card{min-width:0}
+.grid{min-width:0}
 
 /* ── Update banner ── */
 .update-banner{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 14px);left:50%;transform:translateX(-50%);z-index:95;width:min(460px,calc(100vw - 32px));display:flex;align-items:center;gap:12px;background:rgba(18,13,38,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--ln-strong);border-radius:16px;padding:12px 14px;box-shadow:0 16px 44px rgba(0,0,0,0.5),0 0 22px var(--ac-glow);animation:update-in 0.4s cubic-bezier(0.16,1,0.3,1)}
@@ -1630,7 +1638,7 @@ body.native .view{filter:none!important;transition:none!important}
   justify-content: center;
   overflow: hidden;
   pointer-events: none;
-  animation: introFadeOut 0.55s cubic-bezier(0.16, 1, 0.3, 1) 1.9s forwards;
+  animation: introFadeOut 0.45s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
 }
 
 @keyframes introFadeOut {
@@ -2402,10 +2410,18 @@ input[type="date"]::-webkit-calendar-picker-indicator{
 }
 
 /* ── Native performance profile (APK) ── */
+body.native{overflow:hidden}
+body.native main{height:100vh;height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 body.native nav{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(8,6,18,0.94)}
 body.native .modal-backdrop,body.native .modal,body.native .toast,body.native .update-banner{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 body.native .view,body.native .view.on{animation:none!important}
 body.native .view{filter:none!important;transition:none!important}
+.cal-grid{overflow-x:auto}
+#analitik .grid{min-width:0}
+#analitik .card{min-width:0;overflow-wrap:anywhere}
+#analitik svg{max-width:100%;height:auto}
+.card{min-width:0}
+.grid{min-width:0}
 
 /* ── Toasts & Modals ── */
 .toast-wrap{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:10px;width:min(440px,calc(100vw - 32px))}
@@ -3359,7 +3375,7 @@ body.native .view{filter:none!important;transition:none!important}
   justify-content: center;
   overflow: hidden;
   pointer-events: none;
-  animation: introFadeOut 0.55s cubic-bezier(0.16, 1, 0.3, 1) 1.9s forwards;
+  animation: introFadeOut 0.45s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
 }
 
 @keyframes introFadeOut {
@@ -3722,23 +3738,28 @@ body.native .view{filter:none!important;transition:none!important}
 <div id="bye"><b>nexora</b><p>Sampai jumpa. Data Anda tersimpan di browser ini. Silakan tutup tab ini.</p><button class="btn ghost" id="breopen" type="button">Buka kembali</button></div>
 <script>
 (async function(){
-/* ── Durable storage hydration (APK) ──
-   localStorage di WebView bisa tidak ikut ter-flush saat proses dibunuh sistem
-   (atau saat kehabisan memori). Preferences (SharedPreferences Android) adalah
-   sumber kebenaran di APK: setiap tulisan di-mirror, dan saat boot data
-   Preferences disalin kembali ke localStorage SEBELUM kode aplikasi membaca. */
+/* ── Durable storage (APK) ──
+   Sumber kebenaran = Capacitor Preferences (SharedPreferences Android, di-commit native).
+   localStorage hanya dipakai di browser. Jika Preferences belum punya nilai tetapi
+   localStorage punya (upgrade dari versi 1.1/1.2), nilai localStorage diadopsi SEKALI ke Preferences. */
 var PREFS_KEYS=['nx_t','nx_g','nx_b','nx_budget_v2','nx_v2_cleaned3','nx_v4_orphans'];
 var nativePrefs=function(){try{var P=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Preferences;return (P&&P.get&&P.set)?P:null}catch(e){return null}};
+var STORE=null;
 try{
   if(isNativeApp())document.body.classList.add('native');
   var P=nativePrefs();
   if(P){
-    var pairs=await Promise.all(PREFS_KEYS.map(function(k){return P.get({key:k}).then(function(r){return{key:k,value:r&&r.value}},function(){return{key:k,value:undefined}})}));
-    pairs.forEach(function(pair){if(typeof pair.value==='string'&&pair.value.length){try{localStorage.setItem(pair.key,pair.value)}catch(e){}}});
-    var __origSet=localStorage.setItem.bind(localStorage);
-    localStorage.setItem=function(k,v){try{__origSet(k,v)}catch(e){} try{P.set({key:k,value:String(v)})}catch(e){}};
+    var pairs=await Promise.all(PREFS_KEYS.map(function(k){return P.get({key:k}).then(function(r){return{key:k,value:r&&r.value}},function(){return{key:k,value:null}})}));
+    STORE={};
+    PREFS_KEYS.forEach(function(k,i){var v=pairs[i]&&pairs[i].value;if(typeof v==='string'&&v.length)STORE[k]=v});
+    /* Migrasi sekali dari localStorage (upgrade dari 1.1/1.2). */
+    PREFS_KEYS.forEach(function(k){if(STORE[k]==null){try{var v=storeGetRaw(k);if(v!=null){STORE[k]=v;try{P.set({key:k,value:String(v)})}catch(e){}}}catch(e){}}});
   }
-}catch(e){}
+}catch(e){STORE=null}
+var NATIVE=!!STORE;
+function storeGetRaw(k){if(NATIVE)return STORE[k]!==undefined?STORE[k]:null;try{return window.localStorage.getItem(k)}catch(e){return null}}
+function storeSetRaw(k,v){v=String(v);if(NATIVE){STORE[k]=v;try{nativePrefs().set({key:k,value:v})}catch(e){}return true}try{window.localStorage.setItem(k,v);return true}catch(e){return false}}
+function storeRemove(k){if(NATIVE){delete STORE[k];try{var P=nativePrefs();if(P&&P.remove)P.remove({key:k})}catch(e){}return}try{localStorage.removeItem(k)}catch(e){}}
 var $=function(s){return document.querySelector(s)};
 var R=function(n){return 'Rp '+Math.round(n).toLocaleString('id-ID')};
 var P=function(n){return (isFinite(n)?n:0).toFixed(1).replace('.',',')+' %'};
@@ -3766,26 +3787,26 @@ var SEED_AMT={
 };
 var SEED_SIG=[['income','Gaji','Gaji bulanan',1],['income','Freelance','Proyek desain',8],['income','Bisnis','Penjualan online',14],['expense','Sewa','Sewa apartemen',2],['expense','Makanan','Makan & kopi',10],['expense','Transport','Bensin & ojek',12],['expense','Tagihan','Listrik & internet',5],['expense','Hiburan','Streaming & nonton',17],['expense','Belanja','Belanja bulanan',20]];
 function isSeedTx(x){for(var i=0;i<SEED_SIG.length;i++){var s=SEED_SIG[i];if(x.t===s[0]&&x.c===s[1]&&x.d===s[2]&&+x.dt.slice(8)===s[3]){var am=SEED_AMT[x.t+'|'+x.c]||[];return am.indexOf(+x.a)>-1}}return false}
-try{var rawT=localStorage.getItem('nx_t');if(rawT!==null){var parsed=JSON.parse(rawT);T=Array.isArray(parsed)?parsed.filter(function(x){return x&&typeof x==='object'&&isFinite(+x.a)&&typeof x.dt==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x.dt)}):[]}}catch(e){T=[]}
-try{if(localStorage.getItem('nx_v2_cleaned3')!=='1'){
+try{var rawT=storeGetRaw('nx_t');if(rawT!==null){var parsed=JSON.parse(rawT);T=Array.isArray(parsed)?parsed.filter(function(x){return x&&typeof x==='object'&&isFinite(+x.a)&&typeof x.dt==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x.dt)}):[]}}catch(e){T=[]}
+try{if(storeGetRaw('nx_v2_cleaned3')!=='1'){
   T=T.filter(function(x){return !isSeedTx(x)});
-  var rawG=null;try{rawG=JSON.parse(localStorage.getItem('nx_g'))}catch(e){}
+  var rawG=null;try{rawG=JSON.parse(storeGetRaw('nx_g'))}catch(e){}
   if(Array.isArray(rawG)){var ng=rawG.filter(function(g){
     var isDemo=(g&&g.n==='Dana darurat'&&+g.t===30000000&&Array.isArray(g.h)&&g.h.length===1&&+g.s===12500000)||(g&&g.n==='Liburan Bali'&&+g.t===12000000&&Array.isArray(g.h)&&g.h.length===1&&+g.s===4800000);
     return !isDemo});
-    localStorage.setItem('nx_g',JSON.stringify(ng))}
+    storeSetRaw('nx_g',JSON.stringify(ng))}
   /* Baris residu demo (otomatis dibuat app, bukan input pengguna): deposit canned day 3/9, dan income saat goal demo dihapus.
      Match sangat spesifik — tidak mungkin cocok dengan transaksi pengguna biasa. */
   T=T.filter(function(x){return !(/^Setor ke (Dana darurat|Liburan Bali)$/.test(x.d)&&((+x.dt.slice(8)===3&&+x.a===1500000)||(+x.dt.slice(8)===9&&+x.a===800000)))});
   T=T.filter(function(x){return !((x.d==='Target dihapus: Dana darurat'&&+x.a===12500000)||(x.d==='Target dihapus: Liburan Bali'&&+x.a===4800000))});
-  try{localStorage.setItem('nx_t',JSON.stringify(T));localStorage.setItem('nx_v2_cleaned3','1')}catch(e){}
+  try{storeSetRaw('nx_t',JSON.stringify(T));storeSetRaw('nx_v2_cleaned3','1')}catch(e){}
 }}catch(e){}
 /* ── Migrasi v4_orphans: baris residu Goals yang tidak lagi terikat ke Goal aktif.
    Tujuan: Goal yang dihapus sebelumnya (sebelum removeGoalRows ada) tidak boleh
    muncul lagi di mana pun. Hanya baris yang dibuat otomatis app & yatim piatu
    yang dihapus — transaksi asli (non-Goals) tidak disentuh. */
-try{if(localStorage.getItem('nx_v4_orphans')!=='1'){
-  var liveIds={};try{var lg=JSON.parse(localStorage.getItem('nx_g'));if(Array.isArray(lg))lg.forEach(function(g){if(g&&g.id)liveIds[g.id]=1})}catch(e){}
+try{if(storeGetRaw('nx_v4_orphans')!=='1'){
+  var liveIds={};try{var lg=JSON.parse(storeGetRaw('nx_g'));if(Array.isArray(lg))lg.forEach(function(g){if(g&&g.id)liveIds[g.id]=1})}catch(e){}
   var before=T.length;
   T=T.filter(function(x){
     if(x.c!=='Goals')return true;
@@ -3796,28 +3817,14 @@ try{if(localStorage.getItem('nx_v4_orphans')!=='1'){
     var isAppRow=/^(Setor ke|Tarik dari) /.test(d)||/^Target dihapus: /.test(d);
     return !isAppRow;
   });
-  if(T.length!==before){try{localStorage.setItem('nx_t',JSON.stringify(T))}catch(e){}}
-  try{localStorage.setItem('nx_v4_orphans','1')}catch(e){}
+  if(T.length!==before){try{storeSetRaw('nx_t',JSON.stringify(T))}catch(e){}}
+  try{storeSetRaw('nx_v4_orphans','1')}catch(e){}
 }}catch(e){}
-function save(){try{localStorage.setItem('nx_t',JSON.stringify(T))}catch(e){}}
+function save(){try{storeSetRaw('nx_t',JSON.stringify(T))}catch(e){}}
 var today=iso(now.getFullYear(),now.getMonth(),now.getDate());
 var ym=function(d){return d.slice(0,7)},cur=today.slice(0,7);
 
-try{
-  if(T.length === 0){
-    T = [
-      {id:101, t:'income', c:'Gaji', d:'Salary Executive Retainer', a:28500000, dt:today, w:'BCA'},
-      {id:102, t:'income', c:'Freelance', d:'UI/UX Architecture Consultancy', a:14200000, dt:today, w:'Bank Jago'},
-      {id:103, t:'income', c:'Bisnis', d:'SaaS Subscription Nexora Pro', a:9650000, dt:today, w:'DANA'},
-      {id:104, t:'expense', c:'Sewa', d:'Penthouse Office Studio', a:6500000, dt:today, w:'BCA'},
-      {id:105, t:'expense', c:'Makanan', d:'Fine Dining & Tasting Menu', a:1450000, dt:today, w:'GoPay'},
-      {id:106, t:'expense', c:'Transport', d:'Aviation Fuel & Private Ride', a:850000, dt:today, w:'GoPay'},
-      {id:107, t:'expense', c:'Belanja', d:'MacBook Pro M4 Max & Studio Display', a:4800000, dt:today, w:'BCA'},
-      {id:108, t:'expense', c:'Tagihan', d:'High-speed Fiber & Server Cloud', a:1200000, dt:today, w:'BCA'}
-    ];
-    save();
-  }
-}catch(e){}
+/* Instalasi pertama: tidak ada data contoh — aplikasi mulai kosong. */
 
 /* Transaksi Goals adalah pemindahan uang (transfer), bukan pendapatan atau pengeluaran.
    Dikecualikan dari semua statistik, grafik, rekomendasi, dan perhitungan anggaran.
@@ -3854,8 +3861,8 @@ T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();
    Tidak pernah memblokir aplikasi; semua kegagalan jaringan/error ditelan diam-diam.
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 3,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.2',    // HARUS sama dengan versionName
+  code: 4,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.3',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
@@ -4126,7 +4133,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-go]'
 if(b.dataset.t){$('#tt').value=b.dataset.t;fillCats()}location.hash=b.dataset.go});
 window.addEventListener('hashchange',route);
 var G=[];
-try{var sg=JSON.parse(localStorage.getItem('nx_g'));if(Array.isArray(sg))G=sg.filter(function(g){return g&&typeof g==='object'&&typeof g.n==='string'&&isFinite(+g.t)&&+g.t>0});G.forEach(function(g){if(!g.id)g.id=Date.now()+Math.random()});var sb=JSON.parse(localStorage.getItem('nx_b'));if(sb&&typeof sb==='object'&&!Array.isArray(sb))BUD=sb}catch(e){}
+try{var sg=JSON.parse(storeGetRaw('nx_g'));if(Array.isArray(sg))G=sg.filter(function(g){return g&&typeof g==='object'&&typeof g.n==='string'&&isFinite(+g.t)&&+g.t>0});G.forEach(function(g){if(!g.id)g.id=Date.now()+Math.random()});var sb=JSON.parse(storeGetRaw('nx_b'));if(sb&&typeof sb==='object'&&!Array.isArray(sb))BUD=sb}catch(e){}
 var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 function cnt(el,ms){if(RM||!el)return;var m=el.textContent.match(/^([^\d−-]*)(-?[\d.,]+|−[\d.,]+)(.*)$/);if(!m)return;var pre=m[1],raw=m[2],suf=m[3],dec=raw.indexOf(',')>=0?raw.length-raw.indexOf(',')-1:0,t=parseFloat(raw.replace(/−/g,'-').replace(/\./g,'').replace(',','.'));if(isNaN(t))return;var id=el._c=(el._c||0)+1,t0=performance.now(),D=ms||1000;
 setTimeout(function(){if(el._c===id)el.textContent=pre+t.toLocaleString('id-ID',{minimumFractionDigits:dec,maximumFractionDigits:dec})+suf},D+150);
@@ -4136,7 +4143,7 @@ function ring(p,txt){var r=40,C=2*Math.PI*r;return '<svg viewBox="0 0 100 100" w
 function stag(){document.querySelectorAll('.view.on .card').forEach(function(c,i){c.style.setProperty('--i',i)})}
 
 /* Anggaran: Kalkulator Simulasi persentase (Terisolasi) */
-try{localStorage.removeItem('nx_bsim')}catch(e){}
+try{storeRemove('nx_bsim')}catch(e){}
 var BSIM_KEY='nx_budget_v2';
 var BCATS=[['Makan','Makanan'],['Tabungan','Goals'],['Laundry','Laundry'],['Jajan','Jajan'],['Hiburan','Hiburan'],['Dana Cadangan','Dana Cadangan'],['Kas','Kas'],['Bensin','Transport'],['Transportasi','Transport'],['Kos','Kos'],['Pulsa/Internet','Pulsa/Internet'],['Belanja Online','Belanja Online'],['Kebutuhan Lainnya','Kebutuhan Lainnya']];
 function bCatMap(){var m={};BCATS.forEach(function(bc){m[bc[0]]=bc[1]});return m}
@@ -4145,9 +4152,9 @@ var GROUP_CATS={Kebutuhan:['Makan','Laundry','Bensin','Transportasi','Kos','Puls
 var GROUP_OF={'Makan':'Kebutuhan','Laundry':'Kebutuhan','Bensin':'Kebutuhan','Transportasi':'Kebutuhan','Kos':'Kebutuhan','Pulsa/Internet':'Kebutuhan','Kas':'Kebutuhan','Kebutuhan Lainnya':'Kebutuhan','Tabungan':'Tabungan','Dana Cadangan':'Tabungan','Jajan':'Keinginan','Hiburan':'Keinginan','Belanja Online':'Keinginan'};
 var BDEF={method:'7020',periodType:'7d',start:null,end:null,sel:[],alloc:{},locked:{},kasMode:'need',custom:{k:70,t:20,i:10},customValid:{k:70,t:20,i:10}};
 function clone(o){return JSON.parse(JSON.stringify(o))}
-function loadBSim(){try{var s=JSON.parse(localStorage.getItem(BSIM_KEY));if(!s||typeof s!=='object')return clone(BDEF);var map=bCatMap(),out=clone(BDEF);if(['7020','5030','custom'].indexOf(s.method)>-1)out.method=s.method;if(['7d','14d','30d','month','custom'].indexOf(s.periodType)>-1)out.periodType=s.periodType;out.start=typeof s.start==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s.start)?s.start:null;out.end=typeof s.end==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s.end)?s.end:null;if(Array.isArray(s.sel)){out.sel=s.sel.filter(function(c,i,a){return map[c]&&a.indexOf(c)===i})}if(s.alloc&&typeof s.alloc==='object'){Object.keys(s.alloc).forEach(function(k){if(map[k]){var v=+s.alloc[k];if(isFinite(v)&&v>=0)out.alloc[k]=Math.round(v)}})}if(s.locked&&typeof s.locked==='object'){Object.keys(s.locked).forEach(function(k){if(map[k])out.locked[k]=!!s.locked[k]})}if(['need','want'].indexOf(s.kasMode)>-1)out.kasMode=s.kasMode;if(s.custom&&typeof s.custom==='object'){['k','t','i'].forEach(function(k){var v=+s.custom[k];if(isFinite(v)&&v>=0&&v<=100)out.custom[k]=Math.round(v)})}if(s.customValid&&typeof s.customValid==='object'&&['k','t','i'].every(function(k){return isFinite(+s.customValid[k])&&s.customValid[k]>=0&&s.customValid[k]<=100&&['k','t','i'].reduce(function(a,j){return a+(+s.customValid[j]||0)},0)===100}))out.customValid={k:Math.round(s.customValid.k),t:Math.round(s.customValid.t),i:Math.round(s.customValid.i)};return out}catch(e){return clone(BDEF)}}
+function loadBSim(){try{var s=JSON.parse(storeGetRaw(BSIM_KEY));if(!s||typeof s!=='object')return clone(BDEF);var map=bCatMap(),out=clone(BDEF);if(['7020','5030','custom'].indexOf(s.method)>-1)out.method=s.method;if(['7d','14d','30d','month','custom'].indexOf(s.periodType)>-1)out.periodType=s.periodType;out.start=typeof s.start==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s.start)?s.start:null;out.end=typeof s.end==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s.end)?s.end:null;if(Array.isArray(s.sel)){out.sel=s.sel.filter(function(c,i,a){return map[c]&&a.indexOf(c)===i})}if(s.alloc&&typeof s.alloc==='object'){Object.keys(s.alloc).forEach(function(k){if(map[k]){var v=+s.alloc[k];if(isFinite(v)&&v>=0)out.alloc[k]=Math.round(v)}})}if(s.locked&&typeof s.locked==='object'){Object.keys(s.locked).forEach(function(k){if(map[k])out.locked[k]=!!s.locked[k]})}if(['need','want'].indexOf(s.kasMode)>-1)out.kasMode=s.kasMode;if(s.custom&&typeof s.custom==='object'){['k','t','i'].forEach(function(k){var v=+s.custom[k];if(isFinite(v)&&v>=0&&v<=100)out.custom[k]=Math.round(v)})}if(s.customValid&&typeof s.customValid==='object'&&['k','t','i'].every(function(k){return isFinite(+s.customValid[k])&&s.customValid[k]>=0&&s.customValid[k]<=100&&['k','t','i'].reduce(function(a,j){return a+(+s.customValid[j]||0)},0)===100}))out.customValid={k:Math.round(s.customValid.k),t:Math.round(s.customValid.t),i:Math.round(s.customValid.i)};return out}catch(e){return clone(BDEF)}}
 var SIM=loadBSim();
-function saveSim(){try{localStorage.setItem(BSIM_KEY,JSON.stringify(SIM))}catch(e){}}
+function saveSim(){try{storeSetRaw(BSIM_KEY,JSON.stringify(SIM))}catch(e){}}
 var simIso=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 function simParse(iso){var p=String(iso).split('-');return new Date(+p[0],+p[1]-1,+p[2])}
 function simPeriod(){var t=new Date();t.setHours(0,0,0,0);var y=t.getFullYear(),m=t.getMonth(),d=t.getDate();
@@ -4347,7 +4354,7 @@ document.querySelectorAll('#srb,.bar span').forEach(function(b){var w=b.style.wi
 stag()}
 
 var _d=dash;dash=function(){_d();extra()};
-function gsave(){try{localStorage.setItem('nx_g',JSON.stringify(G));localStorage.setItem('nx_b',JSON.stringify(BUD))}catch(e){}}
+function gsave(){try{storeSetRaw('nx_g',JSON.stringify(G));storeSetRaw('nx_b',JSON.stringify(BUD))}catch(e){}}
 function confetti(){if(RM)return;var cs=COL.concat(['#fff']);for(var i=0;i<40;i++){var c=document.createElement('div');c.className='cf';c.style.cssText='left:'+Math.random()*100+'%;background:'+cs[i%7]+';--x:'+(Math.random()*160-80)+'px;animation-delay:'+Math.random()*.4+'s;border-radius:2px';document.body.appendChild(c);setTimeout(function(e){e.remove()},3000,c)}}
 
 var busy=false,chatLog=[];
@@ -4441,7 +4448,7 @@ $('#eye').onclick=function(){document.body.classList.toggle('priv');this.textCon
 window.addEventListener('hashchange',function(){var h=location.hash;if(!h||h=='#dashboard')dash();else if(h=='#goals')gl();else if(h=='#analitik')dash();else if(h=='#omzet')omzet();else if(h=='#tracker')tlist();else if(h=='#anggaran')renderSim();stag()});
 
 /* Bersihkan preferensi menu tersembunyi dari versi lama Nexora */
-try{localStorage.removeItem('nx_nav_hidden')}catch(e){}
+try{storeRemove('nx_nav_hidden')}catch(e){}
 
 /* ── Card pointer tracking ── */
 // pointer tracking disabled for solid stability
@@ -4524,22 +4531,15 @@ function playCinematicIntroSound(){
 (function(){
   var it = document.getElementById('nexora-cinematic-intro');
   if(!it) return;
-  if(isNativeApp()){ try{ it.remove(); }catch(e){} return; }
+  if(RM){ try{ it.remove(); }catch(e){} return; }
 
-  // Coba putar suara intro secara otomatis atau saat interaksi pertama
-  try {
-    playCinematicIntroSound();
-  } catch(e){}
-
+  // Suara hanya diputar setelah gesture pertama (autoplay diblokir browser/WebView)
   document.addEventListener('pointerdown', function onceClick(){
     playCinematicIntroSound();
     document.removeEventListener('pointerdown', onceClick);
   }, {once: true});
 
-  setTimeout(function(){
-    it.classList.add('intro-closed');
-    setTimeout(function(){ try{ it.remove(); }catch(e){} }, 550);
-  }, 1900);
+  setTimeout(function(){ try{ it.remove(); }catch(e){} }, 1550);
 })();
 /* ── Init ── */
 fillCats();tlist();omzet();gl();route();dash();window.scrollTo(0, 0);
