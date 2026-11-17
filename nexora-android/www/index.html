@@ -660,13 +660,17 @@ input[type=&#34;date&#34;]::-webkit-calendar-picker-indicator{
   cursor: pointer;
 }
 
-/* ── Native performance profile (APK) ── */
-body.native{overflow:hidden}
-body.native main{height:100vh;height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-body.native nav{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(8,6,18,0.94)}
-body.native .modal-backdrop,body.native .modal,body.native .toast,body.native .update-banner{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+/* ── Native performance profile (APK) — flat rendering ── */
+body.native{overflow:hidden;overscroll-behavior:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body.native main{height:100vh;height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(var(--bb,120px) + 10px)!important}
+body.native *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.native nav{background:rgba(8,6,18,0.99);box-shadow:none}
+body.native .card,body.native .gloss,body.native .hero{box-shadow:none!important}
+body.native .card::before,body.native .card::after,body.native .card.gloss::before,body.native .card.gloss::after,body.native .card.hero::before,body.native .card.hero::after{display:none!important}
 body.native .view,body.native .view.on{animation:none!important}
 body.native .view{filter:none!important;transition:none!important}
+body.native .app{animation:none!important}
+body.native nav a{user-select:none;-webkit-user-select:none}
 .cal-grid{overflow-x:auto}
 #analitik .grid{min-width:0}
 #analitik .card{min-width:0;overflow-wrap:anywhere}
@@ -1057,7 +1061,7 @@ body.native .view{filter:none!important;transition:none!important}
     min-height: 100vh;
   }
   main{
-    padding: 18px 14px 105px 14px;
+    padding: 18px 14px calc(var(--bb, 110px) + 10px) 14px;
   }
   .head{
     flex-direction: column;
@@ -2409,13 +2413,17 @@ input[type="date"]::-webkit-calendar-picker-indicator{
   cursor: pointer;
 }
 
-/* ── Native performance profile (APK) ── */
-body.native{overflow:hidden}
-body.native main{height:100vh;height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-body.native nav{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(8,6,18,0.94)}
-body.native .modal-backdrop,body.native .modal,body.native .toast,body.native .update-banner{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+/* ── Native performance profile (APK) — flat rendering ── */
+body.native{overflow:hidden;overscroll-behavior:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body.native main{height:100vh;height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(var(--bb,120px) + 10px)!important}
+body.native *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.native nav{background:rgba(8,6,18,0.99);box-shadow:none}
+body.native .card,body.native .gloss,body.native .hero{box-shadow:none!important}
+body.native .card::before,body.native .card::after,body.native .card.gloss::before,body.native .card.gloss::after,body.native .card.hero::before,body.native .card.hero::after{display:none!important}
 body.native .view,body.native .view.on{animation:none!important}
 body.native .view{filter:none!important;transition:none!important}
+body.native .app{animation:none!important}
+body.native nav a{user-select:none;-webkit-user-select:none}
 .cal-grid{overflow-x:auto}
 #analitik .grid{min-width:0}
 #analitik .card{min-width:0;overflow-wrap:anywhere}
@@ -2794,7 +2802,7 @@ body.native .view{filter:none!important;transition:none!important}
     min-height: 1024px;
   }
   main{
-    padding: 18px 14px 105px 14px;
+    padding: 18px 14px calc(var(--bb, 110px) + 10px) 14px;
   }
   .head{
     flex-direction: column;
@@ -3757,8 +3765,8 @@ try{
   }
 }catch(e){STORE=null}
 var NATIVE=!!STORE;
-function storeGetRaw(k){if(NATIVE)return STORE[k]!==undefined?STORE[k]:null;try{return storeGetRaw(k)}catch(e){return null}}
-function storeSetRaw(k,v){v=String(v);if(NATIVE){STORE[k]=v;try{nativePrefs().set({key:k,value:v})}catch(e){}return true}try{storeSetRaw(k,v);return true}catch(e){return false}}
+function storeGetRaw(k){if(NATIVE)return STORE[k]!==undefined?STORE[k]:null;try{return window.localStorage.getItem(k)}catch(e){return null}}
+function storeSetRaw(k,v){v=String(v);if(NATIVE){STORE[k]=v;try{nativePrefs().set({key:k,value:v})}catch(e){}return true}try{window.localStorage.setItem(k,v);return true}catch(e){return false}}
 function storeRemove(k){if(NATIVE){delete STORE[k];try{var P=nativePrefs();if(P&&P.remove)P.remove({key:k})}catch(e){}return}try{localStorage.removeItem(k)}catch(e){}}
 var $=function(s){return document.querySelector(s)};
 var R=function(n){return 'Rp '+Math.round(n).toLocaleString('id-ID')};
@@ -3861,8 +3869,8 @@ T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();
    Tidak pernah memblokir aplikasi; semua kegagalan jaringan/error ditelan diam-diam.
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 4,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.3',    // HARUS sama dengan versionName
+  code: 5,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.4',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
@@ -3927,6 +3935,11 @@ document.addEventListener('click',function(e){
   var btn=e.target.closest('.btn,nav a,.chips button');
   if(btn)createRipple({currentTarget:btn,clientX:e.clientX,clientY:e.clientY})
 });
+
+/* ── Ukur tinggi bottom bar → pasang variabel --bb pada <html> ──
+   Dipakai padding-bottom main agar tidak ada isi yang terselip di bawah bar. */
+function syncBottomBar(){var n=document.getElementById('sidenav');if(!n)return;var cs=getComputedStyle(n);var h=(cs.position==='fixed')?Math.ceil(n.getBoundingClientRect().height):0;document.documentElement.style.setProperty('--bb',(h+14)+'px')}
+window.addEventListener('load',syncBottomBar);window.addEventListener('resize',syncBottomBar);window.addEventListener('orientationchange',syncBottomBar);
 
 /* ── View transition with crossfade ── */
 var currentView=null;
@@ -4135,7 +4148,7 @@ window.addEventListener('hashchange',route);
 var G=[];
 try{var sg=JSON.parse(storeGetRaw('nx_g'));if(Array.isArray(sg))G=sg.filter(function(g){return g&&typeof g==='object'&&typeof g.n==='string'&&isFinite(+g.t)&&+g.t>0});G.forEach(function(g){if(!g.id)g.id=Date.now()+Math.random()});var sb=JSON.parse(storeGetRaw('nx_b'));if(sb&&typeof sb==='object'&&!Array.isArray(sb))BUD=sb}catch(e){}
 var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
-function cnt(el,ms){if(RM||!el)return;var m=el.textContent.match(/^([^\d−-]*)(-?[\d.,]+|−[\d.,]+)(.*)$/);if(!m)return;var pre=m[1],raw=m[2],suf=m[3],dec=raw.indexOf(',')>=0?raw.length-raw.indexOf(',')-1:0,t=parseFloat(raw.replace(/−/g,'-').replace(/\./g,'').replace(',','.'));if(isNaN(t))return;var id=el._c=(el._c||0)+1,t0=performance.now(),D=ms||1000;
+function cnt(el,ms){if(RM||!el||document.body.classList.contains('native'))return;var m=el.textContent.match(/^([^\d−-]*)(-?[\d.,]+|−[\d.,]+)(.*)$/);if(!m)return;var pre=m[1],raw=m[2],suf=m[3],dec=raw.indexOf(',')>=0?raw.length-raw.indexOf(',')-1:0,t=parseFloat(raw.replace(/−/g,'-').replace(/\./g,'').replace(',','.'));if(isNaN(t))return;var id=el._c=(el._c||0)+1,t0=performance.now(),D=ms||1000;
 setTimeout(function(){if(el._c===id)el.textContent=pre+t.toLocaleString('id-ID',{minimumFractionDigits:dec,maximumFractionDigits:dec})+suf},D+150);
 (function f(n){if(el._c!=id)return;var p=Math.min(1,(n-t0)/D),v=t*(1-Math.pow(1-p,3));el.textContent=pre+v.toLocaleString('id-ID',{minimumFractionDigits:dec,maximumFractionDigits:dec})+suf;if(p<1)requestAnimationFrame(f)})(t0)}
 function numAnim(s,ms){document.querySelectorAll(s).forEach(function(el){cnt(el,ms)})}
@@ -4531,7 +4544,6 @@ function playCinematicIntroSound(){
 (function(){
   var it = document.getElementById('nexora-cinematic-intro');
   if(!it) return;
-  if(RM){ try{ it.remove(); }catch(e){} return; }
 
   // Suara hanya diputar setelah gesture pertama (autoplay diblokir browser/WebView)
   document.addEventListener('pointerdown', function onceClick(){
