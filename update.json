@@ -1,6 +1,6 @@
 {
-  "versionCode": 7,
-  "versionName": "1.6",
-  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.6/Nexora.apk",
-  "notes": "Konten tidak pernah terpotong bar bawah (layout kolom), menu AI selalu terlihat"
+  "versionCode": 8,
+  "versionName": "1.7",
+  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.7/Nexora.apk",
+  "notes": "Halaman penuh sempurna di semua ukuran layar (dulu tinggi dipaksa 1024px), bar bawah tetap tampil"
 }
