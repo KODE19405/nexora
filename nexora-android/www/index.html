@@ -1070,7 +1070,7 @@ body.native nav a{user-select:none;-webkit-user-select:none}
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-    padding: 18px 14px calc(var(--bb, 132px) + env(safe-area-inset-bottom, 0px)) 14px;
+    padding: 18px 14px 16px 14px;
   }
   .head{
     flex-direction: column;
@@ -1226,7 +1226,7 @@ body.native nav a{user-select:none;-webkit-user-select:none}
   .logo, .xbtn{display:none!important}
   nav a{padding: 8px 6px; font-size: 11px; flex-direction: column; gap: 4px; justify-content: center; flex: 1; min-width: 0;}
   nav a .nav-icon{width: 26px; height: 26px}
-  main{flex: 1; min-height: 0; height: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 18px 14px calc(var(--bb, 132px) + env(safe-area-inset-bottom, 0px)) 14px;}
+  main{flex: 1; min-height: 0; height: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 18px 14px 16px 14px;}
   .method-pills{grid-template-columns: 1fr}
   .two, .res{grid-template-columns: 1fr}
 }
@@ -2832,7 +2832,7 @@ body.native nav a{user-select:none;-webkit-user-select:none}
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-    padding: 18px 14px calc(var(--bb, 132px) + env(safe-area-inset-bottom, 0px)) 14px;
+    padding: 18px 14px 16px 14px;
   }
   .head{
     flex-direction: column;
@@ -2988,7 +2988,7 @@ body.native nav a{user-select:none;-webkit-user-select:none}
   .logo, .xbtn{display:none!important}
   nav a{padding: 8px 6px; font-size: 11px; flex-direction: column; gap: 4px; justify-content: center; flex: 1; min-width: 0;}
   nav a .nav-icon{width: 26px; height: 26px}
-  main{flex: 1; min-height: 0; height: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 18px 14px calc(var(--bb, 132px) + env(safe-area-inset-bottom, 0px)) 14px;}
+  main{flex: 1; min-height: 0; height: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 18px 14px 16px 14px;}
   .method-pills{grid-template-columns: 1fr}
   .two, .res{grid-template-columns: 1fr}
 }
@@ -3545,9 +3545,74 @@ body.native nav a{user-select:none;-webkit-user-select:none}
   filter: drop-shadow(0 0 10px rgba(121, 82, 214, 0.45));
 }
 
+/* ══════════════════════════════════════════════
+   SIDEBAR, DRAWER & PEMBARUAN — consolidated overrides
+   (dito akhir agar menang dari override tema sebelumnya)
+   ══════════════════════════════════════════════ */
+.hamb{display:none;position:fixed;z-index:130;top:calc(10px + env(safe-area-inset-top,0px));left:10px;width:44px;height:44px;border:1px solid var(--ln-strong);background:rgba(15,11,28,.92);border-radius:12px;color:#d5cfeb;cursor:pointer;align-items:center;justify-content:center}
+.hamb:focus-visible,.sb-toggle:focus-visible{outline:2px solid var(--lt);outline-offset:2px}
+.hamb svg,.sb-toggle svg{stroke:#d5cfeb}
+.sb-toggle{display:none;align-items:center;justify-content:center;width:38px;height:38px;background:transparent;border:1px solid var(--ln-strong);border-radius:10px;color:#d5cfeb;cursor:pointer;margin:2px 0 12px}
+@media (min-width: 769px){
+  .app{grid-template-columns: 264px 1fr;transition:grid-template-columns .28s ease}
+  .sb-toggle{display:flex}
+  #xclose{margin-top:auto}
+}
+body.sb-collapsed .app{grid-template-columns: 78px 1fr}
+body.sb-collapsed .logo{padding-left:0;padding-right:0;justify-content:center}
+body.sb-collapsed .logo .logo-text{display:none}
+body.sb-collapsed nav a{justify-content:center;gap:0;padding:12px 6px;overflow:visible}
+body.sb-collapsed nav a .nav-label{display:none}
+body.sb-collapsed nav a .nav-icon{width:22px;height:22px}
+body.sb-collapsed nav a::after{content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;transform:translateY(-50%);opacity:0;background:#161230;border:1px solid var(--glass-border);color:var(--tx);padding:6px 10px;border-radius:8px;font-size:12.5px;white-space:nowrap;pointer-events:none;transition:opacity .15s;z-index:50}
+body.sb-collapsed nav a:hover::after{opacity:1}
+/* Badge "belum dibaca" untuk menu Pembaruan */
+.nb-badge{position:absolute;top:50%;right:12px;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;padding:0 7px;border-radius:11px;background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;font-size:10.5px;font-weight:700;line-height:1}
+.nb-badge[hidden]{display:none !important}
+nav a{position:relative}
+body.sb-collapsed .nb-badge{right:6px;top:8px;transform:none}
+/* Drawer backdrop (HP) */
+.drawer-backdrop{position:fixed;inset:0;z-index:110;opacity:0;pointer-events:none;background:rgba(4,3,10,.62);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);transition:opacity .25s}
+body.sb-open .drawer-backdrop{opacity:1;pointer-events:auto}
+@media (max-width: 768px){
+  body{padding-top:0;overflow:hidden}
+  .app{display:flex;flex-direction:column;height:100vh;height:100dvh;min-height:0;overflow:hidden}
+  main{flex:1;min-height:0;height:auto;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:calc(56px + env(safe-area-inset-top,0px)) 12px 16px}
+  nav{position:fixed;top:0;bottom:0;left:0;height:100vh;height:100dvh;width:min(80vw,320px);z-index:115;flex-direction:column;justify-content:flex-start;gap:4px;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 16px;border:0;border-right:1px solid var(--glass-border);background:rgba(8,6,18,.97);backdrop-filter:none;-webkit-backdrop-filter:none;transform:translateX(-104%);transition:transform .28s cubic-bezier(.16,1,.3,1);box-shadow:0 0 48px rgba(0,0,0,.5);overflow-y:auto}
+  body.sb-open nav{transform:translateX(0)}
+  .hamb{display:flex}
+  .sb-toggle{display:none}
+  nav a{padding:11px 13px;flex-direction:row;gap:12px;justify-content:flex-start;min-width:0;width:100%;border-radius:12px;animation:none}
+  nav a .nav-icon{width:20px;height:20px;flex:none}
+  nav a .nav-label{font-size:14px;white-space:nowrap}
+  .logo,.xbtn{display:none!important}
+  .nb-badge{right:12px}
+}
+/* Sembunyikan nominal (priv mode) — dipakai tombol #eye */
+body.priv .amt{color:transparent !important;user-select:none;pointer-events:none}
+/* ── What's New / Pembaruan ── */
+.notif-list{display:flex;flex-direction:column;gap:12px;max-width:860px}
+.notif-empty{padding:44px 20px;text-align:center;color:var(--tx-muted);border:1px dashed var(--glass-border);border-radius:14px;background:var(--glass-card);font-size:13.5px}
+.notif-item{background:var(--glass-card);border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;transition:border-color .2s}
+.notif-item:hover{border-color:var(--ln-strong)}
+.notif-item[aria-expanded="true"]{border-color:var(--ln-strong)}
+.nh-head{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;border:0;cursor:pointer;padding:14px 16px}
+.nh-dot{flex:none;width:10px;height:10px;border-radius:50%;background:#a78bfa}
+.nh-dot[data-read="1"]{background:var(--tx-dim)}
+.nh-title{flex:1;min-width:0}
+.nh-title b{display:block;font-size:14px;color:#fff;letter-spacing:-.01em}
+.nh-title span{display:block;margin-top:3px;font-size:12px;color:var(--tx-muted)}
+.nh-tag{flex:none;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#c5b5f8;background:rgba(121,82,214,.16);border-radius:6px;padding:4px 8px}
+.nh-caret{flex:none;stroke:var(--tx-muted);transition:transform .25s}
+.notif-item[aria-expanded="true"] .nh-caret{transform:rotate(180deg)}
+.nh-notes{display:none;margin:0;padding:0 16px 14px 38px;color:var(--tx);font-size:13px;line-height:1.6;border-top:1px solid var(--ln)}
+.nh-notes li{margin:6px 0 0}
+.notif-item[aria-expanded="true"] .nh-notes{display:block}
+
 </style>
 </head>
 <body>
+<script>try{if(localStorage.getItem('nx_hide_amt')==='1')document.body.classList.add('priv')}catch(e){}</script>
 <!-- Cinematic Reveal Intro -->
 <div id="nexora-cinematic-intro" aria-hidden="true">
   <div class="intro-content">
@@ -3557,8 +3622,11 @@ body.native nav a{user-select:none;-webkit-user-select:none}
   </div>
 </div>
 
+<button class="hamb" id="hamb" type="button" aria-label="Buka/tutup menu" aria-expanded="false" aria-controls="sidenav"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+
 <div class="app">
 <nav aria-label="Menu utama" id="sidenav">
+<button class="sb-toggle" id="sb-toggle" type="button" aria-label="Ciutkan / perluas sidebar" aria-expanded="true" aria-controls="sidenav"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
 <div class="logo"><span class="logo-text"><span class="logo-nex">nex</span><span class="logo-ora">ora</span></span></div>
 <a href="#dashboard" data-v="dashboard" class="on"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span><span class="nav-label">Dashboard</span></a>
 <a href="#tracker" data-v="tracker"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg></span><span class="nav-label">Money Tracker</span></a>
@@ -3568,8 +3636,10 @@ body.native nav a{user-select:none;-webkit-user-select:none}
 <a href="#goals" data-v="goals"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg></span><span class="nav-label">Goals</span></a>
 <a href="#analitik" data-v="analitik"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 2 12 12"></path><path d="M16 2h6v6"></path></svg></span><span class="nav-label">Analitik</span></a>
 <a href="#ai" data-v="ai"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"></path><path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9z"></path></svg></span><span class="nav-label">AI Assistant</span></a>
+<a href="#notif" data-v="notif"><span class="nav-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span><span class="nav-label">Pembaruan</span><span class="nb-badge" id="nb-badge" hidden aria-label="Pembaruan belum dibaca">0</span></a>
 <button class="btn ghost xbtn" id="xclose" type="button">Tutup Nexora</button>
 </nav>
+<div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
 <main>
 
 <section class="view on" id="dashboard">
@@ -3584,7 +3654,7 @@ body.native nav a{user-select:none;-webkit-user-select:none}
     <h1 id="greet">Selamat siang!</h1>
     <p class="sub" id="period">Selasa, 17 November 2026 · Ringkasan November 2026, 8 transaksi</p>
   </div>
-<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="eye">Sembunyikan saldo</button><button class="btn" data-go="tracker">Tambah transaksi</button></div></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="eye" type="button" aria-pressed="false">Sembunyikan saldo</button><button class="btn" data-go="tracker">Tambah transaksi</button></div></div>
 <div class="grid g4">
 <div class="card hero" style="--i: 0;"><p class="lbl">Total Balance</p><p class="big" id="bal">Rp 37.550.000</p></div>
 <div class="card gloss" style="--i: 1;"><p class="lbl">Total Income</p><p class="big up" id="inc">Rp 52.350.000</p></div>
@@ -3769,6 +3839,11 @@ body.native nav a{user-select:none;-webkit-user-select:none}
 <div class="row"><input id="aq" placeholder="Tulis pertanyaan Anda" style="flex:1" maxlength="2000"><button class="btn" id="asend">Kirim</button></div></div>
 </section>
 
+<section class="view" id="notif">
+<div class="head"><div><h1>Yang Baru di Nexora</h1><p class="sub">Riwayat resmi pembaruan Nexora — apa yang berubah, ditulis berdasarkan rilis yang benar-benar pernah ada.</p></div><button class="btn ghost" id="markAllRead" type="button">Tandai semua dibaca</button></div>
+<div id="notif-list" class="notif-list"></div>
+</section>
+
 <section class="view" id="goals">
 <div class="head"><div><h1>Goals</h1><p class="sub">Perencanaan dan pemantauan akumulasi dana tujuan finansial jangka menengah dan panjang.</p></div></div>
 <div class="grid g2b">
@@ -3788,7 +3863,7 @@ body.native nav a{user-select:none;-webkit-user-select:none}
    Sumber kebenaran = Capacitor Preferences (SharedPreferences Android, di-commit native).
    localStorage hanya dipakai di browser. Jika Preferences belum punya nilai tetapi
    localStorage punya (upgrade dari versi 1.1/1.2), nilai localStorage diadopsi SEKALI ke Preferences. */
-var PREFS_KEYS=['nx_t','nx_g','nx_b','nx_budget_v2','nx_v2_cleaned3','nx_v4_orphans'];
+var PREFS_KEYS=['nx_t','nx_g','nx_b','nx_budget_v2','nx_v2_cleaned3','nx_v4_orphans','nx_hide_amt','nx_sb_collapsed','nx_whatsnew_seen'];
 var nativePrefs=function(){try{var P=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Preferences;return (P&&P.get&&P.set)?P:null}catch(e){return null}};
 var STORE=null;
 try{
@@ -3804,7 +3879,7 @@ try{
 }catch(e){STORE=null}
 var NATIVE=!!STORE;
 function storeGetRaw(k){if(NATIVE)return STORE[k]!==undefined?STORE[k]:null;try{return window.localStorage.getItem(k)}catch(e){return null}}
-function storeSetRaw(k,v){v=String(v);if(NATIVE){STORE[k]=v;try{nativePrefs().set({key:k,value:v})}catch(e){}return true}try{window.localStorage.setItem(k,v);return true}catch(e){return false}}
+function storeSetRaw(k,v){v=String(v);if(NATIVE){STORE[k]=v;try{var P=nativePrefs();if(P&&P.set){P.set({key:k,value:v}).then(function(){},function(err){console.error('Preferences set failed:',k)})}}catch(e){}return true}try{window.localStorage.setItem(k,v);return true}catch(e){return false}}
 function storeRemove(k){if(NATIVE){delete STORE[k];try{var P=nativePrefs();if(P&&P.remove)P.remove({key:k})}catch(e){}return}try{localStorage.removeItem(k)}catch(e){}}
 var $=function(s){return document.querySelector(s)};
 var R=function(n){return 'Rp '+Math.round(n).toLocaleString('id-ID')};
@@ -3907,8 +3982,8 @@ T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();
    Gagal total = diam-diam (tidak memblokir app).
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 8,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.7',    // HARUS sama dengan versionName
+  code: 9,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.8',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
@@ -3980,11 +4055,6 @@ document.addEventListener('click',function(e){
   var btn=e.target.closest('.btn,nav a,.chips button');
   if(btn)createRipple({currentTarget:btn,clientX:e.clientX,clientY:e.clientY})
 });
-
-/* ── Ukur tinggi bar bawah (fixed) → sediakan ruang di akhir konten ──
-   Agar kartu paling bawah selalu tampil penuh, tidak terpotong bar. */
-function syncBottomBar(){var n=document.getElementById('sidenav');if(!n)return;var h=Math.ceil(n.getBoundingClientRect().height);document.documentElement.style.setProperty('--bb',(h+22)+'px')}
-window.addEventListener('load',syncBottomBar);window.addEventListener('resize',syncBottomBar);window.addEventListener('orientationchange',syncBottomBar);
 
 /* ── View transition with crossfade ── */
 var currentView=null;
@@ -4501,7 +4571,6 @@ var _tl=tlist;tlist=function(){_tl();wsum();numAnim('#wsum b',800)};
 var _omz=omzet;omzet=function(){_omz();document.querySelectorAll('#ores .big').forEach(function(e){e.classList.remove('fl');void e.offsetWidth;e.classList.add('fl')});numAnim('#ores .big',600)};
 ['#op','#ou','#oc','#oo','#ot'].forEach(function(s){$(s).oninput=omzet});
 
-$('#eye').onclick=function(){document.body.classList.toggle('priv');this.textContent=document.body.classList.contains('priv')?'Tampilkan saldo':'Sembunyikan saldo'};
 
 window.addEventListener('hashchange',function(){var h=location.hash;if(!h||h=='#dashboard')dash();else if(h=='#goals')gl();else if(h=='#analitik')dash();else if(h=='#omzet')omzet();else if(h=='#tracker')tlist();else if(h=='#anggaran')renderSim();stag()});
 
@@ -4598,6 +4667,137 @@ function playCinematicIntroSound(){
 
   setTimeout(function(){ try{ it.remove(); }catch(e){} }, 1550);
 })();
+/* ══════════════════════════════════════════════
+   Sembunyikan angka (hide/show) — tombol #eye
+   ══════════════════════════════════════════════ */
+(function(){
+  var desc = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+  if(desc && desc.set && desc.get){
+    var setter = desc.set, getter = desc.get;
+    var rgx = /(-?Rp[\s\d.,]+(?:\s*(?:jt|juta|rb|ribu))?)/g;
+    Object.defineProperty(Element.prototype, 'innerHTML', {
+      configurable: true,
+      enumerable: desc.enumerable,
+      get: function(){ return getter.call(this); },
+      set: function(html){
+        if(this.namespaceURI === 'http://www.w3.org/2000/svg') return setter.call(this, html);
+        var src = String(html == null ? '' : html);
+        src = src.replace(rgx, '<span class="amt">$1</span>');
+        return setter.call(this, src);
+      }
+    });
+  }
+  /* beri class .amt pada elemen textContent murni yang berisi uang */
+  var AMT_IDS = ['bal','inc','exp','gfree','btot','bsimfree','bsimalloc','bsimdly','dlNeed','dlWant','leftNeed','leftTab','leftWant'];
+  AMT_IDS.forEach(function(id){ var e = document.getElementById(id); if(e) e.classList.add('amt'); });
+  document.querySelectorAll('[id^="fund"],[id^="left"],[id^="dlN"],[id^="dlW"]').forEach(function(e){ e.classList.add('amt'); });
+
+  var b = document.getElementById('eye');
+  function applyPriv(on, persist){
+    document.body.classList.toggle('priv', !!on);
+    if(b){ b.textContent = on ? 'Tampilkan saldo' : 'Sembunyikan saldo'; b.setAttribute('aria-pressed', String(!!on)); }
+    if(persist !== false){ try{ storeSetRaw('nx_hide_amt', on ? '1' : '0'); }catch(e){} }
+  }
+  if(storeGetRaw('nx_hide_amt') === '1'){ applyPriv(true, false); }
+  if(b){ b.addEventListener('click', function(){ var now = !document.body.classList.contains('priv'); applyPriv(now, true); }); }
+})();
+
+/* ══════════════════════════════════════════════
+   Sidebar: hamburger (HP drawer / desktop collapse)
+   ══════════════════════════════════════════════ */
+(function(){
+  var mq = window.matchMedia('(max-width: 768px)');
+  var nav = document.getElementById('sidenav');
+  var hamb = document.getElementById('hamb');
+  var sbToggle = document.getElementById('sb-toggle');
+  var backdrop = document.getElementById('drawer-backdrop');
+  if(!nav) return;
+  nav.querySelectorAll('a').forEach(function(a){
+    var lbl = a.querySelector('.nav-label');
+    if(lbl && !a.hasAttribute('data-tip')) a.setAttribute('data-tip', lbl.textContent.trim());
+  });
+  function setAria(){
+    if(hamb) hamb.setAttribute('aria-expanded', String(document.body.classList.contains('sb-open')));
+    if(sbToggle) sbToggle.setAttribute('aria-expanded', String(!document.body.classList.contains('sb-collapsed')));
+  }
+  try{ if(!mq.matches && storeGetRaw('nx_sb_collapsed') === '1'){ document.body.classList.add('sb-collapsed'); } }catch(e){}
+  function closeDrawer(){ document.body.classList.remove('sb-open'); setAria(); }
+  function toggle(){
+    if(mq.matches){ document.body.classList.toggle('sb-open'); }
+    else { document.body.classList.toggle('sb-collapsed'); try{ storeSetRaw('nx_sb_collapsed', document.body.classList.contains('sb-collapsed') ? '1' : '0'); }catch(e){} }
+    setAria();
+  }
+  if(hamb) hamb.addEventListener('click', toggle);
+  if(sbToggle) sbToggle.addEventListener('click', toggle);
+  if(backdrop) backdrop.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && document.body.classList.contains('sb-open')) closeDrawer(); });
+  nav.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ if(mq.matches) closeDrawer(); }); });
+  var mqListener = function(ev){ if(!ev.matches){ document.body.classList.remove('sb-open'); document.body.classList.remove('sb-collapsed'); } setAria(); };
+  if(mq.addEventListener) mq.addEventListener('change', mqListener); else if(mq.addListener) mq.addListener(mqListener);
+  setAria();
+})();
+
+/* ══════════════════════════════════════════════
+   Pembaruan / What's New — riwayat rilis resmi
+   ══════════════════════════════════════════════ */
+(function(){
+  var WHATS_NEW = [
+    { id: 'v1.8', date: '18 Nov 2026', tag: 'Perbaikan', title: 'Sidebar, sembunyi angka & menu Pembaruan', notes: ['Navigasi bawah diganti menjadi sidebar (hamburger / tombol perluas, ciut/perluas di desktop, drawer di HP).', 'Tombol "Sembunyikan saldo" sekarang benar-benar menyembunyikan seluruh nominal (Total Balance, Pemasukan, Pengeluaran, transaksi, anggaran, goals, analitik, kalender).', 'Menu "Pembaruan" baru — tampilkan daftar rilis asli + badge jumlah belum dibaca.', 'Perbaikan kecil: halaman Pembaruan memperbaiki penulisan body overflow untuk Android terbaru.'] },
+    { id: 'v1.7', date: '18 Nov 2026', tag: 'Perbaikan', title: 'Halaman tidak pernah terpotong lagi', notes: ['Tinggi halaman dipaksa 1024px sejak rilis awal sehingga kartu paling bawah selalu tertutup bar bawah — kini tinggi mengikuti tinggi layar (100dvh).', 'Semua menu tampil penuh tanpa terpotong.'] },
+    { id: 'v1.6', date: '17 Nov 2026', tag: 'Perbaikan', title: 'Layout flex-kolom & 7 menu fit', notes: ['Navigasi bawah dijadikan layout kolom agar baris terakhir tidak terpotong.', 'Semua 7 menu utama terlihat tanpa perlu geser horizontal.'] },
+    { id: 'v1.5', date: '17 Nov 2026', tag: 'Perbaikan', title: 'Cek pembaruan 2 sumber', notes: ['Cek pembaruan sekarang mencoba raw.githubusercontent.com lalu cdn.jsdelivr.net, sehingga banner tetap muncul walau salah satu sumber tidak terjangkau jaringan HP Anda.'] },
+    { id: 'v1.4', date: '17 Nov 2026', tag: 'Peningkatan', title: 'Rendering lebih ringan & intro kembali', notes: ['Profil GPU-light di APK: tanpa blur, tanpa shadow kartu, tanpa animasi hitung angka di statistik.', 'Intro diringkas (1,1 detik) dan kembali selalu tampil.'] },
+    { id: 'v1.3', date: '17 Nov 2026', tag: 'Perbaikan', title: 'Penyimpanan data permanen', notes: ['Sumber kebenaran data dipindah dari localStorage ke SharedPreferences (Capacitor Preferences) sehingga data tidak hilang saat app ditutup.', 'Instalasi pertama kini menampilkan aplikasi kosong (tanpa saldo contoh).'] },
+    { id: 'v1.2', date: '17 Nov 2026', tag: 'Perbaikan', title: 'APK 60fps & menu Invoice dihapus', notes: ['Penyimpanan dimirror ke SharedPreferences sebagai cadangan anti-hilang.', 'Intro tidak diputar di APK; menu Invoice dihapus; repo dibersihkan untuk sumber APK saja.'] },
+    { id: 'v1.1', date: '17 Nov 2026', tag: 'Baru', title: 'APK Nexora & pembaruan otomatis', notes: ['Aplikasi Android resmi (sideload, tanpa Play Store).', 'Cek pembaruan otomatis di dalam aplikasi (banner “Pembaruan tersedia”).'] }
+  ];
+  var listEl = document.getElementById('notif-list');
+  var badgeEl = document.getElementById('nb-badge');
+  if(!listEl) return;
+  var SEEN_KEY = 'nx_whatsnew_seen';
+  function getSeen(){ try{ var s = storeGetRaw(SEEN_KEY); if(!s) return []; var p = JSON.parse(s); return Array.isArray(p) ? p : []; }catch(e){ return []; } }
+  function setSeen(arr){ try{ storeSetRaw(SEEN_KEY, JSON.stringify(arr)); }catch(e){} }
+  function unseenCount(seen){ return WHATS_NEW.filter(function(n){ return seen.indexOf(n.id) === -1; }).length; }
+  function render(){
+    var seen = getSeen();
+    if(!WHATS_NEW.length){ listEl.innerHTML = '<div class="notif-empty">Belum ada pembaruan.</div>'; if(badgeEl) badgeEl.hidden = true; return; }
+    var unseen = unseenCount(seen);
+    var firstUnread = WHATS_NEW.findIndex(function(n){ return seen.indexOf(n.id) === -1; });
+    listEl.innerHTML = WHATS_NEW.map(function(n, i){
+      var read = seen.indexOf(n.id) !== -1;
+      var open = (i === firstUnread && unseen > 0);
+      return '<div class="notif-item" data-id="' + n.id + '" aria-expanded="' + String(open) + '">'
+        + '<button type="button" class="nh-head" aria-controls="nh-' + n.id + '" aria-expanded="' + String(open) + '">'
+        + '<span class="nh-dot" data-read="' + (read ? '1' : '0') + '"></span>'
+        + '<span class="nh-title"><b>' + n.title + '</b><span>' + n.date + ' · Nexora · ' + n.id + '</span></span>'
+        + '<span class="nh-tag">' + n.tag + '</span>'
+        + '<svg class="nh-caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>'
+        + '</button>'
+        + '<ul class="nh-notes" id="nh-' + n.id + '">' + n.notes.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>'
+        + '</div>';
+    }).join('');
+    if(badgeEl){ if(unseen > 0){ badgeEl.hidden = false; badgeEl.textContent = String(unseen); } else { badgeEl.hidden = true; } }
+    listEl.querySelectorAll('.nh-head').forEach(function(head){
+      head.addEventListener('click', function(){
+        var item = head.closest('.notif-item');
+        var id = item.getAttribute('data-id');
+        var open = item.getAttribute('aria-expanded') !== 'true';
+        item.setAttribute('aria-expanded', String(open));
+        head.setAttribute('aria-expanded', String(open));
+        var seen2 = getSeen();
+        if(open && seen2.indexOf(id) === -1){ seen2.push(id); setSeen(seen2); }
+        var dot = item.querySelector('.nh-dot');
+        if(dot && open) dot.setAttribute('data-read', '1');
+        var u2 = unseenCount(getSeen());
+        if(badgeEl){ if(u2 > 0){ badgeEl.hidden = false; badgeEl.textContent = String(u2); } else { badgeEl.hidden = true; } }
+      });
+    });
+  }
+  render();
+  var markAll = document.getElementById('markAllRead');
+  if(markAll) markAll.addEventListener('click', function(){ setSeen(WHATS_NEW.map(function(n){ return n.id; })); render(); });
+})();
+
 /* ── Init ── */
 fillCats();tlist();omzet();gl();route();dash();window.scrollTo(0, 0);
 

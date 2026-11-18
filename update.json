@@ -1,6 +1,6 @@
 {
-  "versionCode": 8,
-  "versionName": "1.7",
-  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.7/Nexora.apk",
-  "notes": "Halaman penuh sempurna di semua ukuran layar (dulu tinggi dipaksa 1024px), bar bawah tetap tampil"
+  "versionCode": 9,
+  "versionName": "1.8",
+  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.8/Nexora.apk",
+  "notes": "Sidebar dinamis (hamburger), menu Pembaruan/What's New, tombol sembunyikan angka yang berfungsi"
 }
