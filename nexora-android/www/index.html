@@ -3877,6 +3877,7 @@ nav a.on::after{left:4px;height:22px}
 <div class="update-wrap" id="update-wrap" aria-live="polite">
   <div class="update-empty"><b>Memuat pembaruan…</b>Menghubungkan ke server pembaruan Nexora.</div>
 </div>
+<div id="update-diag" style="margin-top:18px;font-size:11px;color:var(--tx-dim);border-top:1px solid var(--ln);padding-top:14px"></div>
 </section>
 
 <section class="view" id="goals">
@@ -4017,31 +4018,66 @@ T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();
    Gagal total = diam-diam (tidak memblokir app).
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 11,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.10',    // HARUS sama dengan versionName
+  code: 12,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.11',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
 function isNativeApp(){ try { return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); } catch(e) { return false; } }
 function updateConfigured(){ var u = NEXORA_UPDATE.manifestUrl; return /^https:\/\//.test(u) && u.indexOf('USERNAME') < 0 && u.indexOf('REPO') < 0; }
 function checkForUpdate(){
-  if(!isNativeApp() || !updateConfigured()) return;
+  if(!updateConfigured()) return;
   var urls = [NEXORA_UPDATE.manifestUrl, 'https://cdn.jsdelivr.net/gh/KODE19405/nexora@main/update.json'];
   var chain = Promise.resolve(null);
+  var attempts = [];
   urls.forEach(function(u){
     chain = chain.then(function(prev){
       if(prev) return prev;
       return new Promise(function(resolve){
-        var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-        var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, NEXORA_UPDATE.timeout) : null;
-        fetch(u, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
-          .then(function(r){ if(timer) clearTimeout(timer); resolve(r.ok ? r.json().catch(function(){ return null; }) : null); }, function(){ if(timer) clearTimeout(timer); resolve(null); });
+        try {
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', u, true);
+          xhr.timeout = NEXORA_UPDATE.timeout;
+          xhr.responseType = 'text';
+          xhr.onload = function(){
+            if(xhr.status >= 200 && xhr.status < 300){
+              attempts.push(u + ' → HTTP ' + xhr.status);
+              try { resolve(JSON.parse(xhr.responseText)); } catch(e){ attempts.push('JSON parse error'); resolve(null); }
+            } else {
+              attempts.push(u + ' → HTTP ' + xhr.status);
+              resolve(null);
+            }
+          };
+          xhr.onerror = function(){ attempts.push(u + ' → NETWORK ERROR'); resolve(null); };
+          xhr.ontimeout = function(){ attempts.push(u + ' → TIMEOUT'); resolve(null); };
+          xhr.send();
+        } catch (e) { attempts.push(u + ' → EXCEPTION: ' + e.message); resolve(null); }
       });
     });
   });
   chain.then(function(m){
+    var log = { at: new Date().toISOString(), attempts: attempts.slice(0), ok: false, latest: null };
+    if(m && typeof m.versionCode === 'number' && Number.isFinite(m.versionCode)){
+      log.ok = true; log.latest = m.versionCode;
+    }
+    try { storeSetRaw('nx_update_log', JSON.stringify(log)); } catch(e) {}
+    try {
+      var dEl = document.getElementById('update-diag');
+      if(dEl){
+        var diagLines = ['Diagnostik: ' + (log.ok ? 'OK — server melacak versi terbaru ' + log.latest : 'GAGAL — update tidak bisa diperiksa')];
+        (log.attempts || []).forEach(function(a){ diagLines.push('• ' + a); });
+        diagLines.push('terakhir diperiksa: ' + (log.at ? new Date(log.at).toLocaleString('id-ID') : '-'));
+        dEl.textContent = diagLines.join('\n');
+        dEl.style.whiteSpace = 'pre-line';
+      }
+    } catch(e) {}
     if(!m || typeof m.versionCode !== 'number' || !Number.isFinite(m.versionCode)) return;
     if(!m.apkUrl || !/^https:\/\//.test(String(m.apkUrl))) return;
+    try {
+      var _seen = 0;
+      try { var _d = storeGetRaw('nx_update_dismissed'); _seen = Number(_d) || 0; } catch(e) {}
+      if(_seen === m.versionCode) return;
+    } catch(e) {}
     if(m.versionCode <= NEXORA_UPDATE.code) return;
     showUpdateBanner(m);
   }).catch(function(){});
@@ -4773,7 +4809,6 @@ function playCinematicIntroSound(){
 })();
 
 /* ══════════════════════════════════════════════
-/* ══════════════════════════════════════════════
    Pembaruan Aplikasi — cek & unduh APK langsung
    (hanya untuk aplikasi Android; di browser: tampil rilis tanpa aksi install)
    ══════════════════════════════════════════════ */
@@ -4803,6 +4838,7 @@ function playCinematicIntroSound(){
   function fetchMeta(){
     var primary = (typeof NEXORA_UPDATE === 'object' && NEXORA_UPDATE && NEXORA_UPDATE.manifestUrl) ? NEXORA_UPDATE.manifestUrl : 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json';
     var urls = [primary, 'https://cdn.jsdelivr.net/gh/KODE19405/nexora@main/update.json'];
+    var attempts = [];
     var chain = Promise.resolve(null);
     urls.forEach(function(u){
       chain = chain.then(function(prev){
@@ -4811,12 +4847,27 @@ function playCinematicIntroSound(){
           var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
           var t = ctrl ? window.setTimeout(function(){ ctrl.abort(); }, (typeof NEXORA_UPDATE === 'object' && NEXORA_UPDATE && NEXORA_UPDATE.timeout) ? NEXORA_UPDATE.timeout : 6000) : null;
           fetch(u, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
-            .then(function(r){ if(t) clearTimeout(t); if(!r.ok) return resolve(null); return r.json().then(resolve, function(){ resolve(null); }); },
-                   function(){ if(t) clearTimeout(t); resolve(null); });
+            .then(function(r){ if(t) clearTimeout(t); if(!r.ok){ attempts.push(u + ' → HTTP ' + r.status); return resolve(null); } return r.json().then(function(j){ attempts.push(u + ' → OK'); resolve(j); }, function(){ attempts.push(u + ' → JSON parse error'); resolve(null); }); },
+                   function(){ if(t) clearTimeout(t); attempts.push(u + ' → NETWORK ERROR'); resolve(null); });
         });
       });
     });
-    return chain;
+    return chain.then(function(m){
+      var log = { at: new Date().toISOString(), attempts: attempts.slice(0), ok: !!(m && typeof m.versionCode === 'number' && isFinite(m.versionCode)), latest: null };
+      if(m && typeof m.versionCode === 'number' && isFinite(m.versionCode)) log.latest = Number(m.versionCode);
+      try { storeSetRaw('nx_update_log', JSON.stringify(log)); } catch(e) {}
+      try {
+        var dEl = document.getElementById('update-diag');
+        if(dEl){
+          var lines = ['Diagnostik: ' + (log.ok ? 'OK — server melacak versi terbaru ' + log.latest : 'GAGAL — update tidak bisa diperiksa')];
+          (log.attempts || []).forEach(function(a){ lines.push('• ' + a); });
+          lines.push('terakhir diperiksa: ' + new Date(log.at).toLocaleString('id-ID'));
+          dEl.textContent = lines.join('\n');
+          dEl.style.whiteSpace = 'pre-line';
+        }
+      } catch(e) {}
+      return m;
+    });
   }
   function bulletHtml(meta){ return bulletLines(meta && (meta.notes || meta.summary)); }
   function getDismissed(){ try{ var v = storeGetRaw(dismissedKey); var n = Number(v); return isFinite(n) && n > 0 ? n : 0; }catch(e){ return 0; } }

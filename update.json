@@ -1,13 +1,13 @@
 {
-  "versionCode": 11,
-  "versionName": "1.10",
-  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.10/Nexora.apk",
+  "versionCode": 12,
+  "versionName": "1.11",
+  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.11/Nexora.apk",
   "date": "19 Nov 2026",
-  "sha256": "160BFCA5EF2214EE47D8821AB94AB883D18104319C3EC76216FFD4C97F45984F",
-  "size": 3378235,
+  "sha256": "0C49BA06861820A2D7137D497EA7FF2D69D2A7A7482A301BBADC3F85152247DE",
+  "size": 3379049,
   "notes": [
-    "Animasi kembali lengkap: angka menghitung dari awal, chart bars dari bawah ke atas, view transitions, dan animasi app re-entry saat kembali ke app",
-    "Sidebar lebih rapi: logo & icon konsisten, hover state terkontrol, collapsible desktop tetap dengan tooltip, badge tetap terlihat jelas",
-    "Semua perilaku lainnya (drawer, install update via SHA-256, sembunyikan saldo) tidak berubah"
+    "Diagnostik pembaruan di halaman Pembaruan: daftar sumber yang dicoba, status HTTP, timestamp — mempermudah melihat kenapa banner tidak muncul",
+    "Check update diringkas ke satu log persisted nan melakukan eksekusi di awal aplikasi; banner akan muncul jika remote > lokal (bukan tergantung window.Capacitor)",
+    "Animasi sudah dikembalikan sepenuhnya (angka count-up, chart grow, view transitions) di sidebar yang sudah dirapikan"
   ]
 }
