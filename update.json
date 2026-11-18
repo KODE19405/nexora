@@ -1,14 +1,14 @@
 {
   "versionCode": 13,
   "versionName": "1.12",
-  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.12/Nexora.apk",
+  "apkUrl": "https://cdn.jsdelivr.net/gh/KODE19405/nexora@v1.12-release/releases/Nexora.apk",
   "date": "19 Nov 2026",
   "sha256": "8D33472CC226BBAE255E6C9F4152BFDCE5EFD76F8C3A1362815AB2C163171A9E",
   "size": 3378328,
   "notes": [
-    "Sidebar diperkecil jadi ukuran sedang (lebih lega untuk konten)",
-    "Bar diagnostik 'Diagnostik: …' dihapus dari halaman Pembaruan",
-    "Animasi angka count-up dikembalikan dan kini berfungsi di APK (tidak terpengaruh setelan prefers-reduced-motion Android)",
-    "Animasi sparkline path (idle chart) yang dulu di-gate oleh RM juga kini akan tampil karena wantAnim() menghormati Android native"
+    "Sidebar diperkecil ke ukuran sedang (lebih lega untuk konten)",
+    "Diagnostik update dihapus; Update Sekarang sekarang 100% berfungsi di WebView (terjadi masalah CORS pada CDN GitHub release-assets)",
+    "Migrasi download APK ke jsdelivr CDN yang mengirim Access-Control-Allow-Origin: *",
+    "count-up animasi dan sparkline path dikembalikan di Android WebView"
   ]
 }
