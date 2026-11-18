@@ -1,14 +1,13 @@
 {
-  "versionCode": 10,
-  "versionName": "1.9",
-  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.9/Nexora.apk",
-  "date": "18 Nov 2026",
-  "sha256": "6897FBCFD02299DD2314CA27271659CC6B18CD78BAC8C0FB42B93CB778013540",
-  "size": 3377918,
+  "versionCode": 11,
+  "versionName": "1.10",
+  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.10/Nexora.apk",
+  "date": "19 Nov 2026",
+  "sha256": "160BFCA5EF2214EE47D8821AB94AB883D18104319C3EC76216FFD4C97F45984F",
+  "size": 3378235,
   "notes": [
-    "Fitur baru: menu Pembaruan sekarang adalah notifikasi update yang interaktif — tampil hanya jika ada versi terbaru, tombol Update Sekarang mengunduh APK langsung, memverifikasi SHA-256, lalu membuka installer Android resmi.",
-    "Tombol X pada notifikasi menyembunyikan pengingat; tombol 'Periksa sekarang' menampilkannya kembali dan mengecek pembaruan ulang",
-    "AndroidManifest: tambah permission REQUEST_INSTALL_PACKAGES agar paket bisa diinstal langsung dari aplikasi.",
-    "Integritas unduhan diverifikasi SHA-256; tidak ada APK dari sumber luar dijalankan."
+    "Animasi kembali lengkap: angka menghitung dari awal, chart bars dari bawah ke atas, view transitions, dan animasi app re-entry saat kembali ke app",
+    "Sidebar lebih rapi: logo & icon konsisten, hover state terkontrol, collapsible desktop tetap dengan tooltip, badge tetap terlihat jelas",
+    "Semua perilaku lainnya (drawer, install update via SHA-256, sembunyikan saldo) tidak berubah"
   ]
 }

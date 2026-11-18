@@ -667,9 +667,6 @@ body.native *{backdrop-filter:none!important;-webkit-backdrop-filter:none!import
 body.native nav{background:rgba(8,6,18,0.99);box-shadow:none}
 body.native .card,body.native .gloss,body.native .hero{box-shadow:none!important}
 body.native .card::before,body.native .card::after,body.native .card.gloss::before,body.native .card.gloss::after,body.native .card.hero::before,body.native .card.hero::after{display:none!important}
-body.native .view,body.native .view.on{animation:none!important}
-body.native .view{filter:none!important;transition:none!important}
-body.native .app{animation:none!important}
 body.native nav a{user-select:none;-webkit-user-select:none}
 .cal-grid{overflow-x:auto}
 #analitik .grid{min-width:0}
@@ -2441,9 +2438,6 @@ body.native *{backdrop-filter:none!important;-webkit-backdrop-filter:none!import
 body.native nav{background:rgba(8,6,18,0.99);box-shadow:none}
 body.native .card,body.native .gloss,body.native .hero{box-shadow:none!important}
 body.native .card::before,body.native .card::after,body.native .card.gloss::before,body.native .card.gloss::after,body.native .card.hero::before,body.native .card.hero::after{display:none!important}
-body.native .view,body.native .view.on{animation:none!important}
-body.native .view{filter:none!important;transition:none!important}
-body.native .app{animation:none!important}
 body.native nav a{user-select:none;-webkit-user-select:none}
 .cal-grid{overflow-x:auto}
 #analitik .grid{min-width:0}
@@ -3620,6 +3614,34 @@ body.priv .amt{color:transparent !important;user-select:none;pointer-events:none
 .update-spinner{width:16px;height:16px;border:2px solid var(--ln);border-top-color:#a78bfa;border-radius:50%;animation:update-spin .8s linear infinite}
 @keyframes update-spin{to{transform:rotate(360deg)}}
 
+/* ══════════════════════════════════════════════
+   SIDEBAR TIDY — konsisten di semua ukuran layar
+   ══════════════════════════════════════════════ */
+.logo{display:flex;align-items:center;gap:12px;padding:20px 16px 14px}
+.logo-text{display:inline-flex;align-items:baseline;gap:8px;font-size:clamp(20px,5vw,26px);line-height:1;font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-0.03em}
+.logo-text .logo-nex,.logo-text .logo-ora{display:inline-flex;align-items:baseline}
+nav a{padding:11px 12px}
+nav a .nav-icon{flex:none;width:38px;height:38px;border-radius:11px}
+nav a .nav-label{font-size:13.5px;line-height:1.2}
+/* badge: biarkan di tengah vertikal, aman saat expand/collapse */
+.nb-badge{top:50% !important;right:10px !important;transform:translateY(-50%) !important}
+body.sb-collapsed .nb-badge{right:0 !important;top:2px !important;transform:none !important}
+/* closed sidebar: mati-kan padding teks bar yang tabrakan */
+body.sb-collapsed .logo-text,body.sb-collapsed .xbtn{display:none !important}
+body.sb-collapsed .logo{padding:18px 8px 12px !important;justify-content:center}
+body.sb-collapsed nav a{padding:10px 0 !important;justify-content:center;overflow:visible !important}
+/* Mobile drawer */
+@media (max-width:768px){
+  .logo{padding:16px 14px 12px;align-items:center;gap:10px}
+  .logo-text{font-size:20px;gap:6px}
+  nav a{gap:10px;padding:11px 14px;border-radius:12px}
+  nav a .nav-icon{width:38px;height:38px;border-radius:10px}
+  nav a .nav-label{font-size:14.5px}
+  .xbtn{display:none !important}
+  .nb-badge{right:14px !important}
+}
+/* indicator bar aktif tetap bersih & tidak menabrak icon */
+nav a.on::after{left:4px;height:22px}
 </style>
 </head>
 <body>
@@ -3995,8 +4017,8 @@ T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();
    Gagal total = diam-diam (tidak memblokir app).
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 10,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.9',    // HARUS sama dengan versionName
+  code: 11,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.10',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
@@ -4276,7 +4298,7 @@ window.addEventListener('hashchange',route);
 var G=[];
 try{var sg=JSON.parse(storeGetRaw('nx_g'));if(Array.isArray(sg))G=sg.filter(function(g){return g&&typeof g==='object'&&typeof g.n==='string'&&isFinite(+g.t)&&+g.t>0});G.forEach(function(g){if(!g.id)g.id=Date.now()+Math.random()});var sb=JSON.parse(storeGetRaw('nx_b'));if(sb&&typeof sb==='object'&&!Array.isArray(sb))BUD=sb}catch(e){}
 var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
-function cnt(el,ms){if(RM||!el||document.body.classList.contains('native'))return;var m=el.textContent.match(/^([^\d−-]*)(-?[\d.,]+|−[\d.,]+)(.*)$/);if(!m)return;var pre=m[1],raw=m[2],suf=m[3],dec=raw.indexOf(',')>=0?raw.length-raw.indexOf(',')-1:0,t=parseFloat(raw.replace(/−/g,'-').replace(/\./g,'').replace(',','.'));if(isNaN(t))return;var id=el._c=(el._c||0)+1,t0=performance.now(),D=ms||1000;
+function cnt(el,ms){if(RM||!el)return;var m=el.textContent.match(/^([^\d−-]*)(-?[\d.,]+|−[\d.,]+)(.*)$/);if(!m)return;var pre=m[1],raw=m[2],suf=m[3],dec=raw.indexOf(',')>=0?raw.length-raw.indexOf(',')-1:0,t=parseFloat(raw.replace(/−/g,'-').replace(/\./g,'').replace(',','.'));if(isNaN(t))return;var id=el._c=(el._c||0)+1,t0=performance.now(),D=ms||1000;
 setTimeout(function(){if(el._c===id)el.textContent=pre+t.toLocaleString('id-ID',{minimumFractionDigits:dec,maximumFractionDigits:dec})+suf},D+150);
 (function f(n){if(el._c!=id)return;var p=Math.min(1,(n-t0)/D),v=t*(1-Math.pow(1-p,3));el.textContent=pre+v.toLocaleString('id-ID',{minimumFractionDigits:dec,maximumFractionDigits:dec})+suf;if(p<1)requestAnimationFrame(f)})(t0)}
 function numAnim(s,ms){document.querySelectorAll(s).forEach(function(el){cnt(el,ms)})}
@@ -4599,7 +4621,7 @@ $('#xclose').onclick=bye;
 $('#breopen').onclick=function(){document.body.classList.remove('closing')};
 
 /* ── Tab return animation ── */
-document.addEventListener('visibilitychange',function(){if(!document.hidden&&!RM&&!document.body.classList.contains('closing')&&!isNativeApp()){var a=$('.app');a.style.animation='none';void a.offsetWidth;a.style.animation='view-enter .7s ease-out';setTimeout(function(){a.style.animation=''},800)}});
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&!RM&&!document.body.classList.contains('closing')){var a=$('.app');a.style.animation='none';void a.offsetWidth;a.style.animation='view-enter .7s ease-out';setTimeout(function(){a.style.animation=''},800)}});
 
 /* ── Intro screen ── */
 if(false){var it=document.createElement('div');it.id='intro';it.innerHTML='<b>nexora</b><i></i>';document.body.appendChild(it);setTimeout(function(){it.remove()},2700)}
