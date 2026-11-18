@@ -82,7 +82,7 @@ body::after{
 /* ── Layout &amp; Responsive Shell ── */
 .app{
   display:grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 240px 1fr;
   min-height: 100vh;
   position: relative;
 }
@@ -1850,7 +1850,7 @@ body::after{
 /* ── Layout & Responsive Shell ── */
 .app{
   display:grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 240px 1fr;
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
@@ -3548,11 +3548,11 @@ body.native nav a{user-select:none;-webkit-user-select:none}
 .hamb svg,.sb-toggle svg{stroke:#d5cfeb}
 .sb-toggle{display:none;align-items:center;justify-content:center;width:38px;height:38px;background:transparent;border:1px solid var(--ln-strong);border-radius:10px;color:#d5cfeb;cursor:pointer;margin:2px 0 12px}
 @media (min-width: 769px){
-  .app{grid-template-columns: 264px 1fr;transition:grid-template-columns .28s ease}
+  .app{grid-template-columns: 240px 1fr;transition:grid-template-columns .28s ease}
   .sb-toggle{display:flex}
   #xclose{margin-top:auto}
 }
-body.sb-collapsed .app{grid-template-columns: 78px 1fr}
+body.sb-collapsed .app{grid-template-columns: 72px 1fr}
 body.sb-collapsed .logo{padding-left:0;padding-right:0;justify-content:center}
 body.sb-collapsed .logo .logo-text{display:none}
 body.sb-collapsed nav a{justify-content:center;gap:0;padding:12px 6px;overflow:visible}
@@ -3572,7 +3572,7 @@ body.sb-open .drawer-backdrop{opacity:1;pointer-events:auto}
   body{padding-top:0;overflow:hidden}
   .app{display:flex;flex-direction:column;height:100vh;height:100dvh;min-height:0;overflow:hidden}
   main{flex:1;min-height:0;height:auto;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:calc(56px + env(safe-area-inset-top,0px)) 12px 16px}
-  nav{position:fixed;top:0;bottom:0;left:0;height:100vh;height:100dvh;width:min(80vw,320px);z-index:115;flex-direction:column;justify-content:flex-start;gap:4px;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 16px;border:0;border-right:1px solid var(--glass-border);background:rgba(8,6,18,.97);backdrop-filter:none;-webkit-backdrop-filter:none;transform:translateX(-104%);transition:transform .28s cubic-bezier(.16,1,.3,1);box-shadow:0 0 48px rgba(0,0,0,.5);overflow-y:auto}
+  nav{position:fixed;top:0;bottom:0;left:0;height:100vh;height:100dvh;width:min(75vw,296px);z-index:115;flex-direction:column;justify-content:flex-start;gap:4px;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 16px;border:0;border-right:1px solid var(--glass-border);background:rgba(8,6,18,.97);backdrop-filter:none;-webkit-backdrop-filter:none;transform:translateX(-104%);transition:transform .28s cubic-bezier(.16,1,.3,1);box-shadow:0 0 48px rgba(0,0,0,.5);overflow-y:auto}
   body.sb-open nav{transform:translateX(0)}
   .hamb{display:flex}
   .sb-toggle{display:none}
@@ -3877,7 +3877,6 @@ nav a.on::after{left:4px;height:22px}
 <div class="update-wrap" id="update-wrap" aria-live="polite">
   <div class="update-empty"><b>Memuat pembaruan…</b>Menghubungkan ke server pembaruan Nexora.</div>
 </div>
-<div id="update-diag" style="margin-top:18px;font-size:11px;color:var(--tx-dim);border-top:1px solid var(--ln);padding-top:14px"></div>
 </section>
 
 <section class="view" id="goals">
@@ -4018,8 +4017,8 @@ T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();
    Gagal total = diam-diam (tidak memblokir app).
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 12,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.11',    // HARUS sama dengan versionName
+  code: 13,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.12',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
@@ -4029,7 +4028,6 @@ function checkForUpdate(){
   if(!updateConfigured()) return;
   var urls = [NEXORA_UPDATE.manifestUrl, 'https://cdn.jsdelivr.net/gh/KODE19405/nexora@main/update.json'];
   var chain = Promise.resolve(null);
-  var attempts = [];
   urls.forEach(function(u){
     chain = chain.then(function(prev){
       if(prev) return prev;
@@ -4041,36 +4039,17 @@ function checkForUpdate(){
           xhr.responseType = 'text';
           xhr.onload = function(){
             if(xhr.status >= 200 && xhr.status < 300){
-              attempts.push(u + ' → HTTP ' + xhr.status);
-              try { resolve(JSON.parse(xhr.responseText)); } catch(e){ attempts.push('JSON parse error'); resolve(null); }
-            } else {
-              attempts.push(u + ' → HTTP ' + xhr.status);
-              resolve(null);
-            }
+              try { resolve(JSON.parse(xhr.responseText)); } catch(e){ resolve(null); }
+            } else { resolve(null); }
           };
-          xhr.onerror = function(){ attempts.push(u + ' → NETWORK ERROR'); resolve(null); };
-          xhr.ontimeout = function(){ attempts.push(u + ' → TIMEOUT'); resolve(null); };
+          xhr.onerror = function(){ resolve(null); };
+          xhr.ontimeout = function(){ resolve(null); };
           xhr.send();
-        } catch (e) { attempts.push(u + ' → EXCEPTION: ' + e.message); resolve(null); }
+        } catch (e) { resolve(null); }
       });
     });
   });
   chain.then(function(m){
-    var log = { at: new Date().toISOString(), attempts: attempts.slice(0), ok: false, latest: null };
-    if(m && typeof m.versionCode === 'number' && Number.isFinite(m.versionCode)){
-      log.ok = true; log.latest = m.versionCode;
-    }
-    try { storeSetRaw('nx_update_log', JSON.stringify(log)); } catch(e) {}
-    try {
-      var dEl = document.getElementById('update-diag');
-      if(dEl){
-        var diagLines = ['Diagnostik: ' + (log.ok ? 'OK — server melacak versi terbaru ' + log.latest : 'GAGAL — update tidak bisa diperiksa')];
-        (log.attempts || []).forEach(function(a){ diagLines.push('• ' + a); });
-        diagLines.push('terakhir diperiksa: ' + (log.at ? new Date(log.at).toLocaleString('id-ID') : '-'));
-        dEl.textContent = diagLines.join('\n');
-        dEl.style.whiteSpace = 'pre-line';
-      }
-    } catch(e) {}
     if(!m || typeof m.versionCode !== 'number' || !Number.isFinite(m.versionCode)) return;
     if(!m.apkUrl || !/^https:\/\//.test(String(m.apkUrl))) return;
     try {
@@ -4334,7 +4313,8 @@ window.addEventListener('hashchange',route);
 var G=[];
 try{var sg=JSON.parse(storeGetRaw('nx_g'));if(Array.isArray(sg))G=sg.filter(function(g){return g&&typeof g==='object'&&typeof g.n==='string'&&isFinite(+g.t)&&+g.t>0});G.forEach(function(g){if(!g.id)g.id=Date.now()+Math.random()});var sb=JSON.parse(storeGetRaw('nx_b'));if(sb&&typeof sb==='object'&&!Array.isArray(sb))BUD=sb}catch(e){}
 var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
-function cnt(el,ms){if(RM||!el)return;var m=el.textContent.match(/^([^\d−-]*)(-?[\d.,]+|−[\d.,]+)(.*)$/);if(!m)return;var pre=m[1],raw=m[2],suf=m[3],dec=raw.indexOf(',')>=0?raw.length-raw.indexOf(',')-1:0,t=parseFloat(raw.replace(/−/g,'-').replace(/\./g,'').replace(',','.'));if(isNaN(t))return;var id=el._c=(el._c||0)+1,t0=performance.now(),D=ms||1000;
+function wantAnim(){ try { return !RM || (typeof isNativeApp === 'function' && isNativeApp()); } catch(e) { return true; } }
+function cnt(el,ms){if(!el || !wantAnim())return;var m=el.textContent.match(/^([^\d−-]*)(-?[\d.,]+|−[\d.,]+)(.*)$/);if(!m)return;var pre=m[1],raw=m[2],suf=m[3],dec=raw.indexOf(',')>=0?raw.length-raw.indexOf(',')-1:0,t=parseFloat(raw.replace(/−/g,'-').replace(/\./g,'').replace(',','.'));if(isNaN(t))return;var id=el._c=(el._c||0)+1,t0=performance.now(),D=ms||1000;
 setTimeout(function(){if(el._c===id)el.textContent=pre+t.toLocaleString('id-ID',{minimumFractionDigits:dec,maximumFractionDigits:dec})+suf},D+150);
 (function f(n){if(el._c!=id)return;var p=Math.min(1,(n-t0)/D),v=t*(1-Math.pow(1-p,3));el.textContent=pre+v.toLocaleString('id-ID',{minimumFractionDigits:dec,maximumFractionDigits:dec})+suf;if(p<1)requestAnimationFrame(f)})(t0)}
 function numAnim(s,ms){document.querySelectorAll(s).forEach(function(el){cnt(el,ms)})}
@@ -4544,7 +4524,7 @@ var pts=nt2.map(function(n,j){return{x:j*78+42,y:190-n/mm2*170,n:n}});
 var dIdx=-1;for(var j=0;j<ms2.length;j++){if(ms2[j].proj){dIdx=j;break}}
 var dA2=smooth(pts.slice(0,Math.min(pts.length,dIdx>0?dIdx+1:pts.length)));
 var dots='';pts.forEach(function(p,j){if(j<(dIdx<0?pts.length:dIdx))dots+='<circle cx="'+p.x+'" cy="'+p.y+'" r="3.2" fill="#fff" style="transform-box:fill-box;transform-origin:center;animation:pop .5s '+(.6+j*.3)+'s backwards"/>'});
-var html='<path d="'+dA2+'" pathLength="1" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="'+(RM?'':'stroke-dasharray:1;stroke-dashoffset:1;animation:dr 1.8s .6s cubic-bezier(.4,0,.2,1) forwards')+'"/>';
+var html='<path d="'+dA2+'" pathLength="1" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="'+(wantAnim()?'stroke-dasharray:1;stroke-dashoffset:1;animation:dr 1.8s .6s cubic-bezier(.4,0,.2,1) forwards':'')+'"/>';
 if(dIdx>0){html+='<path d="'+smooth(pts.slice(Math.max(0,dIdx-1)))+'" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 5" opacity=".65"/>'}
 sv.insertAdjacentHTML('beforeend',html+dots)}
 ['#bal','#inc','#exp'].forEach(function(s){cnt($(s))});
@@ -4838,7 +4818,6 @@ function playCinematicIntroSound(){
   function fetchMeta(){
     var primary = (typeof NEXORA_UPDATE === 'object' && NEXORA_UPDATE && NEXORA_UPDATE.manifestUrl) ? NEXORA_UPDATE.manifestUrl : 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json';
     var urls = [primary, 'https://cdn.jsdelivr.net/gh/KODE19405/nexora@main/update.json'];
-    var attempts = [];
     var chain = Promise.resolve(null);
     urls.forEach(function(u){
       chain = chain.then(function(prev){
@@ -4847,27 +4826,12 @@ function playCinematicIntroSound(){
           var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
           var t = ctrl ? window.setTimeout(function(){ ctrl.abort(); }, (typeof NEXORA_UPDATE === 'object' && NEXORA_UPDATE && NEXORA_UPDATE.timeout) ? NEXORA_UPDATE.timeout : 6000) : null;
           fetch(u, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
-            .then(function(r){ if(t) clearTimeout(t); if(!r.ok){ attempts.push(u + ' → HTTP ' + r.status); return resolve(null); } return r.json().then(function(j){ attempts.push(u + ' → OK'); resolve(j); }, function(){ attempts.push(u + ' → JSON parse error'); resolve(null); }); },
-                   function(){ if(t) clearTimeout(t); attempts.push(u + ' → NETWORK ERROR'); resolve(null); });
+            .then(function(r){ if(t) clearTimeout(t); if(!r.ok) return resolve(null); return r.json().then(function(j){ resolve(j); }, function(){ resolve(null); }); },
+                   function(){ if(t) clearTimeout(t); resolve(null); });
         });
       });
     });
-    return chain.then(function(m){
-      var log = { at: new Date().toISOString(), attempts: attempts.slice(0), ok: !!(m && typeof m.versionCode === 'number' && isFinite(m.versionCode)), latest: null };
-      if(m && typeof m.versionCode === 'number' && isFinite(m.versionCode)) log.latest = Number(m.versionCode);
-      try { storeSetRaw('nx_update_log', JSON.stringify(log)); } catch(e) {}
-      try {
-        var dEl = document.getElementById('update-diag');
-        if(dEl){
-          var lines = ['Diagnostik: ' + (log.ok ? 'OK — server melacak versi terbaru ' + log.latest : 'GAGAL — update tidak bisa diperiksa')];
-          (log.attempts || []).forEach(function(a){ lines.push('• ' + a); });
-          lines.push('terakhir diperiksa: ' + new Date(log.at).toLocaleString('id-ID'));
-          dEl.textContent = lines.join('\n');
-          dEl.style.whiteSpace = 'pre-line';
-        }
-      } catch(e) {}
-      return m;
-    });
+    return chain.then(function(m){ return m; });
   }
   function bulletHtml(meta){ return bulletLines(meta && (meta.notes || meta.summary)); }
   function getDismissed(){ try{ var v = storeGetRaw(dismissedKey); var n = Number(v); return isFinite(n) && n > 0 ? n : 0; }catch(e){ return 0; } }

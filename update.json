@@ -1,13 +1,14 @@
 {
-  "versionCode": 12,
-  "versionName": "1.11",
-  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.11/Nexora.apk",
+  "versionCode": 13,
+  "versionName": "1.12",
+  "apkUrl": "https://github.com/KODE19405/nexora/releases/download/v1.12/Nexora.apk",
   "date": "19 Nov 2026",
-  "sha256": "0C49BA06861820A2D7137D497EA7FF2D69D2A7A7482A301BBADC3F85152247DE",
-  "size": 3379049,
+  "sha256": "8D33472CC226BBAE255E6C9F4152BFDCE5EFD76F8C3A1362815AB2C163171A9E",
+  "size": 3378328,
   "notes": [
-    "Diagnostik pembaruan di halaman Pembaruan: daftar sumber yang dicoba, status HTTP, timestamp — mempermudah melihat kenapa banner tidak muncul",
-    "Check update diringkas ke satu log persisted nan melakukan eksekusi di awal aplikasi; banner akan muncul jika remote > lokal (bukan tergantung window.Capacitor)",
-    "Animasi sudah dikembalikan sepenuhnya (angka count-up, chart grow, view transitions) di sidebar yang sudah dirapikan"
+    "Sidebar diperkecil jadi ukuran sedang (lebih lega untuk konten)",
+    "Bar diagnostik 'Diagnostik: …' dihapus dari halaman Pembaruan",
+    "Animasi angka count-up dikembalikan dan kini berfungsi di APK (tidak terpengaruh setelan prefers-reduced-motion Android)",
+    "Animasi sparkline path (idle chart) yang dulu di-gate oleh RM juga kini akan tampil karena wantAnim() menghormati Android native"
   ]
 }
