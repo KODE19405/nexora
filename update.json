@@ -1,14 +1,13 @@
 {
-  "versionCode": 13,
-  "versionName": "1.12",
-  "apkUrl": "https://cdn.jsdelivr.net/gh/KODE19405/nexora@v1.12-release/releases/Nexora.apk",
+  "versionCode": 14,
+  "versionName": "1.13",
+  "apkUrl": "https://cdn.jsdelivr.net/gh/KODE19405/nexora@v1.13-release/releases/Nexora.apk",
   "date": "19 Nov 2026",
-  "sha256": "8D33472CC226BBAE255E6C9F4152BFDCE5EFD76F8C3A1362815AB2C163171A9E",
-  "size": 3378328,
+  "sha256": "48D5EBB390A4997D310AA9B4741A302B528746D078333CAA123FAC3A33ED902B",
+  "size": 3377936,
   "notes": [
-    "Sidebar diperkecil ke ukuran sedang (lebih lega untuk konten)",
-    "Diagnostik update dihapus; Update Sekarang sekarang 100% berfungsi di WebView (terjadi masalah CORS pada CDN GitHub release-assets)",
-    "Migrasi download APK ke jsdelivr CDN yang mengirim Access-Control-Allow-Origin: *",
-    "count-up animasi dan sparkline path dikembalikan di Android WebView"
+    "Update install tidak lagi memerlukan plugin custom (ApkUpdater dihapus) — pakai Filesystem + AppLauncher (plugin resmi Capacitor) untuk menulis APK ke cache dan membuka installer Android",
+    "REQUEST_INSTALL_PACKAGES dihapus (tidak diperlukan dengan FileProvider)",
+    "Aplikasi lebih kecil dan update flow lebih stabil"
   ]
 }
