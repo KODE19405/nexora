@@ -1,13 +1,13 @@
 {
-  "versionCode": 14,
-  "versionName": "1.13",
-  "apkUrl": "https://cdn.jsdelivr.net/gh/KODE19405/nexora@v1.13-release/releases/Nexora.apk",
+  "versionCode": 15,
+  "versionName": "1.14",
+  "apkUrl": "https://cdn.jsdelivr.net/gh/KODE19405/nexora@v1.14-release/releases/Nexora.apk",
   "date": "19 Nov 2026",
-  "sha256": "48D5EBB390A4997D310AA9B4741A302B528746D078333CAA123FAC3A33ED902B",
-  "size": 3377936,
+  "sha256": "B07CF8B063AA02EE0E2691F647223E7C71C889EA50618811D23EDA1CAD571B63",
+  "size": 3378178,
   "notes": [
-    "Update install tidak lagi memerlukan plugin custom (ApkUpdater dihapus) — pakai Filesystem + AppLauncher (plugin resmi Capacitor) untuk menulis APK ke cache dan membuka installer Android",
-    "REQUEST_INSTALL_PACKAGES dihapus (tidak diperlukan dengan FileProvider)",
-    "Aplikasi lebih kecil dan update flow lebih stabil"
+    "Kalender Analitik didesain ulang: sel seragam dengan indikator 4 titik intensitas pengeluaran (bukan lagi bar pil yang melebar di sel)",
+    "Menu sidebar & drawer diperkecil ke ukuran sedang (ikon 28px, label 13px); badge 'belum dibaca' lebih kecil",
+    "Drawer HP tidak lagi bertabrakan dengan tombol hamburger di item pertama"
   ]
 }
