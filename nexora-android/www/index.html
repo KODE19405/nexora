@@ -4017,8 +4017,8 @@ T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();
    Gagal total = diam-diam (tidak memblokir app).
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 13,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.12',    // HARUS sama dengan versionName
+  code: 14,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.13',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
@@ -4992,8 +4992,14 @@ function playCinematicIntroSound(){
   }
   function saveAndInstall(buf, meta){
     setStatus('writing'); setProgressText('Menulis file APK…');
-    if(!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.ApkUpdater){
-      renderError('Install hanya tersedia di aplikasi Android (ApkUpdater plugin tidak ditemukan).');
+    var FS = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem;
+    var AL = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.AppLauncher;
+    if(!FS || typeof FS.writeFile !== 'function'){
+      renderError('Install tidak tersedia di aplikasi ini (Filesystem plugin tidak terdaftar).');
+      return;
+    }
+    if(!AL || typeof AL.openUrl !== 'function'){
+      renderError('Install tidak tersedia di aplikasi ini (AppLauncher plugin tidak terdaftar).');
       return;
     }
     var CHUNK = 8192;
@@ -5002,8 +5008,13 @@ function playCinematicIntroSound(){
       b64 += String.fromCharCode.apply(null, buf.subarray(i, i + CHUNK));
     }
     b64 = btoa(b64);
-    window.Capacitor.Plugins.ApkUpdater.writeApk({ path: 'nexora-update.apk', data: b64 })
-      .then(function(){ return window.Capacitor.Plugins.ApkUpdater.installApk({ path: 'nexora-update.apk' }); })
+    FS.writeFile({ path: 'nexora-update.apk', directory: 'CACHE', data: b64 })
+      .then(function(){ return FS.getUri({ path: 'nexora-update.apk', directory: 'CACHE' }); })
+      .then(function(res){
+        var url = res && res.uri;
+        if(!url) throw new Error('URI APK tidak ditemukan setelah ditulis');
+        return AL.openUrl({ url: url });
+      })
       .then(function(){ setStatus('awaiting-installer'); renderAwaitingInstaller(); })
       .catch(function(err){ renderError('Install gagal: ' + (err && err.message ? err.message : String(err))); });
   }
