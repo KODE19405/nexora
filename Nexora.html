@@ -3590,24 +3590,35 @@ body.sb-open .drawer-backdrop{opacity:1;pointer-events:auto}
 }
 /* Sembunyikan nominal (priv mode) — dipakai tombol #eye */
 body.priv .amt{color:transparent !important;user-select:none;pointer-events:none}
-/* ── What's New / Pembaruan ── */
-.notif-list{display:flex;flex-direction:column;gap:12px;max-width:860px}
-.notif-empty{padding:44px 20px;text-align:center;color:var(--tx-muted);border:1px dashed var(--glass-border);border-radius:14px;background:var(--glass-card);font-size:13.5px}
-.notif-item{background:var(--glass-card);border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;transition:border-color .2s}
-.notif-item:hover{border-color:var(--ln-strong)}
-.notif-item[aria-expanded="true"]{border-color:var(--ln-strong)}
-.nh-head{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;border:0;cursor:pointer;padding:14px 16px}
-.nh-dot{flex:none;width:10px;height:10px;border-radius:50%;background:#a78bfa}
-.nh-dot[data-read="1"]{background:var(--tx-dim)}
-.nh-title{flex:1;min-width:0}
-.nh-title b{display:block;font-size:14px;color:#fff;letter-spacing:-.01em}
-.nh-title span{display:block;margin-top:3px;font-size:12px;color:var(--tx-muted)}
-.nh-tag{flex:none;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#c5b5f8;background:rgba(121,82,214,.16);border-radius:6px;padding:4px 8px}
-.nh-caret{flex:none;stroke:var(--tx-muted);transition:transform .25s}
-.notif-item[aria-expanded="true"] .nh-caret{transform:rotate(180deg)}
-.nh-notes{display:none;margin:0;padding:0 16px 14px 38px;color:var(--tx);font-size:13px;line-height:1.6;border-top:1px solid var(--ln)}
-.nh-notes li{margin:6px 0 0}
-.notif-item[aria-expanded="true"] .nh-notes{display:block}
+/* ── Pembaruan Aplikasi / Update ── */
+.update-wrap{display:flex;flex-direction:column;gap:16px;max-width:740px}
+.update-card{background:var(--glass-card);border:1px solid var(--glass-border);border-radius:16px;padding:18px 20px;position:relative}
+.update-card.update-available{border-color:rgba(167,139,250,.4);box-shadow:0 0 22px rgba(167,139,250,.12)}
+.update-close{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:8px;border:0;background:transparent;color:var(--tx-muted);cursor:pointer;display:grid;place-items:center}
+.update-close:hover{color:#fff;background:rgba(255,255,255,.05)}
+.update-eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 6px}
+.update-tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#c5b5f8;background:rgba(121,82,214,.18)}
+.update-tag.current{color:#86efac;background:rgba(52,211,153,.12)}
+.update-tag.outdated{color:#fda4af;background:rgba(251,113,133,.14)}
+.update-ver{margin:0;font-family:'Space Grotesk',sans-serif;font-size:22px;color:#fff;font-weight:700;letter-spacing:-.02em}
+.update-meta{display:flex;flex-wrap:wrap;gap:6px 16px;margin:6px 0 12px;font-size:12px;color:var(--tx-muted)}
+.update-meta b{color:#fff;font-weight:600}
+.update-notes{margin:0;padding-left:20px;color:var(--tx);font-size:13px;line-height:1.6}
+.update-notes li{margin:6px 0}
+.update-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center}
+.update-actions .btn{min-width:150px}
+.update-progress{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.update-pbar{height:6px;background:var(--ln);border-radius:999px;overflow:hidden}
+.update-pbar>span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#a78bfa,#7c3aed);transition:width .15s linear}
+.update-meta2{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--tx-muted)}
+.update-sub{margin:6px 0 0;font-size:11.5px;color:var(--tx-dim)}
+.update-empty{padding:40px 18px;text-align:center;border:1px dashed var(--glass-border);border-radius:16px;color:var(--tx-muted)}
+.update-empty b{color:#fff;font-size:17px;display:block;margin:0 0 4px}
+.update-error{background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.35);color:#fecaca;border-radius:14px;padding:12px 14px;font-size:12.5px;line-height:1.55}
+.update-error .retry{margin-top:10px}
+.update-check{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--tx-muted);margin-top:14px;padding-top:14px;border-top:1px solid var(--ln)}
+.update-spinner{width:16px;height:16px;border:2px solid var(--ln);border-top-color:#a78bfa;border-radius:50%;animation:update-spin .8s linear infinite}
+@keyframes update-spin{to{transform:rotate(360deg)}}
 
 </style>
 </head>
@@ -3840,8 +3851,10 @@ body.priv .amt{color:transparent !important;user-select:none;pointer-events:none
 </section>
 
 <section class="view" id="notif">
-<div class="head"><div><h1>Yang Baru di Nexora</h1><p class="sub">Riwayat resmi pembaruan Nexora — apa yang berubah, ditulis berdasarkan rilis yang benar-benar pernah ada.</p></div><button class="btn ghost" id="markAllRead" type="button">Tandai semua dibaca</button></div>
-<div id="notif-list" class="notif-list"></div>
+<div class="head"><div><h1>Pembaruan</h1><p class="sub">Cek apakah ada versi terbaru Nexora untuk HP Anda. Update diapk instalasi membutuhkan konfirmasi dari Anda.</p></div><button class="btn ghost" id="checkUpdateAgain" type="button">Cek lagi</button></div>
+<div class="update-wrap" id="update-wrap" aria-live="polite">
+  <div class="update-empty"><b>Memuat pembaruan…</b>Menghubungkan ke server pembaruan Nexora.</div>
+</div>
 </section>
 
 <section class="view" id="goals">
@@ -3982,8 +3995,8 @@ T=T.filter(function(t){return String(t.id)!==String(id)});save();tlist();dash();
    Gagal total = diam-diam (tidak memblokir app).
    Perbarui NEXORA_UPDATE.code & name SETIAP kali menaikkan versionCode di android/app/build.gradle. */
 var NEXORA_UPDATE = {
-  code: 9,        // HARUS sama dengan versionCode di android/app/build.gradle
-  name: '1.8',    // HARUS sama dengan versionName
+  code: 10,        // HARUS sama dengan versionCode di android/app/build.gradle
+  name: '1.9',    // HARUS sama dengan versionName
   manifestUrl: 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json',
   timeout: 6000
 };
@@ -4738,66 +4751,253 @@ function playCinematicIntroSound(){
 })();
 
 /* ══════════════════════════════════════════════
-   Pembaruan / What's New — riwayat rilis resmi
+/* ══════════════════════════════════════════════
+   Pembaruan Aplikasi — cek & unduh APK langsung
+   (hanya untuk aplikasi Android; di browser: tampil rilis tanpa aksi install)
    ══════════════════════════════════════════════ */
 (function(){
-  var WHATS_NEW = [
-    { id: 'v1.8', date: '18 Nov 2026', tag: 'Perbaikan', title: 'Sidebar, sembunyi angka & menu Pembaruan', notes: ['Navigasi bawah diganti menjadi sidebar (hamburger / tombol perluas, ciut/perluas di desktop, drawer di HP).', 'Tombol "Sembunyikan saldo" sekarang benar-benar menyembunyikan seluruh nominal (Total Balance, Pemasukan, Pengeluaran, transaksi, anggaran, goals, analitik, kalender).', 'Menu "Pembaruan" baru — tampilkan daftar rilis asli + badge jumlah belum dibaca.', 'Perbaikan kecil: halaman Pembaruan memperbaiki penulisan body overflow untuk Android terbaru.'] },
-    { id: 'v1.7', date: '18 Nov 2026', tag: 'Perbaikan', title: 'Halaman tidak pernah terpotong lagi', notes: ['Tinggi halaman dipaksa 1024px sejak rilis awal sehingga kartu paling bawah selalu tertutup bar bawah — kini tinggi mengikuti tinggi layar (100dvh).', 'Semua menu tampil penuh tanpa terpotong.'] },
-    { id: 'v1.6', date: '17 Nov 2026', tag: 'Perbaikan', title: 'Layout flex-kolom & 7 menu fit', notes: ['Navigasi bawah dijadikan layout kolom agar baris terakhir tidak terpotong.', 'Semua 7 menu utama terlihat tanpa perlu geser horizontal.'] },
-    { id: 'v1.5', date: '17 Nov 2026', tag: 'Perbaikan', title: 'Cek pembaruan 2 sumber', notes: ['Cek pembaruan sekarang mencoba raw.githubusercontent.com lalu cdn.jsdelivr.net, sehingga banner tetap muncul walau salah satu sumber tidak terjangkau jaringan HP Anda.'] },
-    { id: 'v1.4', date: '17 Nov 2026', tag: 'Peningkatan', title: 'Rendering lebih ringan & intro kembali', notes: ['Profil GPU-light di APK: tanpa blur, tanpa shadow kartu, tanpa animasi hitung angka di statistik.', 'Intro diringkas (1,1 detik) dan kembali selalu tampil.'] },
-    { id: 'v1.3', date: '17 Nov 2026', tag: 'Perbaikan', title: 'Penyimpanan data permanen', notes: ['Sumber kebenaran data dipindah dari localStorage ke SharedPreferences (Capacitor Preferences) sehingga data tidak hilang saat app ditutup.', 'Instalasi pertama kini menampilkan aplikasi kosong (tanpa saldo contoh).'] },
-    { id: 'v1.2', date: '17 Nov 2026', tag: 'Perbaikan', title: 'APK 60fps & menu Invoice dihapus', notes: ['Penyimpanan dimirror ke SharedPreferences sebagai cadangan anti-hilang.', 'Intro tidak diputar di APK; menu Invoice dihapus; repo dibersihkan untuk sumber APK saja.'] },
-    { id: 'v1.1', date: '17 Nov 2026', tag: 'Baru', title: 'APK Nexora & pembaruan otomatis', notes: ['Aplikasi Android resmi (sideload, tanpa Play Store).', 'Cek pembaruan otomatis di dalam aplikasi (banner “Pembaruan tersedia”).'] }
-  ];
-  var listEl = document.getElementById('notif-list');
   var badgeEl = document.getElementById('nb-badge');
-  if(!listEl) return;
-  var SEEN_KEY = 'nx_whatsnew_seen';
-  function getSeen(){ try{ var s = storeGetRaw(SEEN_KEY); if(!s) return []; var p = JSON.parse(s); return Array.isArray(p) ? p : []; }catch(e){ return []; } }
-  function setSeen(arr){ try{ storeSetRaw(SEEN_KEY, JSON.stringify(arr)); }catch(e){} }
-  function unseenCount(seen){ return WHATS_NEW.filter(function(n){ return seen.indexOf(n.id) === -1; }).length; }
-  function render(){
-    var seen = getSeen();
-    if(!WHATS_NEW.length){ listEl.innerHTML = '<div class="notif-empty">Belum ada pembaruan.</div>'; if(badgeEl) badgeEl.hidden = true; return; }
-    var unseen = unseenCount(seen);
-    var firstUnread = WHATS_NEW.findIndex(function(n){ return seen.indexOf(n.id) === -1; });
-    listEl.innerHTML = WHATS_NEW.map(function(n, i){
-      var read = seen.indexOf(n.id) !== -1;
-      var open = (i === firstUnread && unseen > 0);
-      return '<div class="notif-item" data-id="' + n.id + '" aria-expanded="' + String(open) + '">'
-        + '<button type="button" class="nh-head" aria-controls="nh-' + n.id + '" aria-expanded="' + String(open) + '">'
-        + '<span class="nh-dot" data-read="' + (read ? '1' : '0') + '"></span>'
-        + '<span class="nh-title"><b>' + n.title + '</b><span>' + n.date + ' · Nexora · ' + n.id + '</span></span>'
-        + '<span class="nh-tag">' + n.tag + '</span>'
-        + '<svg class="nh-caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>'
-        + '</button>'
-        + '<ul class="nh-notes" id="nh-' + n.id + '">' + n.notes.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>'
-        + '</div>';
-    }).join('');
-    if(badgeEl){ if(unseen > 0){ badgeEl.hidden = false; badgeEl.textContent = String(unseen); } else { badgeEl.hidden = true; } }
-    listEl.querySelectorAll('.nh-head').forEach(function(head){
-      head.addEventListener('click', function(){
-        var item = head.closest('.notif-item');
-        var id = item.getAttribute('data-id');
-        var open = item.getAttribute('aria-expanded') !== 'true';
-        item.setAttribute('aria-expanded', String(open));
-        head.setAttribute('aria-expanded', String(open));
-        var seen2 = getSeen();
-        if(open && seen2.indexOf(id) === -1){ seen2.push(id); setSeen(seen2); }
-        var dot = item.querySelector('.nh-dot');
-        if(dot && open) dot.setAttribute('data-read', '1');
-        var u2 = unseenCount(getSeen());
-        if(badgeEl){ if(u2 > 0){ badgeEl.hidden = false; badgeEl.textContent = String(u2); } else { badgeEl.hidden = true; } }
+  var wrapEl  = document.getElementById('update-wrap');
+  if(!wrapEl) return;
+  var isNative = isNativeApp();
+  var localCode = (typeof NEXORA_UPDATE === 'object' && NEXORA_UPDATE && typeof NEXORA_UPDATE.code === 'number') ? NEXORA_UPDATE.code : 10;
+  var localName = (typeof NEXORA_UPDATE === 'object' && NEXORA_UPDATE && NEXORA_UPDATE.name) ? NEXORA_UPDATE.name : '1.9';
+  var dismissedKey = 'nx_update_dismissed';
+
+  function formatSize(bytes){
+    var b = Number(bytes);
+    if(!isFinite(b) || b <= 0) return '';
+    if(b < 1024) return b + ' B';
+    if(b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+    return (b / 1048576).toFixed(1) + ' MB';
+  }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function bulletLines(notes){
+    if(!notes) return '<li>Rilis ini perbaikan kecil.</li>';
+    if(Array.isArray(notes)) return notes.filter(Boolean).map(function(x){ return '<li>' + esc(String(x).trim()) + '</li>'; }).join('');
+    return String(notes).split(/\r?\n|\s*[•;]\s*/).map(function(x){ return x.trim(); }).filter(Boolean).map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('');
+  }
+  /* Ambil metadata rilis dari server (raw.githubusercontent.com, fallback jsdelivr). */
+  function fetchMeta(){
+    var primary = (typeof NEXORA_UPDATE === 'object' && NEXORA_UPDATE && NEXORA_UPDATE.manifestUrl) ? NEXORA_UPDATE.manifestUrl : 'https://raw.githubusercontent.com/KODE19405/nexora/main/update.json';
+    var urls = [primary, 'https://cdn.jsdelivr.net/gh/KODE19405/nexora@main/update.json'];
+    var chain = Promise.resolve(null);
+    urls.forEach(function(u){
+      chain = chain.then(function(prev){
+        if(prev) return prev;
+        return new Promise(function(resolve){
+          var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          var t = ctrl ? window.setTimeout(function(){ ctrl.abort(); }, (typeof NEXORA_UPDATE === 'object' && NEXORA_UPDATE && NEXORA_UPDATE.timeout) ? NEXORA_UPDATE.timeout : 6000) : null;
+          fetch(u, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+            .then(function(r){ if(t) clearTimeout(t); if(!r.ok) return resolve(null); return r.json().then(resolve, function(){ resolve(null); }); },
+                   function(){ if(t) clearTimeout(t); resolve(null); });
+        });
       });
     });
+    return chain;
   }
-  render();
-  var markAll = document.getElementById('markAllRead');
-  if(markAll) markAll.addEventListener('click', function(){ setSeen(WHATS_NEW.map(function(n){ return n.id; })); render(); });
-})();
+  function bulletHtml(meta){ return bulletLines(meta && (meta.notes || meta.summary)); }
+  function getDismissed(){ try{ var v = storeGetRaw(dismissedKey); var n = Number(v); return isFinite(n) && n > 0 ? n : 0; }catch(e){ return 0; } }
+  function setDismissed(v){ try{ storeSetRaw(dismissedKey, v > 0 ? String(v) : '0'); }catch(e){} }
+  function setBadge(n){ if(!badgeEl) return; if(n > 0){ badgeEl.hidden = false; badgeEl.textContent = String(n); } else { badgeEl.hidden = true; } }
 
+  var state = { status: 'idle', meta: null, progress: 0 };
+
+  function $(id){ return document.getElementById(id); }
+  function busyRender(){
+    wrapEl.innerHTML = '<div class="update-empty"><div class="update-spinner" style="display:inline-block;vertical-align:middle;margin-right:10px"></div>Memeriksa pembaruan…<div class="update-sub">Menghubungi server pembaruan Nexora.</div></div>';
+  }
+  function recoveryActions(retryId, retryLabel){
+    return '<div class="update-actions"><button class="btn" id="' + (retryId || 'update-check-again') + '" type="button">' + esc(retryLabel || 'Coba lagi') + '</button></div>';
+  }
+  function renderError(msg){
+    wrapEl.innerHTML =
+      '<div class="update-card update-error"><b>Tidak bisa mendapatkan info pembaruan</b>' +
+      '<div style="margin-top:4px">' + esc(String(msg || 'Periksa koneksi internet Anda.')) + '</div>'
+      + recoveryActions('update-check-again', 'Coba lagi') + '</div>';
+    setBadge(0);
+    state.status = 'error';
+  }
+  function setBadgeFor(meta){
+    if(!meta){ setBadge(0); return; }
+    setBadge(isNative ? 1 : 0);
+  }
+  function checkRow(muted){
+    var msg = muted ? 'Terakhir diperiksa' : '';
+    return '<div class="update-check">Pembaruan otomatis diperiksa setiap aplikasi dibuka.<button class="btn ghost" id="update-check-again" type="button" style="min-width:0;padding:6px 12px;font-size:12px;margin-left:auto">Periksa sekarang</button></div>';
+  }
+  function renderUpToDate(meta){
+    wrapEl.innerHTML =
+      '<div class="update-card">'
+      + '<div class="update-eyebrow"><span class="update-tag current">Sudah terbaru</span></div>'
+      + '<h2 class="update-ver">Nexora ' + esc(localName) + '</h2>'
+      + '<p class="update-meta" style="margin-bottom:0">Versi terpasang di perangkat ini sudah yang terbaru.</p>'
+      + '</div>'
+      + checkRow(true);
+    setBadge(0);
+    state.status = 'up-to-date';
+  }
+  function renderBrowserVersion(meta){
+    if(!isNative){
+      var url = meta && meta.apkUrl ? meta.apkUrl : 'https://github.com/KODE19405/nexora/releases';
+      wrapEl.innerHTML =
+        '<div class="update-card">'
+        + '<div class="update-eyebrow"><span class="update-tag">Rilis terbaru</span></div>'
+        + '<h2 class="update-ver">Nexora ' + esc(meta && meta.versionName ? meta.versionName : localName) + '</h2>'
+        + '<div class="update-meta"><span>Versi aplikasi: <b>' + esc(localName) + '</b> (browser)</span></div>'
+        + '<ul class="update-notes">' + bulletHtml(meta) + '</ul>'
+        + '<div class="update-actions"><a class="btn" href="' + esc(url) + '" target="_blank" rel="noopener">Buka halaman rilis</a></div>'
+        + '</div>'
+        + checkRow(true);
+      setBadge(0);
+      state.status = 'up-to-date';
+      return;
+    }
+    renderAvailable(meta);
+  }
+  function renderAvailable(meta){
+    wrapEl.innerHTML =
+      '<div class="update-card update-available">'
+      + '<button class="update-close" id="update-dismiss" type="button" aria-label="Tutup notifikasi">'
+      +   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M6 18L18 6"/></svg>'
+      + '</button>'
+      + '<div class="update-eyebrow"><span class="update-tag">Pembaruan tersedia</span></div>'
+      + '<h2 class="update-ver">Nexora ' + esc(meta.versionName || '') + '</h2>'
+      + '<div class="update-meta">' + (meta.size ? '<span>Ukuran: <b>' + esc(formatSize(meta.size)) + '</b></span>' : '') + (meta.date ? '<span>Dirilis: <b>' + esc(meta.date) + '</b></span>' : '') + '</div>'
+      + '<ul class="update-notes">' + bulletHtml(meta) + '</ul>'
+      + '<div class="update-progress" id="update-progress" style="display:none">'
+      +   '<div class="update-pbar"><span id="update-pbar-fill" style="width:0%"></span></div>'
+      +   '<div class="update-meta2"><span id="update-progress-text">Memulai unduhan…</span>'
+      +     '<button class="btn ghost" id="update-cancel" type="button" style="min-width:0;padding:6px 12px;font-size:12px">Batal</button>'
+      +   '</div>'
+      + '</div>'
+      + '<div class="update-actions" id="update-actions"><button class="btn" id="update-go" type="button">Update Sekarang</button></div>'
+      + '<p class="update-sub">APK diunduh &amp; diverifikasi SHA-256, lalu dikirim ke installer Android resmi. Anda tetap harus menekan "Install".</p>'
+      + '</div>'
+      + checkRow(true);
+    setBadgeFor(meta);
+    state.status = 'available'; state.meta = meta;
+  }
+  function renderDismissed(meta){
+    wrapEl.innerHTML =
+      '<div class="update-card">'
+      + '<div class="update-eyebrow"><span class="update-tag outdated">Pembaruan tersedia</span></div>'
+      + '<h2 class="update-ver">Nexora ' + esc(meta.versionName || '') + '</h2>'
+      + '<div class="update-meta"><span><b>Versi Anda:</b> ' + esc(localName) + '</span>' + (meta.size ? '<span>Ukuran: <b>' + esc(formatSize(meta.size)) + '</b></span>' : '') + '</div>'
+      + '<p class="update-state">Anda telah menyembunyikan pengingat untuk versi ini.</p>'
+      + '<div class="update-actions"><button class="btn" id="update-go" type="button">Unduh &amp; Pasang</button></div>'
+      + '<p class="update-sub">Menyembunyikan notifikasi tidak menghapus update — versi lama tetap terpasang.</p>'
+      + '</div>'
+      + checkRow(true);
+    setBadgeFor(meta);
+    state.status = 'dismissed'; state.meta = meta;
+  }
+  function renderAwaitingInstaller(){
+    wrapEl.innerHTML =
+      '<div class="update-card update-available">'
+      + '<div class="update-eyebrow"><span class="update-tag">Menunggu instalasi</span></div>'
+      + '<h2 class="update-ver">Nexora ' + esc(state.meta && state.meta.versionName ? state.meta.versionName : '') + '</h2>'
+      + '<p class="update-meta" style="margin-bottom:0">File terverifikasi sudah disiapkan dan dikirim ke <b>installer Android</b>.</p>'
+      + '<ul class="update-notes" style="margin-top:10px"><li>Layar konfirmasi Android akan muncul — tekan <b>Install</b> di sana untuk memperbarui.</li>'
+      +   '<li>Android meminta konfirmasi dari Anda untuk setiap pemasangan paket — ini bagian dari sistem keamanan Android.</li>'
+      +   '<li>Setelah terinstal, buka kembali Nexora — notifikasi akan hilang otomatis saat versi terpasang terdeteksi.</li></ul>'
+      + '<div class="update-actions"><button class="btn" id="update-check-again" type="button">Saya sudah membuka Nexora</button></div>'
+      + '</div>';
+    setBadge(0);
+    state.status = 'awaiting-installer';
+  }
+  function renderError(msg){
+    wrapEl.innerHTML = '<div class="update-card update-error"><b>Pembaruan gagal</b>'
+      + '<div style="margin-top:4px">' + esc(String(msg || 'Terjadi kesalahan.')) + '</div>'
+      + recoveryActions('update-check-again', 'Coba lagi') + '</div>';
+    setBadge(0);
+    state.status = 'error';
+  }
+  function setStatus(s){
+    state.status = s;
+    document.querySelectorAll('#update-progress').forEach(function(el){ el.style.display = (s === 'downloading' || s === 'writing' || s === 'installing') ? 'flex' : 'none'; });
+    var go = $('update-go'); if(go) go.disabled = (s === 'downloading' || s === 'writing' || s === 'installing');
+  }
+  function setProgress(loaded, total){
+    var pct = total && total > 0 ? Math.min(100, Math.round((loaded / total) * 100)) : 0;
+    var fill = $('update-pbar-fill'); if(fill) fill.style.width = pct + '%';
+    var txt  = $('update-progress-text'); if(txt) txt.textContent = total ? (formatSize(loaded) + ' / ' + formatSize(total) + ' — ' + pct + '%') : formatSize(loaded) + ' diunduh…';
+  }
+  function setProgressText(t){ var txt = $('update-progress-text'); if(txt) txt.textContent = t; }
+  function downloadAndInstall(meta){
+    setStatus('downloading'); setProgress(0, meta.size || 0); setProgressText('Mengunduh…');
+    var url = meta.apkUrl;
+    if(!url){ renderError('Link unduhan tidak valid.'); return; }
+    var req = new XMLHttpRequest();
+    req.open('GET', url, true);
+    req.responseType = 'arraybuffer';
+    req.onprogress = function(e){
+      if(e.lengthComputable) setProgress(e.loaded, e.total);
+    };
+    req.onload = function(){
+      if(req.status < 200 || req.status >= 300){ renderError('Unduh gagal (HTTP ' + req.status + ').'); return; }
+      var buf = new Uint8Array(req.response);
+      var received = buf.length;
+      var expected = meta.size || 0;
+      setProgress(received, expected || received);
+      var integrity = Promise.resolve();
+      if(meta.sha256 && window.crypto && crypto.subtle){
+        integrity = crypto.subtle.digest('SHA-256', buf.buffer).then(function(hb){
+          var hex = Array.from(new Uint8Array(hb)).map(function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
+          if(String(hex).toLowerCase() !== String(meta.sha256).toLowerCase()) throw new Error('SHA-256 tidak cocok — file mungkin rusak');
+        });
+      }
+      integrity.then(function(){ saveAndInstall(buf, meta); })
+               .catch(function(err){ renderError(err && err.message ? err.message : String(err)); });
+    };
+    req.onerror = function(){ renderError('Unduh gagal — periksa koneksi internet.'); };
+    req.send();
+  }
+  function saveAndInstall(buf, meta){
+    setStatus('writing'); setProgressText('Menulis file APK…');
+    if(!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.ApkUpdater){
+      renderError('Install hanya tersedia di aplikasi Android (ApkUpdater plugin tidak ditemukan).');
+      return;
+    }
+    var CHUNK = 8192;
+    var b64 = '';
+    for(var i = 0; i < buf.length; i += CHUNK){
+      b64 += String.fromCharCode.apply(null, buf.subarray(i, i + CHUNK));
+    }
+    b64 = btoa(b64);
+    window.Capacitor.Plugins.ApkUpdater.writeApk({ path: 'nexora-update.apk', data: b64 })
+      .then(function(){ return window.Capacitor.Plugins.ApkUpdater.installApk({ path: 'nexora-update.apk' }); })
+      .then(function(){ setStatus('awaiting-installer'); renderAwaitingInstaller(); })
+      .catch(function(err){ renderError('Install gagal: ' + (err && err.message ? err.message : String(err))); });
+  }
+  function check(){
+    if(state.status === 'downloading' || state.status === 'writing' || state.status === 'installing') return;
+    state.status = 'checking'; busyRender(); setBadge(0);
+    fetchMeta().then(function(m){
+      if(!m || typeof m.versionCode !== 'number' || !isFinite(m.versionCode)){ renderError('Tidak bisa mengambil data pembaruan dari server.'); return; }
+      var remoteCode = Number(m.versionCode);
+      var dismissed = getDismissed();
+      if(remoteCode <= localCode){ renderUpToDate(m); return; }
+      if(dismissed === remoteCode){ renderDismissed(m); return; }
+      if(isNative) renderAvailable(m); else renderBrowserVersion(m);
+    });
+  }
+  // Delegasi klik tombol aksi
+  document.addEventListener('click', function(ev){
+    var t = ev.target;
+    var again = t.closest && t.closest('#update-check-again');
+    if(again){ ev.preventDefault(); setDismissed(0); check(); return; }
+    var go = t.closest && t.closest('#update-go');
+    if(go){ ev.preventDefault(); if(state.meta) downloadAndInstall(state.meta); return; }
+    var dismiss = t.closest && t.closest('#update-dismiss');
+    if(dismiss){ ev.preventDefault(); if(state.meta){ setDismissed(state.meta.versionCode); renderDismissed(state.meta); } return; }
+    var restore = t.closest && t.closest('#update-restore');
+    if(restore){ ev.preventDefault(); setDismissed(0); if(state.meta) check(); return; }
+    var cancel = t.closest && t.closest('#update-cancel');
+    if(cancel){ ev.preventDefault(); state.status = 'available'; if(isNative && state.meta) renderAvailable(state.meta); else if(state.meta) renderBrowserVersion(state.meta); else check(); return; }
+  });
+  if(wrapEl) check();
+})();
 /* ── Init ── */
 fillCats();tlist();omzet();gl();route();dash();window.scrollTo(0, 0);
 
